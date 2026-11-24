@@ -57,7 +57,7 @@ Six parsers ran in one harness, `experiments/log_benchmark.py`:
 2. **On KATO against Paper: the same groups on 13 systems.** Not the same score only. Every one of the 2,000 lines is with the same lines.
 3. **The other 515 lines all come from lines of one token.** Spell joins such a line to a template that holds its token: `warning` goes into `<*> warning <*>`, which the labels count as wrong, and that template then reads later lines differently. KATO does not learn a pattern of one symbol, so the reader keeps such a line as a type of its own. With that rule added to the paper version (Lone), not one of the 32,000 lines is grouped otherwise.
 4. **HPC's 0.904 is that rule, not a better loop.** 497 of HPC's 2,000 lines are the one-token messages `ambient<*>` and `warning`. Without HPC, the mean is 0.805 for Paper and for On KATO.
-5. **Published against Paper: five systems differ by more than 0.003.** The two shortcuts account for HealthApp, OpenSSH and Android entirely, and for most of BGL: compare Reference with Plain. Mac's 0.008 is in the rest of the benchmark's code, which skips a template that shares fewer than half the line's tokens whatever tau is, and updates a template position by position.
+5. **Published against Paper: five systems differ by more than 0.003.** The two shortcuts account for HealthApp, OpenSSH and Android entirely, and for most of BGL: compare Reference with Plain. Mac's 0.008 is in the rest of the benchmark's code. Two things there are not the paper's: it skips a template that shares fewer than half the line's tokens whatever tau is, and it updates a template position by position.
 
 So the chain is: Reference reproduces the published numbers; Plain shows what its shortcuts add; Paper is Plain to within 0.008; On KATO is Paper, line for line, but for lines of one token.
 
@@ -91,7 +91,7 @@ The service: KATO at `f32bac0`, started from the checkout with one uvicorn worke
 
 **What my in-process node had wrong.**
 
-1. **It let a retired pattern be learned again.** KATO refuses. The reader learned first and un-retired second. On a service that is a learn that does not happen. The reader un-retires first now, and the in-process node refuses as KATO does.
+1. **It let a retired pattern be learned again.** KATO refuses. The reader learned first and un-retired second, and on a service that learn is refused. The reader un-retires first now, and the in-process node refuses as KATO does.
 2. **It read a retired pattern's frequency as 0.** KATO still returns the pattern by name.
 
 Neither changed a number in this note. The first would have stopped the loop on a service at the first template whose content came back.
@@ -108,7 +108,7 @@ Neither changed a number in this note. The first would have stopped the loop on 
 | The same with the inside reading | 1.3 s | 223 s | every number and the digest |
 | Round 2's report, `examples/sequences.py` | 554 lines, 2.2 s | 554 lines | byte for byte, sha1 `7c8150fb` |
 
-About 58,000 requests. None was answered with a 5xx, and the only refusals were the ones the checks asked for. Through REST the loop is 70 to 200 times slower, on one worker with runs overlapping.
+58,946 requests in all. 58,942 were answered with a 200. The other four are the refusals the checks asked for: three 409 and one 422. Through REST the loop is 70 to 200 times slower, on one worker with runs overlapping.
 
 **Two things in KATO for you to judge.** I changed nothing in KATO.
 
@@ -122,7 +122,7 @@ About 58,000 requests. None was answered with a 5xx, and the only refusals were 
 1. A sequence goes to the template node. It joins the type it shares the longest common subsequence with, if that is at least `tau` of the sequence.
 2. The template is edited: the new pattern is learned and the old one retired. Each placeholder is a VAR symbol of its own, and a gap that holds an earlier VAR keeps that VAR's symbol.
 3. The nodes above are fed from the template. Runs of constants are chunks (node_1a). The template with chunk names in place of the runs is the rule (node_1b). When the template is edited, the old rule is retired there too. Each VAR's value goes to node_2b, and so does what the template held at a new gap before the edit.
-4. node_0 still learns the raw sequence. Nothing reads it yet. ADIOS will.
+4. node_0 still learns the raw sequence. Nothing reads it yet. It is kept for the next round.
 
 Real output, shortened (`examples/explore.py`, the command is in section 9):
 
@@ -167,7 +167,7 @@ Every earlier version of the rule is still stored, and un-retire brings it back.
 
 The module holds 942 live templates here, and the loop alone 941: with one placeholder symbol two templates once became the same text, and with numbered VARs they cannot. A sentence that joins a template with nothing in a gap counts as "no rule" for the loop alone and as a rule without VARs in the module: 5 slots.
 
-**Why it is behind.** Spell asks one template to cover at least half of the sentence. That suits a log line, which is one message. A sentence that holds a slot is usually several pieces put together: what is wanted, where, when, for how many. No single earlier sentence shares half of it.
+**Why it is behind.** Spell asks one template to share at least half of the sentence. That suits a log line, which is one message. My reading of the numbers below: a sentence that holds a slot is more often several pieces put together (what is wanted, where, when, for how many), and then no one template shares half of it.
 
 1. **Where a sentence has a rule, the loop is the more exact.** 30% of those slots are exactly one VAR, against 17% for round 2. With the inside reading, 35% against 26%.
 2. **But 48% of the slots are in a sentence that has no rule yet.** In round 2 it was 16%.
@@ -185,7 +185,7 @@ The module holds 942 live templates here, and the loop alone 941: with one place
 
 Lower the threshold and more sentences join, but the templates wear down and the slots end up inside longer VARs. Raise it and the VARs are tighter, but most sentences that hold a slot have no template. No value passes 16.4%. A template only ever loses constants, so by the end of the run 45% of the slots sit inside a longer VAR at tau 0.5.
 
-The limit is the unit, one template for a whole sentence, and not a setting. That is what ADIOS is for: its patterns are parts of sentences, shared between sentences.
+On this probe the limit is the unit, one template for a whole sentence, and not a setting. That is the case for ADIOS next: its patterns are parts of sentences, shared between sentences.
 
 ## 5. What KATO did here, and what was awkward
 
@@ -222,7 +222,7 @@ ADIOS, for what Spell does not do: patterns that are parts of a sequence, when a
 Two things about it to settle with the design, before code:
 
 1. **A yardstick.** Its paper measures precision and recall against an artificial grammar it knows, and recall on ATIS. I will propose one of those to hold the KATO version to, as the log benchmark held this round.
-2. **It is a batch method.** It passes over a corpus several times and its result depends on the order of the sentences. KATO learns as data arrives and uses no random seed. The design has to say what is kept of ADIOS when the order is fixed and the data arrives once.
+2. **Online or batch.** ADIOS is described on a whole corpus, held as a graph and gone over repeatedly. KATO learns as data arrives and uses no random seed. The design has to say what is kept of ADIOS when the data arrives once, in one order, and I will pin to the paper how far its published results rest on repeated passes and on the order of the sentences.
 
 ## 8. Sources
 
