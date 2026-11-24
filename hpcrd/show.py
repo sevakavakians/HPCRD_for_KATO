@@ -175,6 +175,18 @@ def print_sequence(step, m, readings=True):
     decides = step.get('decides', [])
     read = len(step['readings'])
     print(f"sequence  {' '.join(tokens)}")
+    if step.get('by_template'):
+        res = step['stretches'][0]
+        if not res['joined']:
+            print(f"      templates a new type: the sequence is its own template, {('PTRN|' + res['template'])[:11]}")
+        else:
+            was = f"   (edited; it was [{' '.join(res['old'])}], now retired)" if res['changed'] else "   (unchanged)"
+            print(f"      templates {('PTRN|' + res['template'])[:11]} = [{' '.join(res['new'])}]{was}")
+        print_result(res, m, tokens)
+        for part in res['parts']:
+            if part.get('retired'):
+                print(f"      node_1b   retired: {seq(part['retired'], m.node1a)}")
+        return
     if step.get('by_rule'):
         r = step['stretches'][0]['reading']
         print(f"      node_1t   {r.name[:6]}  {' '.join(r.pattern)}  x{r.frequency} | " + '  '.join(cells(r)))
