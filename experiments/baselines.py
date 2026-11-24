@@ -59,15 +59,18 @@ def gaps(tokens, constants):
 
 
 class Spell:
-    def __init__(self, tau=0.5):
-        self.tau = tau
-        self.templates = []     # token lists, `*` marking a parameter
+    def __init__(self, tau=0.5, star=STAR, star_matches=False):
+        """`star_matches`: the placeholder is a token like any other when sequences are compared.
+        The log benchmark's preprocessing puts placeholders into the lines themselves, and its
+        reference implementation lets them match (experiments/log_benchmark.py)."""
+        self.tau, self.star, self.star_matches = tau, star, star_matches
+        self.templates = []     # token lists, the placeholder marking a parameter
         self.sizes = []
 
     def add(self, tokens):
         best, where = 0, None
         for k, template in enumerate(self.templates):
-            constants = [t for t in template if t != STAR]
+            constants = template if self.star_matches else [t for t in template if t != self.star]
             shared = LCSseq.similarity(tokens, constants)
             if shared > best or (shared == best and where is not None and len(template) < len(self.templates[where])):
                 best, where = shared, k
@@ -79,17 +82,16 @@ class Spell:
         pairs = lcs_pairs(tokens, old)
         new, last = [], (-1, -1)
         for i, j in pairs + [(len(tokens), len(old))]:
-            if i - last[0] > 1 or j - last[1] > 1:
-                new.append(STAR)
-            if i < len(tokens):
-                new.append(tokens[i])
+            for symbol in ([self.star] if i - last[0] > 1 or j - last[1] > 1 else []) + ([tokens[i]] if i < len(tokens) else []):
+                if not (symbol == self.star and new and new[-1] == self.star):     # adjacent placeholders are one
+                    new.append(symbol)
             last = (i, j)
         self.templates[where] = new
         self.sizes[where] += 1
         return where, True
 
     def constants(self, k):
-        return [t for t in self.templates[k] if t != STAR]
+        return [t for t in self.templates[k] if t != self.star]
 
 
 def run_spell(data, tau):
