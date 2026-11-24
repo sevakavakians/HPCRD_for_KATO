@@ -1,6 +1,6 @@
 """Position-level reading of one KATO prediction, from its returned fields only.
 
-Scope: every event holds exactly one symbol (this experiment's text setting).
+Scope: every event holds exactly one symbol (this experiment's first setting).
 
 KATO's matcher computes which pattern position each observed position was
 matched to, and does not return it. With one symbol per event the returned
@@ -16,14 +16,25 @@ one learned pattern accounts for it.
 
     ('M', q)        matched to pattern position q
     ('S', q, x)     substituted: aligned with pattern position q, which holds x.
-                    Interior gap, as many `extras` as `missing`, position for position.
-    ('E', q, x)     edge: an extra before the first / after the last match that lines
-                    up with a position of `past` / `future` holding x
-    ('I', q)        inserted: an extra inside the matched span with nothing opposite it;
-                    q is the pattern position of the match before it
+                    As many `extras` as `missing` in the gap, position for position.
+    ('I', q)        inserted: an extra with nothing opposite it; q is the pattern
+                    position of the match before it
     ('U', n, m, q)  unequal gap: one of n extras standing against m missing (n != m, m > 0);
                     q is the pattern position of the match before the gap
+    ('E', q, x)     edge: an extra before the first / after the last match that lines
+                    up with a position of `past` / `future` holding x
     ('O',)          out of view: beyond the pattern's first or last event
+
+Two ways to treat what lies before the first match and after the last one:
+
+    whole=False   The STM is a window: where it starts and ends is arbitrary, so the
+                  pattern's `past` and `future` are context outside the view. Extras
+                  there are edges ('E') or out of view ('O').
+    whole=True    The STM and the pattern are both complete sequences (a sentence
+                  against a sentence). Their starts line up and so do their ends, so
+                  the leading extras stand against the whole of `past`, the trailing
+                  extras against the whole of `future`, and both are gaps like any
+                  other ('S', 'I', 'U'). No 'E', no 'O'.
 """
 from typing import NamedTuple
 
@@ -37,6 +48,7 @@ class Reading(NamedTuple):
     pairs: list            # [(pattern position, STM position)] matched, in order
     blocks: list           # [(pattern start, STM start, length)] maximal contiguous matches
     deletions: list        # [(STM position before, [pattern symbols skipped])] missing with no extra opposite
+    whole: bool = False    # read as two complete sequences (see module docstring)
 
 
 def flat(events):
@@ -48,7 +60,7 @@ def flat(events):
     return out
 
 
-def read(prediction, stm_events):
+def read(prediction, stm_events, whole=False):
     stm = flat(stm_events)
     extras, missing = prediction['extras'], prediction['missing']
     past, present, future = prediction['past'], prediction['present'], prediction['future']
@@ -65,8 +77,11 @@ def read(prediction, stm_events):
             raise ValueError("matched positions hold different symbols")
         relation[i] = ('M', q)
 
+    # Gaps: what lies between two neighbouring anchors. With whole sequences the two ends
+    # are anchors too, just before the first position and just after the last.
+    anchors = [(-1, -1)] + pairs + [(len(pattern), n)] if whole else pairs
     deletions = []
-    for (q0, i0), (q1, i1) in zip(pairs, pairs[1:]):
+    for (q0, i0), (q1, i1) in zip(anchors, anchors[1:]):
         gap_s, gap_p = i1 - i0 - 1, q1 - q0 - 1
         if gap_s == 0 and gap_p > 0:
             deletions.append((i0, pattern[q0 + 1:q1]))
@@ -78,14 +93,15 @@ def read(prediction, stm_events):
             else:
                 relation[i0 + d] = ('U', gap_s, gap_p, q0)
 
-    q0, i0 = pairs[0]
-    for d in range(1, i0 + 1):
-        q = q0 - d
-        relation[i0 - d] = ('E', q, pattern[q]) if q >= 0 else ('O',)
-    q_last, i_last = pairs[-1]
-    for d in range(1, n - i_last):
-        q = q_last + d
-        relation[i_last + d] = ('E', q, pattern[q]) if q < len(pattern) else ('O',)
+    if not whole and pairs:
+        q0, i0 = pairs[0]
+        for d in range(1, i0 + 1):
+            q = q0 - d
+            relation[i0 - d] = ('E', q, pattern[q]) if q >= 0 else ('O',)
+        q_last, i_last = pairs[-1]
+        for d in range(1, n - i_last):
+            q = q_last + d
+            relation[i_last + d] = ('E', q, pattern[q]) if q < len(pattern) else ('O',)
 
     blocks = []
     for q, i in pairs:
@@ -94,4 +110,4 @@ def read(prediction, stm_events):
         else:
             blocks.append((q, i, 1))
     return Reading(prediction['name'], prediction['frequency'], pattern, len(past),
-                   relation, pairs, blocks, deletions)
+                   relation, pairs, blocks, deletions, whole)
