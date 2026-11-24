@@ -1,0 +1,906 @@
+
+====================================================================================================
+EXAMPLE 1  One slot, one window at a time (the description to the letter)
+====================================================================================================
+text: the cat sat on the mat . the dog sat on the mat . the bird sat on the mat .
+settings: window=7 recall_threshold=0.5 span=window markers=[] naming=rule slots=position unexplained=drop mixed=var min_support=1 edge_vars=False
+
+--- t=6: the first full window. Nothing has been learned, so the ensemble is empty.
+t=6   STM       the cat sat on the mat .
+      ensemble  0 predictions.  node_0 learns this window as PTRN|a3719f
+
+--- t=13: what node_0 returns, and what the module holds out
+t=13  STM       the dog sat on the mat .
+        a3719f  the cat sat on the mat .   frequency 1  similarity 0.857  learned at t=6   READ
+        1eaaea  cat sat on the mat . the   frequency 1  similarity 0.714  learned at t=7   echo: shares tokens with the STM
+        7c6bcd  sat on the mat . the dog   frequency 1  similarity 0.714  learned at t=8   echo: shares tokens with the STM
+        fbf9a2  on the mat . the dog sat   frequency 1  similarity 0.571  learned at t=9   echo: shares tokens with the STM
+        4f4db4  the mat . the dog sat on   frequency 1  similarity 0.571  learned at t=10  echo: shares tokens with the STM
+        a09df5  mat . the dog sat on the   frequency 1  similarity 0.714  learned at t=11  echo: shares tokens with the STM
+        92502d  . the dog sat on the mat   frequency 1  similarity 0.857  learned at t=12  echo: shares tokens with the STM
+
+--- t=13: the one prediction that is read, as KATO returns it
+          matches  ["the", "sat", "on", "the", "mat", "."]
+          missing  [[], ["cat"], [], [], [], [], []]
+          extras   [[], ["dog"], [], [], [], [], []]
+          past     []
+          present  [["the"], ["cat"], ["sat"], ["on"], ["the"], ["mat"], ["."]]
+          future   []
+
+--- t=13: what the module does with it
+t=13  STM       the dog sat on the mat .
+      ensemble  7 predictions: 6 echoes held out, 1 read.  node_0 then learns this window as PTRN|1a3d0c
+        a3719f  the cat sat on the mat .       @0      | =  ~cat  =  =  =  =  =
+      labels    the/C  dog/V  sat/C  on/C  the/C  mat/C  ./C
+      node_1a   PTRN|76a6fb = [sat on the mat .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [the] [dog] [PTRN|76a6fb(sat on the mat .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|16f905 = [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   frequency 1
+      node_2b   [VAR|1] [dog]   (new value; earlier: cat x1)
+      node_2b   [VAR|1] [cat]   (value a learned pattern has there)
+
+--- t=14: the same slot at the window's edge. The pattern's side is in `past`, not in `missing`.
+t=14  STM       dog sat on the mat . the
+        1eaaea  cat sat on the mat . the
+          matches  ["sat", "on", "the", "mat", ".", "the"]
+          missing  [[], [], [], [], [], []]
+          extras   [["dog"], [], [], [], [], [], []]
+          past     [["cat"]]
+          present  [["sat"], ["on"], ["the"], ["mat"], ["."], ["the"]]
+          future   []
+      labels    dog/N:unexplained  sat/C  on/C  the/C  mat/C  ./C  the/C
+      node_1a   PTRN|11a6bb = [sat on the mat . the]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1b   nothing to learn: one symbol is not a pattern
+
+--- t=20: the rule is recognised. node_1b's own prediction for the probe:
+t=20  STM       the bird sat on the mat .
+      probe     [the] [bird] [PTRN|76a6fb(sat on the mat .)]
+        16f905  frequency 1  similarity 0.667
+          matches  ["the", "PTRN|76a6fbd3fd4840cef7844f523750e20d3e996af3"]
+          missing  [[], ["VAR|1"], []]
+          extras   [[], ["bird"], []]
+          past     []
+          present  [["the"], ["VAR|1"], ["PTRN|76a6fbd3fd4840cef7844f523750e20d3e996af3"]]
+          future   []
+      labels    the/C  bird/V  sat/C  on/C  the/C  mat/C  ./C
+      node_1a   PTRN|76a6fb = [sat on the mat .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [the] [bird] [PTRN|76a6fb(sat on the mat .)]   -> RECOGNISED
+      node_1b   PTRN|16f905 = [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   frequency 2
+      node_2b   [VAR|1] [bird]   (new value; earlier: cat x1, dog x1)
+
+--- every step that taught a node above node_0
+t=13  the dog sat on the mat .     [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+t=14  dog sat on the mat . the     chunk only: [sat on the mat . the]
+t=15  sat on the mat . the bird    chunk only: [sat on the mat . the]
+t=16  on the mat . the bird sat    [PTRN|86e365(on the mat . the)] [VAR|2] [sat]
+t=17  the mat . the bird sat on    [PTRN|19d06e(the mat . the)] [VAR|3] [PTRN|9b9746(sat on)]
+t=18  mat . the bird sat on the    [PTRN|feedd8(mat . the)] [VAR|4] [PTRN|4e0120(sat on the)]
+t=19  . the bird sat on the mat    [PTRN|490ed6(. the)] [VAR|5] [PTRN|c2fcdf(sat on the mat)]
+t=20  the bird sat on the mat .    [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   (recognised)
+
+--- what every node holds at the end
+  node_0: 15 patterns, 15 learns
+    PTRN|10286d  f=1  [sat] [on] [the] [mat] [.] [the] [bird]
+    PTRN|103075  f=1  [the] [bird] [sat] [on] [the] [mat] [.]
+    PTRN|113ece  f=1  [on] [the] [mat] [.] [the] [bird] [sat]
+    PTRN|1a3d0c  f=1  [the] [dog] [sat] [on] [the] [mat] [.]
+    PTRN|1eaaea  f=1  [cat] [sat] [on] [the] [mat] [.] [the]
+    PTRN|3f6d2e  f=1  [mat] [.] [the] [bird] [sat] [on] [the]
+    PTRN|4f4db4  f=1  [the] [mat] [.] [the] [dog] [sat] [on]
+    PTRN|7c6bcd  f=1  [sat] [on] [the] [mat] [.] [the] [dog]
+    PTRN|92502d  f=1  [.] [the] [dog] [sat] [on] [the] [mat]
+    PTRN|9e0457  f=1  [dog] [sat] [on] [the] [mat] [.] [the]
+    PTRN|a09df5  f=1  [mat] [.] [the] [dog] [sat] [on] [the]
+    PTRN|a3719f  f=1  [the] [cat] [sat] [on] [the] [mat] [.]
+    PTRN|afe77e  f=1  [.] [the] [bird] [sat] [on] [the] [mat]
+    PTRN|dc380b  f=1  [the] [mat] [.] [the] [bird] [sat] [on]
+    PTRN|fbf9a2  f=1  [on] [the] [mat] [.] [the] [dog] [sat]
+  node_1a: 9 patterns, 11 learns
+    PTRN|11a6bb  f=2  [sat] [on] [the] [mat] [.] [the]
+    PTRN|76a6fb  f=2  [sat] [on] [the] [mat] [.]
+    PTRN|19d06e  f=1  [the] [mat] [.] [the]
+    PTRN|490ed6  f=1  [.] [the]
+    PTRN|4e0120  f=1  [sat] [on] [the]
+    PTRN|86e365  f=1  [on] [the] [mat] [.] [the]
+    PTRN|9b9746  f=1  [sat] [on]
+    PTRN|c2fcdf  f=1  [sat] [on] [the] [mat]
+    PTRN|feedd8  f=1  [mat] [.] [the]
+  node_1b: 5 patterns, 6 learns
+    PTRN|16f905  f=2  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+    PTRN|1e333a  f=1  [PTRN|feedd8(mat . the)] [VAR|4] [PTRN|4e0120(sat on the)]
+    PTRN|3d948e  f=1  [PTRN|490ed6(. the)] [VAR|5] [PTRN|c2fcdf(sat on the mat)]
+    PTRN|50a2f9  f=1  [PTRN|19d06e(the mat . the)] [VAR|3] [PTRN|9b9746(sat on)]
+    PTRN|8f15e1  f=1  [PTRN|86e365(on the mat . the)] [VAR|2] [sat]
+  node_2a: 5 patterns, 5 learns
+    PTRN|376965  f=1  [PTRN|1e333a] [PTRN|3d948e]
+    PTRN|432da4  f=1  [PTRN|3d948e] [PTRN|16f905]
+    PTRN|76754c  f=1  [PTRN|50a2f9] [PTRN|1e333a]
+    PTRN|8d3dd8  f=1  [PTRN|16f905] [PTRN|8f15e1]
+    PTRN|b954ae  f=1  [PTRN|8f15e1] [PTRN|50a2f9]
+  node_2b: 13 patterns, 13 learns
+    PTRN|0af7ce  f=1  [VAR|2] [dog]
+    PTRN|27598c  f=1  [VAR|4] [bird]
+    PTRN|4831d9  f=1  [VAR|3] [bird]
+    PTRN|5dce77  f=1  [VAR|1] [dog]
+    PTRN|5eee58  f=1  [VAR|5] [bird]
+    PTRN|9651e3  f=1  [VAR|1] [bird]
+    PTRN|9842ee  f=1  [VAR|4] [dog]
+    PTRN|be8704  f=1  [VAR|4] [cat]
+    PTRN|c19013  f=1  [VAR|5] [cat]
+    PTRN|db69d1  f=1  [VAR|5] [dog]
+    PTRN|db6f9e  f=1  [VAR|1] [cat]
+    PTRN|e5ba23  f=1  [VAR|3] [dog]
+    PTRN|f9526c  f=1  [VAR|2] [bird]
+
+--- the same text with edge_vars=True (an extra that lines up with `past` or `future` is a variable too)
+t=13  the dog sat on the mat .     [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+t=14  dog sat on the mat . the     [VAR|2] [PTRN|11a6bb(sat on the mat . the)]
+t=15  sat on the mat . the bird    [PTRN|11a6bb(sat on the mat . the)] [VAR|3]
+t=16  on the mat . the bird sat    [PTRN|86e365(on the mat . the)] [VAR|4] [sat]
+t=17  the mat . the bird sat on    [PTRN|19d06e(the mat . the)] [VAR|5] [PTRN|9b9746(sat on)]
+t=18  mat . the bird sat on the    [PTRN|feedd8(mat . the)] [VAR|6] [PTRN|4e0120(sat on the)]
+t=19  . the bird sat on the mat    [PTRN|490ed6(. the)] [VAR|7] [PTRN|c2fcdf(sat on the mat)]
+t=20  the bird sat on the mat .    [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   (recognised)
+                        strict     edge_vars
+node_0 patterns             15            15
+node_1a chunks               9             9
+node_1a learns              11            11
+longest chunk                6             6
+node_1b rules                5             7
+node_1b learns               6             8
+rules seen again             1             1
+VARs                         5             7
+node_2a patterns             5             7
+node_2b patterns            13            17
+
+====================================================================================================
+EXAMPLE 2  The same text stitched along the stream, and a chunk longer than the window
+====================================================================================================
+text: the cat sat on the mat . the dog sat on the mat . the bird sat on the mat .
+settings: window=7 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=position unexplained=drop mixed=var min_support=1 edge_vars=False
+stretch 0..6  the cat sat on the mat .
+      labels    the/N:unexplained  cat/N:unexplained  sat/N:unexplained  on/N:unexplained  the/N:unexplained  mat/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 7..13  the dog sat on the mat .
+      labels    the/C  dog/V  sat/C  on/C  the/C  mat/C  ./C
+      node_1a   PTRN|76a6fb = [sat on the mat .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [the] [dog] [PTRN|76a6fb(sat on the mat .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|16f905 = [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   frequency 1
+      node_2b   [VAR|1] [dog]   (new value; earlier: cat x1)
+      node_2b   [VAR|1] [cat]   (value a learned pattern has there)
+stretch 14..20  the bird sat on the mat .
+      labels    the/C  bird/V  sat/C  on/C  the/C  mat/C  ./C
+      node_1a   PTRN|76a6fb = [sat on the mat .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [the] [bird] [PTRN|76a6fb(sat on the mat .)]   -> RECOGNISED
+      node_1b   PTRN|16f905 = [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   frequency 2
+      node_2b   [VAR|1] [bird]   (new value; earlier: cat x1, dog x1)
+
+--- what every node holds at the end (stitched)
+  node_0: 15 patterns, 15 learns (one window per token from t=6)
+  node_1a: 1 patterns, 2 learns
+    PTRN|76a6fb  f=2  [sat] [on] [the] [mat] [.]
+  node_1b: 1 patterns, 2 learns
+    PTRN|16f905  f=2  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+  node_2a: 1 patterns, 1 learns
+    PTRN|5df69e  f=1  [PTRN|16f905] [PTRN|16f905]
+  node_2b: 3 patterns, 3 learns
+    PTRN|5dce77  f=1  [VAR|1] [dog]
+    PTRN|9651e3  f=1  [VAR|1] [bird]
+    PTRN|db6f9e  f=1  [VAR|1] [cat]
+
+--- one window at a time against stitched, same text, same settings otherwise
+                    per window      stitched
+node_0 patterns             15            15
+node_1a chunks               9             1
+node_1a learns              11             2
+longest chunk                6             5
+node_1b rules                5             1
+node_1b learns               6             2
+rules seen again             1             1
+VARs                         5             1
+node_2a patterns             5             1
+node_2b patterns            13             3
+
+--- a constant stretch of 8 tokens, window of 7
+text: the old cat sat on the mat by the door . the old dog sat on the mat by the door . the old bird sat on the mat by the door .
+settings: window=7 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=position unexplained=drop mixed=var min_support=1 edge_vars=False
+stretch 0..10  the old cat sat on the mat by the door .
+      labels    the/N:unexplained  old/N:unexplained  cat/N:unexplained  sat/N:unexplained  on/N:unexplained  the/N:unexplained  mat/N:unexplained  by/N:unexplained  the/N:unexplained  door/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 11..21  the old dog sat on the mat by the door .
+      labels    the/C  old/C  dog/V  sat/C  on/C  the/C  mat/C  by/C  the/C  door/C  ./C
+      node_1a   PTRN|9c5d3c = [the old]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1a   PTRN|1c5c3e = [sat on the mat by the door .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [PTRN|9c5d3c(the old)] [dog] [PTRN|1c5c3e(sat on the mat by the door .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|d81498 = [PTRN|9c5d3c(the old)] [VAR|1] [PTRN|1c5c3e(sat on the mat by the door .)]   frequency 1
+      node_2b   [VAR|1] [dog]   (new value; earlier: cat x1)
+      node_2b   [VAR|1] [cat]   (value a learned pattern has there)
+stretch 22..32  the old bird sat on the mat by the door .
+      labels    the/C  old/C  bird/V  sat/C  on/C  the/C  mat/C  by/C  the/C  door/C  ./C
+      node_1a   PTRN|9c5d3c = [the old]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      node_1a   PTRN|1c5c3e = [sat on the mat by the door .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [PTRN|9c5d3c(the old)] [bird] [PTRN|1c5c3e(sat on the mat by the door .)]   -> RECOGNISED
+      node_1b   PTRN|d81498 = [PTRN|9c5d3c(the old)] [VAR|1] [PTRN|1c5c3e(sat on the mat by the door .)]   frequency 2
+      node_2b   [VAR|1] [bird]   (new value; earlier: cat x1, dog x1)
+  node_0: 21 patterns, 27 learns (one window per token from t=6)
+  node_1a: 2 patterns, 4 learns
+    PTRN|1c5c3e  f=2  [sat] [on] [the] [mat] [by] [the] [door] [.]
+    PTRN|9c5d3c  f=2  [the] [old]
+  node_1b: 1 patterns, 2 learns
+    PTRN|d81498  f=2  [PTRN|9c5d3c(the old)] [VAR|1] [PTRN|1c5c3e(sat on the mat by the door .)]
+  node_2a: 1 patterns, 1 learns
+    PTRN|6dd409  f=1  [PTRN|d81498] [PTRN|d81498]
+  node_2b: 3 patterns, 3 learns
+    PTRN|5dce77  f=1  [VAR|1] [dog]
+    PTRN|9651e3  f=1  [VAR|1] [bird]
+    PTRN|db6f9e  f=1  [VAR|1] [cat]
+                    per window      stitched
+node_0 patterns             21            21
+node_1a chunks              14             2
+node_1a learns              24             4
+longest chunk                7             8
+node_1b rules                7             1
+node_1b learns               9             2
+rules seen again             2             1
+VARs                         7             1
+node_2a patterns             7             1
+node_2b patterns            18             3
+
+--- node_0 already knew the windows inside the long chunk: their frequency went to 2 and 3
+    PTRN|46e7a8  f=3  sat on the mat by the door
+    PTRN|2bbc25  f=3  on the mat by the door .
+    PTRN|39dfe7  f=2  the mat by the door . the
+    PTRN|0078d0  f=2  mat by the door . the old
+
+====================================================================================================
+EXAMPLE 3  The sketch in the request, run; then noise, a value of another length, slots side by side
+====================================================================================================
+
+--- (a) the layout of the sketch: VAR, chunk, VAR VAR VAR, chunk with noise inside it, VAR
+text: please book a table for two quiet adults at seven tonight . kindly book a table for six hungry diners at seven today . please book a table for four tired guests at uh seven tonight . kindly book a table for two quiet adults at seven today .
+settings: window=7 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=position unexplained=drop mixed=var min_support=1 edge_vars=False
+stretch 0..11  please book a table for two quiet adults at seven tonight .
+      labels    please/N:unexplained  book/N:unexplained  a/N:unexplained  table/N:unexplained  for/N:unexplained  two/N:unexplained  quiet/N:unexplained  adults/N:unexplained  at/N:unexplained  seven/N:unexplained  tonight/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 12..23  kindly book a table for six hungry diners at seven today .
+      labels    kindly/N:unexplained  book/C  a/C  table/C  for/C  six/V  hungry/V  diners/V  at/C  seven/C  today/V  ./C
+      node_1a   PTRN|6454f3 = [book a table for]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1a   PTRN|8a0c5a = [at seven]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [PTRN|6454f3(book a table for)] [six] [hungry] [diners] [PTRN|8a0c5a(at seven)] [today] [.]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|ad48e1 = [PTRN|6454f3(book a table for)] [VAR|1] [VAR|2] [VAR|3] [PTRN|8a0c5a(at seven)] [VAR|4] [.]   frequency 1
+      node_2b   [VAR|1] [six]   (new value; earlier: two x1)
+      node_2b   [VAR|2] [hungry]   (new value; earlier: quiet x1)
+      node_2b   [VAR|3] [diners]   (new value; earlier: adults x1)
+      node_2b   [VAR|4] [today]   (new value; earlier: tonight x1)
+      node_2b   [VAR|1] [two]   (value a learned pattern has there)
+      node_2b   [VAR|2] [quiet]   (value a learned pattern has there)
+      node_2b   [VAR|3] [adults]   (value a learned pattern has there)
+      node_2b   [VAR|4] [tonight]   (value a learned pattern has there)
+      node_2b   [VAR|1] [six] [VAR|2] [hungry] [VAR|3] [diners] [VAR|4] [today]   (values together)
+      node_2b   [VAR|1] [VAR|2] [VAR|3]   (VARs side by side)
+stretch 24..36  please book a table for four tired guests at uh seven tonight .
+      labels    please/V  book/C  a/C  table/C  for/C  four/V  tired/V  guests/V  at/C  uh/N:inserted  seven/C  tonight/V  ./C
+      node_1a   PTRN|6454f3 = [book a table for]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      node_1a   PTRN|8a0c5a = [at seven]   frequency 2   (joined again after the noise between its parts was dropped)
+      probe     [please] [PTRN|6454f3(book a table for)] [four] [tired] [guests] [PTRN|8a0c5a(at seven)] [tonight] [.]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|1c9f9a = [VAR|5] [PTRN|6454f3(book a table for)] [VAR|6] [VAR|7] [VAR|8] [PTRN|8a0c5a(at seven)] [VAR|9] [.]   frequency 1
+      node_2b   [VAR|5] [please]   (new value; earlier: kindly x1)
+      node_2b   [VAR|6] [four]   (new value; earlier: six x1, two x1)
+      node_2b   [VAR|7] [tired]   (new value; earlier: hungry x1, quiet x1)
+      node_2b   [VAR|8] [guests]   (new value; earlier: adults x1, diners x1)
+      node_2b   [VAR|9] [tonight]   (new value; earlier: today x1)
+      node_2b   [VAR|5] [kindly]   (value a learned pattern has there)
+      node_2b   [VAR|6] [six]   (value a learned pattern has there)
+      node_2b   [VAR|6] [two]   (value a learned pattern has there)
+      node_2b   [VAR|7] [hungry]   (value a learned pattern has there)
+      node_2b   [VAR|7] [quiet]   (value a learned pattern has there)
+      node_2b   [VAR|8] [adults]   (value a learned pattern has there)
+      node_2b   [VAR|8] [diners]   (value a learned pattern has there)
+      node_2b   [VAR|9] [today]   (value a learned pattern has there)
+      node_2b   [VAR|5] [please] [VAR|6] [four] [VAR|7] [tired] [VAR|8] [guests] [VAR|9] [tonight]   (values together)
+      node_2b   [VAR|6] [VAR|7] [VAR|8]   (VARs side by side)
+stretch 37..48  kindly book a table for two quiet adults at seven today .
+      labels    kindly/V  book/C  a/C  table/C  for/C  two/V  quiet/V  adults/V  at/C  seven/C  today/V  ./C
+      node_1a   PTRN|6454f3 = [book a table for]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      node_1a   PTRN|8a0c5a = [at seven]   frequency 3   (contiguous match, seen whole in 2 earlier places)
+      probe     [kindly] [PTRN|6454f3(book a table for)] [two] [quiet] [adults] [PTRN|8a0c5a(at seven)] [today] [.]   -> RECOGNISED
+      node_1b   PTRN|1c9f9a = [VAR|5] [PTRN|6454f3(book a table for)] [VAR|6] [VAR|7] [VAR|8] [PTRN|8a0c5a(at seven)] [VAR|9] [.]   frequency 2
+      node_2b   [VAR|5] [kindly]   (known value; earlier: please x1)
+      node_2b   [VAR|6] [two]   (known value; earlier: four x1, six x1)
+      node_2b   [VAR|7] [quiet]   (known value; earlier: hungry x1, tired x1)
+      node_2b   [VAR|8] [adults]   (known value; earlier: diners x1, guests x1)
+      node_2b   [VAR|9] [today]   (known value; earlier: tonight x1)
+      node_2b   [VAR|5] [kindly] [VAR|6] [two] [VAR|7] [quiet] [VAR|8] [adults] [VAR|9] [today]   (values together)
+      node_2b   [VAR|6] [VAR|7] [VAR|8]   (VARs side by side)
+  node_0: 38 patterns, 43 learns (one window per token from t=6)
+  node_1a: 2 patterns, 6 learns
+    PTRN|6454f3  f=3  [book] [a] [table] [for]
+    PTRN|8a0c5a  f=3  [at] [seven]
+  node_1b: 2 patterns, 3 learns
+    PTRN|1c9f9a  f=2  [VAR|5] [PTRN|6454f3(book a table for)] [VAR|6] [VAR|7] [VAR|8] [PTRN|8a0c5a(at seven)] [VAR|9] [.]
+    PTRN|ad48e1  f=1  [PTRN|6454f3(book a table for)] [VAR|1] [VAR|2] [VAR|3] [PTRN|8a0c5a(at seven)] [VAR|4] [.]
+  node_2a: 2 patterns, 2 learns
+    PTRN|1d2ad2  f=1  [PTRN|1c9f9a] [PTRN|1c9f9a]
+    PTRN|5a2df3  f=1  [PTRN|ad48e1] [PTRN|1c9f9a]
+  node_2b: 26 patterns, 32 learns
+    PTRN|141c01  f=2  [VAR|8] [adults]
+    PTRN|3158a1  f=2  [VAR|9] [today]
+    PTRN|7b299d  f=2  [VAR|7] [quiet]
+    PTRN|b6729e  f=2  [VAR|6] [two]
+    PTRN|d83810  f=2  [VAR|5] [kindly]
+    PTRN|f969df  f=2  [VAR|6] [VAR|7] [VAR|8]
+    PTRN|0797a3  f=1  [VAR|1] [six]
+    PTRN|18f510  f=1  [VAR|7] [tired]
+    PTRN|1e9ffa  f=1  [VAR|8] [diners]
+    PTRN|25c8a1  f=1  [VAR|2] [quiet]
+    PTRN|2d2427  f=1  [VAR|2] [hungry]
+    PTRN|2d2a83  f=1  [VAR|9] [tonight]
+    PTRN|2fbccb  f=1  [VAR|7] [hungry]
+    PTRN|33e2b2  f=1  [VAR|5] [kindly] [VAR|6] [two] [VAR|7] [quiet] [VAR|8] [adults] [VAR|9] [today]
+    PTRN|34c400  f=1  [VAR|6] [four]
+    PTRN|5d1d72  f=1  [VAR|1] [VAR|2] [VAR|3]
+    PTRN|681720  f=1  [VAR|1] [six] [VAR|2] [hungry] [VAR|3] [diners] [VAR|4] [today]
+    PTRN|798f31  f=1  [VAR|5] [please] [VAR|6] [four] [VAR|7] [tired] [VAR|8] [guests] [VAR|9] [tonight]
+    PTRN|8c14b6  f=1  [VAR|4] [tonight]
+    PTRN|9097ae  f=1  [VAR|1] [two]
+    PTRN|a5b8de  f=1  [VAR|4] [today]
+    PTRN|c6ea19  f=1  [VAR|6] [six]
+    PTRN|d485b4  f=1  [VAR|3] [diners]
+    PTRN|d8f8d9  f=1  [VAR|3] [adults]
+    PTRN|dbd6b4  f=1  [VAR|5] [please]
+    PTRN|fd49c3  f=1  [VAR|8] [guests]
+
+text: show flights from boston to denver . show flights from dallas to denver . show me flights from boston to denver . show flights from new york to denver . show flights from los angeles to denver .
+
+--- (b) to the letter: one VAR per aligned position, everything else removed as noise
+settings: window=7 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=position unexplained=drop mixed=var min_support=1 edge_vars=False
+stretch 0..6  show flights from boston to denver .
+      labels    show/N:unexplained  flights/N:unexplained  from/N:unexplained  boston/N:unexplained  to/N:unexplained  denver/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 7..13  show flights from dallas to denver .
+      labels    show/C  flights/C  from/C  dallas/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [PTRN|ac5190(show flights from)] [dallas] [PTRN|c97f0b(to denver .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 1
+      node_2b   [VAR|1] [dallas]   (new value; earlier: boston x1)
+      node_2b   [VAR|1] [boston]   (value a learned pattern has there)
+stretch 14..21  show me flights from boston to denver .
+      labels    show/C  me/N:inserted  flights/C  from/C  boston/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 2   (joined again after the noise between its parts was dropped)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [boston] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 2
+      node_2b   [VAR|1] [boston]   (known value; earlier: dallas x1)
+stretch 22..29  show flights from new york to denver .
+      labels    show/C  flights/C  from/C  new/N:unequal  york/N:unequal  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 3   (contiguous match, seen whole in 2 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      node_1b   PTRN|35ed08 = [PTRN|ac5190(show flights from)] [PTRN|c97f0b(to denver .)]   frequency 1
+stretch 30..37  show flights from los angeles to denver .
+      labels    show/C  flights/C  from/C  los/V  angeles/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 4   (contiguous match, seen whole in 3 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 4   (contiguous match, seen whole in 4 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [los] [angeles] [PTRN|c97f0b(to denver .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|4401ca = [PTRN|ac5190(show flights from)] [VAR|2] [VAR|3] [PTRN|c97f0b(to denver .)]   frequency 1
+      node_2b   [VAR|2] [los]   (new value; earlier: new x1)
+      node_2b   [VAR|3] [angeles]   (new value; earlier: york x1)
+      node_2b   [VAR|2] [new]   (value a learned pattern has there)
+      node_2b   [VAR|3] [york]   (value a learned pattern has there)
+      node_2b   [VAR|2] [los] [VAR|3] [angeles]   (values together)
+      node_2b   [VAR|2] [new] [VAR|3] [york]   (values together in a learned pattern)
+      node_2b   [VAR|2] [VAR|3]   (VARs side by side)
+  node_0: 29 patterns, 32 learns (one window per token from t=6)
+  node_1a: 2 patterns, 8 learns
+    PTRN|ac5190  f=4  [show] [flights] [from]
+    PTRN|c97f0b  f=4  [to] [denver] [.]
+  node_1b: 3 patterns, 4 learns
+    PTRN|27641b  f=2  [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]
+    PTRN|35ed08  f=1  [PTRN|ac5190(show flights from)] [PTRN|c97f0b(to denver .)]
+    PTRN|4401ca  f=1  [PTRN|ac5190(show flights from)] [VAR|2] [VAR|3] [PTRN|c97f0b(to denver .)]
+  node_2a: 3 patterns, 3 learns
+    PTRN|27e8d9  f=1  [PTRN|27641b] [PTRN|27641b]
+    PTRN|a4ccc1  f=1  [PTRN|35ed08] [PTRN|4401ca]
+    PTRN|e60a68  f=1  [PTRN|27641b] [PTRN|35ed08]
+  node_2b: 9 patterns, 10 learns
+    PTRN|d6656e  f=2  [VAR|1] [boston]
+    PTRN|4b15b6  f=1  [VAR|3] [angeles]
+    PTRN|96832a  f=1  [VAR|2] [new]
+    PTRN|a93e24  f=1  [VAR|2] [los]
+    PTRN|c132e1  f=1  [VAR|1] [dallas]
+    PTRN|d61f5c  f=1  [VAR|2] [los] [VAR|3] [angeles]
+    PTRN|d8bad9  f=1  [VAR|3] [york]
+    PTRN|d9bcdc  f=1  [VAR|2] [VAR|3]
+    PTRN|f5ac4d  f=1  [VAR|2] [new] [VAR|3] [york]
+
+--- (c) only an insertion is removed; a token nothing accounts for ends the part
+settings: window=7 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=position unexplained=break mixed=var min_support=1 edge_vars=False
+stretch 0..6  show flights from boston to denver .
+      labels    show/N:unexplained  flights/N:unexplained  from/N:unexplained  boston/N:unexplained  to/N:unexplained  denver/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 7..13  show flights from dallas to denver .
+      labels    show/C  flights/C  from/C  dallas/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [PTRN|ac5190(show flights from)] [dallas] [PTRN|c97f0b(to denver .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 1
+      node_2b   [VAR|1] [dallas]   (new value; earlier: boston x1)
+      node_2b   [VAR|1] [boston]   (value a learned pattern has there)
+stretch 14..21  show me flights from boston to denver .
+      labels    show/C  me/N:inserted  flights/C  from/C  boston/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 2   (joined again after the noise between its parts was dropped)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [boston] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 2
+      node_2b   [VAR|1] [boston]   (known value; earlier: dallas x1)
+stretch 22..29  show flights from new york to denver .
+      labels    show/C  flights/C  from/C  new/N:unequal  york/N:unequal  to/C  denver/C  ./C
+      part      show flights from
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 3   (contiguous match, seen whole in 2 earlier places)
+      node_1b   nothing to learn: one symbol is not a pattern
+      part      to denver .
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      node_1b   nothing to learn: one symbol is not a pattern
+stretch 30..37  show flights from los angeles to denver .
+      labels    show/C  flights/C  from/C  los/V  angeles/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 4   (contiguous match, seen whole in 3 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 4   (contiguous match, seen whole in 4 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [los] [angeles] [PTRN|c97f0b(to denver .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|4401ca = [PTRN|ac5190(show flights from)] [VAR|2] [VAR|3] [PTRN|c97f0b(to denver .)]   frequency 1
+      node_2b   [VAR|2] [los]   (new value; earlier: new x1)
+      node_2b   [VAR|3] [angeles]   (new value; earlier: york x1)
+      node_2b   [VAR|2] [new]   (value a learned pattern has there)
+      node_2b   [VAR|3] [york]   (value a learned pattern has there)
+      node_2b   [VAR|2] [los] [VAR|3] [angeles]   (values together)
+      node_2b   [VAR|2] [new] [VAR|3] [york]   (values together in a learned pattern)
+      node_2b   [VAR|2] [VAR|3]   (VARs side by side)
+  node_0: 29 patterns, 32 learns (one window per token from t=6)
+  node_1a: 2 patterns, 8 learns
+    PTRN|ac5190  f=4  [show] [flights] [from]
+    PTRN|c97f0b  f=4  [to] [denver] [.]
+  node_1b: 2 patterns, 3 learns
+    PTRN|27641b  f=2  [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]
+    PTRN|4401ca  f=1  [PTRN|ac5190(show flights from)] [VAR|2] [VAR|3] [PTRN|c97f0b(to denver .)]
+  node_2a: 2 patterns, 2 learns
+    PTRN|27e8d9  f=1  [PTRN|27641b] [PTRN|27641b]
+    PTRN|4f52cf  f=1  [PTRN|27641b] [PTRN|4401ca]
+  node_2b: 9 patterns, 10 learns
+    PTRN|d6656e  f=2  [VAR|1] [boston]
+    PTRN|4b15b6  f=1  [VAR|3] [angeles]
+    PTRN|96832a  f=1  [VAR|2] [new]
+    PTRN|a93e24  f=1  [VAR|2] [los]
+    PTRN|c132e1  f=1  [VAR|1] [dallas]
+    PTRN|d61f5c  f=1  [VAR|2] [los] [VAR|3] [angeles]
+    PTRN|d8bad9  f=1  [VAR|3] [york]
+    PTRN|d9bcdc  f=1  [VAR|2] [VAR|3]
+    PTRN|f5ac4d  f=1  [VAR|2] [new] [VAR|3] [york]
+
+--- (d) one VAR per gap: a value may be longer or shorter than the one it stands against
+settings: window=7 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=gap unexplained=break mixed=var min_support=1 edge_vars=False
+stretch 0..6  show flights from boston to denver .
+      labels    show/N:unexplained  flights/N:unexplained  from/N:unexplained  boston/N:unexplained  to/N:unexplained  denver/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 7..13  show flights from dallas to denver .
+      labels    show/C  flights/C  from/C  dallas/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [PTRN|ac5190(show flights from)] [dallas] [PTRN|c97f0b(to denver .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 1
+      node_2b   [VAR|1] [dallas]   (new value; earlier: boston x1)
+      node_2b   [VAR|1] [boston]   (value a learned pattern has there)
+stretch 14..21  show me flights from boston to denver .
+      labels    show/C  me/N:inserted  flights/C  from/C  boston/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 2   (joined again after the noise between its parts was dropped)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [boston] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 2
+      node_2b   [VAR|1] [boston]   (known value; earlier: dallas x1)
+stretch 22..29  show flights from new york to denver .
+      labels    show/C  flights/C  from/C  new/V  york/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 3   (contiguous match, seen whole in 2 earlier places)
+      node_1a   PTRN|86a351 = [new york]   frequency 1   (the value of a slot)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [PTRN|86a351(new york)] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 3
+      node_2b   [VAR|1] [PTRN|86a351(new york)]   (new value; earlier: boston x2, dallas x1)
+stretch 30..37  show flights from los angeles to denver .
+      labels    show/C  flights/C  from/C  los/V  angeles/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 4   (contiguous match, seen whole in 3 earlier places)
+      node_1a   PTRN|80d389 = [los angeles]   frequency 1   (the value of a slot)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 4   (contiguous match, seen whole in 4 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [PTRN|80d389(los angeles)] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 4
+      node_2b   [VAR|1] [PTRN|80d389(los angeles)]   (new value; earlier: PTRN|86a351(new york) x1, boston x2, dallas x1)
+  node_0: 29 patterns, 32 learns (one window per token from t=6)
+  node_1a: 4 patterns, 10 learns
+    PTRN|ac5190  f=4  [show] [flights] [from]
+    PTRN|c97f0b  f=4  [to] [denver] [.]
+    PTRN|80d389  f=1  [los] [angeles]
+    PTRN|86a351  f=1  [new] [york]
+  node_1b: 1 patterns, 4 learns
+    PTRN|27641b  f=4  [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]
+  node_2a: 1 patterns, 3 learns
+    PTRN|27e8d9  f=3  [PTRN|27641b] [PTRN|27641b]
+  node_2b: 4 patterns, 5 learns
+    PTRN|d6656e  f=2  [VAR|1] [boston]
+    PTRN|20e7f0  f=1  [VAR|1] [PTRN|86a351(new york)]
+    PTRN|769586  f=1  [VAR|1] [PTRN|80d389(los angeles)]
+    PTRN|c132e1  f=1  [VAR|1] [dallas]
+                    (b) letter     (c) break       (d) gap
+node_0 patterns             29            29            29
+node_1a chunks               2             2             4
+node_1a learns               8             8            10
+longest chunk                3             3             3
+node_1b rules                3             2             1
+node_1b learns               4             3             4
+rules seen again             1             1             1
+VARs                         3             3             1
+node_2a patterns             3             2             1
+node_2b patterns             9             9             4
+
+====================================================================================================
+EXAMPLE 4  Two slots: how general a rule gets, and values that go together
+====================================================================================================
+text: the cat sat on the mat . the dog sat on the mat . the cat sat on the rug . the dog sat on the rug . when the cat is happy it purrs . when the dog is happy it barks . when the cat is happy it purrs . when the dog is happy it barks .
+settings: window=7 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=position unexplained=break mixed=var min_support=1 edge_vars=False
+stretch 0..6  the cat sat on the mat .
+      labels    the/N:unexplained  cat/N:unexplained  sat/N:unexplained  on/N:unexplained  the/N:unexplained  mat/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 7..13  the dog sat on the mat .
+      labels    the/C  dog/V  sat/C  on/C  the/C  mat/C  ./C
+      node_1a   PTRN|76a6fb = [sat on the mat .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [the] [dog] [PTRN|76a6fb(sat on the mat .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|16f905 = [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   frequency 1
+      node_2b   [VAR|1] [dog]   (new value; earlier: cat x1)
+      node_2b   [VAR|1] [cat]   (value a learned pattern has there)
+stretch 14..20  the cat sat on the rug .
+      labels    the/C  cat/V  sat/C  on/C  the/C  rug/V  ./C
+      node_1a   PTRN|4e0120 = [sat on the]   frequency 1   (contiguous match, seen whole in 2 earlier places)
+      probe     [the] [cat] [PTRN|4e0120(sat on the)] [rug] [.]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|15eab5 = [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]   frequency 1
+      node_2b   [VAR|2] [cat]   (new value; earlier: dog x1)
+      node_2b   [VAR|3] [rug]   (new value; earlier: mat x2)
+      node_2b   [VAR|2] [dog]   (value a learned pattern has there)
+      node_2b   [VAR|3] [mat]   (value a learned pattern has there)
+      node_2b   [VAR|2] [cat] [VAR|3] [rug]   (values together)
+      node_2b   [VAR|2] [cat] [VAR|3] [mat]   (values together in a learned pattern)
+      node_2b   [VAR|2] [dog] [VAR|3] [mat]   (values together in a learned pattern)
+stretch 21..27  the dog sat on the rug .
+      labels    the/C  dog/V  sat/C  on/C  the/C  rug/V  ./C
+      node_1a   PTRN|4e0120 = [sat on the]   frequency 2   (contiguous match, seen whole in 3 earlier places)
+      probe     [the] [dog] [PTRN|4e0120(sat on the)] [rug] [.]   -> RECOGNISED
+      node_1b   PTRN|15eab5 = [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]   frequency 2
+      node_2b   [VAR|2] [dog]   (known value; earlier: cat x2)
+      node_2b   [VAR|3] [rug]   (known value; earlier: mat x2)
+      node_2b   [VAR|2] [dog] [VAR|3] [rug]   (values together)
+stretch 28..35  when the cat is happy it purrs .
+      labels    when/N:inserted  the/C  cat/C  is/N:unexplained  happy/N:unexplained  it/N:unexplained  purrs/N:unexplained  ./C
+      node_1a   PTRN|4894cb = [the cat]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1b   nothing to learn: one symbol is not a pattern
+stretch 36..43  when the dog is happy it barks .
+      labels    when/C  the/C  dog/V  is/C  happy/C  it/C  barks/V  ./C
+      node_1a   PTRN|3dc3ab = [when the]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1a   PTRN|f73d8d = [is happy it]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [PTRN|3dc3ab(when the)] [dog] [PTRN|f73d8d(is happy it)] [barks] [.]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|2c85fc = [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]   frequency 1
+      node_2b   [VAR|4] [dog]   (new value; earlier: cat x1)
+      node_2b   [VAR|5] [barks]   (new value; earlier: purrs x1)
+      node_2b   [VAR|4] [cat]   (value a learned pattern has there)
+      node_2b   [VAR|5] [purrs]   (value a learned pattern has there)
+      node_2b   [VAR|4] [dog] [VAR|5] [barks]   (values together)
+      node_2b   [VAR|4] [cat] [VAR|5] [purrs]   (values together in a learned pattern)
+stretch 44..51  when the cat is happy it purrs .
+      labels    when/C  the/C  cat/V  is/C  happy/C  it/C  purrs/V  ./C
+      node_1a   PTRN|3dc3ab = [when the]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      node_1a   PTRN|f73d8d = [is happy it]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [PTRN|3dc3ab(when the)] [cat] [PTRN|f73d8d(is happy it)] [purrs] [.]   -> RECOGNISED
+      node_1b   PTRN|2c85fc = [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]   frequency 2
+      node_2b   [VAR|4] [cat]   (known value; earlier: dog x1)
+      node_2b   [VAR|5] [purrs]   (known value; earlier: barks x1)
+      node_2b   [VAR|4] [cat] [VAR|5] [purrs]   (values together)
+stretch 52..59  when the dog is happy it barks .
+      labels    when/C  the/C  dog/V  is/C  happy/C  it/C  barks/V  ./C
+      node_1a   PTRN|3dc3ab = [when the]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      node_1a   PTRN|f73d8d = [is happy it]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      probe     [PTRN|3dc3ab(when the)] [dog] [PTRN|f73d8d(is happy it)] [barks] [.]   -> RECOGNISED
+      node_1b   PTRN|2c85fc = [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]   frequency 3
+      node_2b   [VAR|4] [dog]   (known value; earlier: cat x2)
+      node_2b   [VAR|5] [barks]   (known value; earlier: purrs x2)
+      node_2b   [VAR|4] [dog] [VAR|5] [barks]   (values together)
+  node_0: 43 patterns, 54 learns (one window per token from t=6)
+  node_1a: 5 patterns, 10 learns
+    PTRN|3dc3ab  f=3  [when] [the]
+    PTRN|f73d8d  f=3  [is] [happy] [it]
+    PTRN|4e0120  f=2  [sat] [on] [the]
+    PTRN|4894cb  f=1  [the] [cat]
+    PTRN|76a6fb  f=1  [sat] [on] [the] [mat] [.]
+  node_1b: 3 patterns, 6 learns
+    PTRN|2c85fc  f=3  [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]
+    PTRN|15eab5  f=2  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+    PTRN|16f905  f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+  node_2a: 4 patterns, 5 learns
+    PTRN|e564e6  f=2  [PTRN|2c85fc] [PTRN|2c85fc]
+    PTRN|0e4e83  f=1  [PTRN|16f905] [PTRN|15eab5]
+    PTRN|235423  f=1  [PTRN|15eab5] [PTRN|2c85fc]
+    PTRN|2e76f3  f=1  [PTRN|15eab5] [PTRN|15eab5]
+  node_2b: 16 patterns, 24 learns
+    PTRN|0af7ce  f=2  [VAR|2] [dog]
+    PTRN|3a2b6d  f=2  [VAR|5] [purrs]
+    PTRN|81c71c  f=2  [VAR|5] [barks]
+    PTRN|8d7125  f=2  [VAR|3] [rug]
+    PTRN|983a3f  f=2  [VAR|4] [dog] [VAR|5] [barks]
+    PTRN|9842ee  f=2  [VAR|4] [dog]
+    PTRN|b43951  f=2  [VAR|4] [cat] [VAR|5] [purrs]
+    PTRN|be8704  f=2  [VAR|4] [cat]
+    PTRN|0c8681  f=1  [VAR|2] [cat] [VAR|3] [mat]
+    PTRN|272b00  f=1  [VAR|2] [dog] [VAR|3] [rug]
+    PTRN|2cd579  f=1  [VAR|2] [cat]
+    PTRN|5dce77  f=1  [VAR|1] [dog]
+    PTRN|6ff3d9  f=1  [VAR|2] [dog] [VAR|3] [mat]
+    PTRN|8e7244  f=1  [VAR|2] [cat] [VAR|3] [rug]
+    PTRN|db6f9e  f=1  [VAR|1] [cat]
+    PTRN|f9920d  f=1  [VAR|3] [mat]
+
+--- the dial: node_0's recall_threshold, and the two other settings that decide what varies
+  recall_threshold=0.1 (KATO default):  5 rules, 16 VARs
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=1  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+      f=1  [the] [VAR|4] [PTRN|4e0120(sat on the)] [VAR|5] [VAR|6]
+      f=1  [VAR|7] [PTRN|4894cb(the cat)] [VAR|8] [VAR|9] [VAR|10] [VAR|11] [.]
+      f=3  [PTRN|3dc3ab(when the)] [VAR|12] [VAR|13] [VAR|14] [VAR|15] [VAR|16] [.]
+  recall_threshold=0.3:  4 rules, 12 VARs
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=2  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+      f=1  [PTRN|4894cb(the cat)] [VAR|4] [VAR|5] [VAR|6] [VAR|7] [.]
+      f=3  [PTRN|3dc3ab(when the)] [VAR|8] [VAR|9] [VAR|10] [VAR|11] [VAR|12] [.]
+  recall_threshold=0.5:  3 rules, 5 VARs
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=2  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+      f=3  [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]
+  recall_threshold=0.7:  3 rules, 5 VARs
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=2  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+      f=3  [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]
+  recall_threshold=0.9:  0 rules, 0 VARs
+  0.5, mixed=const:  4 rules, 4 VARs
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=1  [PTRN|a4fb47(the cat sat on the)] [VAR|2] [.]
+      f=1  [PTRN|171bc5(the dog sat on the)] [PTRN|6a9d11(rug .)]
+      f=1  [PTRN|3dc3ab(when the)] [VAR|3] [PTRN|f73d8d(is happy it)] [VAR|4] [.]
+  0.5, min_support=2:  3 rules, 5 VARs
+      f=1  [PTRN|a4fb47(the cat sat on the)] [VAR|1] [.]
+      f=1  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+      f=1  [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]
+
+--- values that go together: the joint values node_2b holds for each rule with two slots
+  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+      cat + mat        seen together x1
+      cat + rug        seen together x1
+      dog + mat        seen together x1
+      dog + rug        seen together x1
+      4 of 4 possible combinations seen (2 values of VAR|2 x 2 values of VAR|3)
+  [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]
+      cat + purrs      seen together x2
+      dog + barks      seen together x2
+      2 of 4 possible combinations seen (2 values of VAR|4 x 2 values of VAR|5)
+
+--- asking node_2b: given the value of the first slot, what stands in the second?
+  observe [VAR|2] [cat] [VAR|3] at node_2b: 11 predictions, 2 match all three symbols
+      0c8681  frequency 1  similarity 0.857  present [["VAR|2"], ["cat"], ["VAR|3"]]  future [["mat"]]
+      8e7244  frequency 1  similarity 0.857  present [["VAR|2"], ["cat"], ["VAR|3"]]  future [["rug"]]
+      future_potentials: [{"next_event": ["rug"], "probability": 0.5, "supporting_patterns": 3}, {"next_event": ["mat"], "probability": 0.499, "supporting_patterns": 3}, {"next_event": ["dog"], "probability": 0.0, "supporting_patterns": 1}, {"next_event": ["VAR|5"], "probability": 0.0, "supporting_patterns": 1}]
+  observe [VAR|4] [cat] [VAR|5] at node_2b: 10 predictions, 1 match all three symbols
+      b43951  frequency 2  similarity 0.857  present [["VAR|4"], ["cat"], ["VAR|5"]]  future [["purrs"]]
+      future_potentials: [{"next_event": ["purrs"], "probability": 0.991, "supporting_patterns": 2}, {"next_event": ["barks"], "probability": 0.007, "supporting_patterns": 2}, {"next_event": ["dog"], "probability": 0.0, "supporting_patterns": 1}, {"next_event": ["VAR|3"], "probability": 0.0, "supporting_patterns": 2}]
+
+====================================================================================================
+EXAMPLE 5  Three ways to give a slot its VAR id
+====================================================================================================
+text: the cat sat on the mat . the dog sat on the mat . we saw the cat near the old barn . we saw the dog near the old barn . the cat sat by a warm fire . the dog sat by a warm fire . the bird sat on the mat . we saw the bird near the old barn . the bird sat by a warm fire .
+
+--- naming=rule
+  the dog sat on the mat .               [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   (new VAR|1)
+  we saw the dog near the old barn .     [PTRN|24d6a8(we saw the)] [VAR|2] [PTRN|14fd2b(near the old barn .)]   (new VAR|2)
+  the cat sat by a warm fire .           [the] [VAR|3] [sat]   (new VAR|3)
+  the dog sat by a warm fire .           [the] [VAR|4] [PTRN|1661b6(sat by a warm fire .)]   (new VAR|4)
+  the bird sat on the mat .              [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+  we saw the bird near the old barn .    [PTRN|24d6a8(we saw the)] [VAR|2] [PTRN|14fd2b(near the old barn .)]
+  the bird sat by a warm fire .          [the] [VAR|4] [PTRN|1661b6(sat by a warm fire .)]
+  node_1b: 4 rules.  VARs: 4
+      VAR|1: bird x1, cat x1, dog x1
+      VAR|2: bird x1, cat x1, dog x1
+      VAR|3: cat x1, dog x1
+      VAR|4: bird x1, cat x1, dog x1
+
+--- naming=neighbours
+  the dog sat on the mat .               [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   (new VAR|1)
+  we saw the dog near the old barn .     [PTRN|24d6a8(we saw the)] [VAR|2] [PTRN|14fd2b(near the old barn .)]   (new VAR|2)
+  the cat sat by a warm fire .           [the] [VAR|1] [sat]
+  the dog sat by a warm fire .           [the] [VAR|1] [PTRN|1661b6(sat by a warm fire .)]
+  the bird sat on the mat .              [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+  we saw the bird near the old barn .    [PTRN|24d6a8(we saw the)] [VAR|2] [PTRN|14fd2b(near the old barn .)]
+  the bird sat by a warm fire .          [the] [VAR|1] [PTRN|1661b6(sat by a warm fire .)]
+  node_1b: 4 rules.  VARs: 2
+      VAR|1: bird x2, cat x2, dog x2
+      VAR|2: bird x1, cat x1, dog x1
+      VAR|1 is the slot between 'the' and 'sat'
+      VAR|2 is the slot between 'the' and 'near'
+
+--- naming=values
+  the dog sat on the mat .               [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   (new VAR|1)
+  we saw the dog near the old barn .     [PTRN|24d6a8(we saw the)] [VAR|1] [PTRN|14fd2b(near the old barn .)]
+  the cat sat by a warm fire .           [the] [VAR|1] [sat]
+  the dog sat by a warm fire .           [the] [VAR|1] [PTRN|1661b6(sat by a warm fire .)]
+  the bird sat on the mat .              [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+  we saw the bird near the old barn .    [PTRN|24d6a8(we saw the)] [VAR|1] [PTRN|14fd2b(near the old barn .)]
+  the bird sat by a warm fire .          [the] [VAR|1] [PTRN|1661b6(sat by a warm fire .)]
+  node_1b: 4 rules.  VARs: 1
+      VAR|1: bird x3, cat x2, dog x3
+                          rule    neighbours        values
+node_0 patterns             63            63            63
+node_1a chunks               5             5             5
+node_1a learns               9             9             9
+longest chunk                6             6             6
+node_1b rules                4             4             4
+node_1b learns               7             7             7
+rules seen again             3             3             3
+VARs                         4             2             1
+node_2a patterns             5             5             5
+node_2b patterns            11             6             3
+
+--- VARs that share values, found by asking node_2b (naming=rule): observe one value, read which VARs hold it
+  observe [cat] at node_2b -> VAR|1 (x1), VAR|2 (x1), VAR|3 (x1), VAR|4 (x1)
+      one of them, as KATO returns it: past [["VAR|3"]] present [["cat"]] future [] similarity 0.667
+  observe [bird] at node_2b -> VAR|1 (x1), VAR|2 (x1), VAR|4 (x1)
+
+--- VARs side by side that recur across rules
+text: the big dog sat on the mat . the small cat sat on the mat . the big cat sat on the mat . we saw the big dog near the old barn . we saw the small cat near the old barn . we saw the small dog near the old barn .
+  naming=rule: 4 VARs
+      node_1b f=2  [the] [VAR|1] [VAR|2] [PTRN|76a6fb(sat on the mat .)]
+      node_1b f=2  [PTRN|24d6a8(we saw the)] [VAR|3] [VAR|4] [PTRN|14fd2b(near the old barn .)]
+      node_2b f=2  [VAR|1] [VAR|2]   (VARs side by side)
+      node_2b f=2  [VAR|3] [VAR|4]   (VARs side by side)
+  naming=values: 2 VARs
+      node_1b f=2  [the] [VAR|1] [VAR|2] [PTRN|76a6fb(sat on the mat .)]
+      node_1b f=2  [PTRN|24d6a8(we saw the)] [VAR|1] [VAR|2] [PTRN|14fd2b(near the old barn .)]
+      node_2b f=4  [VAR|1] [VAR|2]   (VARs side by side)
+
+====================================================================================================
+EXAMPLE 6  Using what was learned
+====================================================================================================
+text: the cat sat on the mat . the dog sat on the mat . the cat sat on the rug . the dog sat on the rug . when the cat is happy it purrs . when the dog is happy it barks . when the cat is happy it purrs . when the dog is happy it barks .
+  rule 'sat': PTRN|15eab5 f=2  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+  rule 'when': PTRN|2c85fc f=3  [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]
+
+--- (a) a new sentence with a value never seen in the slot
+stretch 60..66  the bird sat on the rug .
+      labels    the/C  bird/V  sat/C  on/C  the/C  rug/V  ./C
+      node_1a   PTRN|4e0120 = [sat on the]   frequency 3   (contiguous match, seen whole in 4 earlier places)
+      probe     [the] [bird] [PTRN|4e0120(sat on the)] [rug] [.]   -> RECOGNISED
+      node_1b   PTRN|15eab5 = [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]   frequency 3
+      node_2b   [VAR|2] [bird]   (new value; earlier: cat x2, dog x2)
+      node_2b   [VAR|3] [rug]   (known value; earlier: mat x2)
+      node_2b   [VAR|2] [bird] [VAR|3] [rug]   (values together)
+
+--- (b) which values a VAR accepts: observe the VAR alone at node_2b
+  observe [VAR|2] at node_2b: 8 predictions, 3 of them a VAR with one value
+      0af7ce  frequency 2  present [["VAR|2"]]  future [["dog"]]
+      2cd579  frequency 1  present [["VAR|2"]]  future [["cat"]]
+      f9526c  frequency 1  present [["VAR|2"]]  future [["bird"]]
+
+--- (c) what the 'sat' rule licenses, against what was seen
+      the bird sat on the mat .            never seen: the rule allows it, no observation backs it
+      the bird sat on the rug .            seen together x1
+      the cat sat on the mat .             seen together x1
+      the cat sat on the rug .             seen together x1
+      the dog sat on the mat .             seen together x1
+      the dog sat on the rug .             seen together x1
+      when the cat is happy it barks .     never seen: the rule allows it, no observation backs it
+      when the cat is happy it purrs .     seen together x2
+      when the dog is happy it barks .     seen together x2
+      when the dog is happy it purrs .     never seen: the rule allows it, no observation backs it
+
+--- (d) a sentence that shares nothing with what was learned
+  node_0, asked about 'birds fly south in winter .' on its own: 0 predictions (recall_threshold 0.5)
+stretch 74..79  birds fly south in winter .
+      labels    birds/N:unexplained  fly/N:unexplained  south/N:unexplained  in/N:unexplained  winter/N:unexplained  ./C
+      nothing to learn above node_0
+
+--- (e) every name unravels: a rule and its values give back the sentence
+  node_1b  PTRN|2c85fc = [PTRN|3dc3ab] [VAR|4] [PTRN|f73d8d] [VAR|5] [.]
+      PTRN|3dc3ab -> node_1a -> when the
+      PTRN|f73d8d -> node_1a -> is happy it
+      with VAR|4=cat and VAR|5=purrs: when the cat is happy it purrs .
+
+====================================================================================================
+NODE_2B  Two ways to store a VAR's values
+====================================================================================================
+
+--- as one list per VAR (the description's example): [[VAR|1],[cat],[dog]], then bird arrives
+  learn PTRN|76d530 = [VAR|1] [cat] [dog]
+  learn PTRN|9fd21a = [VAR|1] [cat] [dog] [bird]
+  the same values in another order: PTRN|4328df (another pattern)
+      observe [VAR|1] -> 76d530 f=1 future [["cat"], ["dog"]]
+      observe [VAR|1] -> 9fd21a f=1 future [["cat"], ["dog"], ["bird"]]
+      observe [bird]  -> 9fd21a f=1 past [["VAR|1"], ["cat"], ["dog"]]
+
+--- as one pattern per VAR and value: frequency counts how often the value stood in the slot
+      observe [VAR|1] -> db6f9e f=3 future [["cat"]]
+      observe [VAR|1] -> 5dce77 f=2 future [["dog"]]
+      observe [VAR|1] -> 9651e3 f=1 future [["bird"]]
+      future_potentials: [{"next_event": ["cat"], "probability": 0.448, "supporting_patterns": 1}, {"next_event": ["dog"], "probability": 0.34, "supporting_patterns": 1}, {"next_event": ["bird"], "probability": 0.212, "supporting_patterns": 1}]
+      observe [cat]   -> 2cd579 f=1 past [["VAR|2"]]
+      observe [cat]   -> db6f9e f=3 past [["VAR|1"]]
+      is [VAR|1] [bird] known?  frequency of PTRN|9651e3 = 1   (one lookup by name, no search)
+      is [VAR|1] [fish] known?  frequency = 0
+
+====================================================================================================
+LIMITS  Two things the window cannot see
+====================================================================================================
+
+--- an analog closer than one window: five-token sentences, window of 7
+text: the cat says meow . the dog says woof . the cat says meow . the dog says woof .
+settings: window=7 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=position unexplained=break mixed=var min_support=1 edge_vars=False
+stretch 0..4  the cat says meow .
+      labels    the/N:unexplained  cat/N:unexplained  says/N:unexplained  meow/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 5..9  the dog says woof .
+      labels    the/N:unexplained  dog/N:unexplained  says/N:unexplained  woof/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 10..14  the cat says meow .
+      labels    the/C  cat/C  says/C  meow/C  ./C
+      node_1a   PTRN|b489b5 = [the cat says meow .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1b   nothing to learn: one symbol is not a pattern
+stretch 15..19  the dog says woof .
+      labels    the/C  dog/C  says/C  woof/C  ./C
+      node_1a   PTRN|e2f8de = [the dog says woof .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1b   nothing to learn: one symbol is not a pattern
+  node_0: 10 patterns, 14 learns (one window per token from t=6)
+  node_1a: 2 patterns, 2 learns
+    PTRN|b489b5  f=1  [the] [cat] [says] [meow] [.]
+    PTRN|e2f8de  f=1  [the] [dog] [says] [woof] [.]
+  node_1b: 0 patterns, 0 learns
+  node_2a: 0 patterns, 0 learns
+  node_2b: 0 patterns, 0 learns
+
+--- the same text with a window of 5
+settings: window=5 recall_threshold=0.5 span=stream markers=['.'] naming=rule slots=position unexplained=break mixed=var min_support=1 edge_vars=False
+stretch 0..4  the cat says meow .
+      labels    the/N:unexplained  cat/N:unexplained  says/N:unexplained  meow/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+stretch 5..9  the dog says woof .
+      labels    the/C  dog/V  says/C  woof/V  ./C
+      probe     [the] [dog] [says] [woof] [.]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|0c8fce = [the] [VAR|1] [says] [VAR|2] [.]   frequency 1
+      node_2b   [VAR|1] [dog]   (new value; earlier: cat x1)
+      node_2b   [VAR|2] [woof]   (new value; earlier: meow x1)
+      node_2b   [VAR|1] [cat]   (value a learned pattern has there)
+      node_2b   [VAR|2] [meow]   (value a learned pattern has there)
+      node_2b   [VAR|1] [dog] [VAR|2] [woof]   (values together)
+      node_2b   [VAR|1] [cat] [VAR|2] [meow]   (values together in a learned pattern)
+stretch 10..14  the cat says meow .
+      labels    the/C  cat/V  says/C  meow/V  ./C
+      probe     [the] [cat] [says] [meow] [.]   -> RECOGNISED
+      node_1b   PTRN|0c8fce = [the] [VAR|1] [says] [VAR|2] [.]   frequency 2
+      node_2b   [VAR|1] [cat]   (known value; earlier: dog x1)
+      node_2b   [VAR|2] [meow]   (known value; earlier: woof x1)
+      node_2b   [VAR|1] [cat] [VAR|2] [meow]   (values together)
+stretch 15..19  the dog says woof .
+      labels    the/C  dog/V  says/C  woof/V  ./C
+      probe     [the] [dog] [says] [woof] [.]   -> RECOGNISED
+      node_1b   PTRN|0c8fce = [the] [VAR|1] [says] [VAR|2] [.]   frequency 3
+      node_2b   [VAR|1] [dog]   (known value; earlier: cat x2)
+      node_2b   [VAR|2] [woof]   (known value; earlier: meow x2)
+      node_2b   [VAR|1] [dog] [VAR|2] [woof]   (values together)
+  node_0: 10 patterns, 16 learns (one window per token from t=4)
+  node_1a: 0 patterns, 0 learns
+  node_1b: 1 patterns, 3 learns
+    PTRN|0c8fce  f=3  [the] [VAR|1] [says] [VAR|2] [.]
+  node_2a: 1 patterns, 2 learns
+    PTRN|c52155  f=2  [PTRN|0c8fce] [PTRN|0c8fce]
+  node_2b: 6 patterns, 12 learns
+    PTRN|151a6b  f=2  [VAR|1] [dog] [VAR|2] [woof]
+    PTRN|5dce77  f=2  [VAR|1] [dog]
+    PTRN|9a5f7b  f=2  [VAR|2] [meow]
+    PTRN|9a8188  f=2  [VAR|1] [cat] [VAR|2] [meow]
+    PTRN|9ebc1b  f=2  [VAR|2] [woof]
+    PTRN|db6f9e  f=2  [VAR|1] [cat]

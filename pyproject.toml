@@ -1,0 +1,24 @@
+[project]
+name = "hpcrd-for-kato"
+version = "0.1.0"
+description = "Hierarchical pattern chunking and rule discovery for KATO"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+# KATO itself is read from a checkout named by KATO_REPO, with KATO's own
+# requirements installed in the environment. See README.md.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["hpcrd"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
