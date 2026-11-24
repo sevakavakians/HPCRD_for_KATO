@@ -8,7 +8,7 @@ Round 2 ended with two questions. Your answer to both was the same: decide by pr
 
 | Question | Decision | Whose design it is |
 |---|---|---|
-| How does node_2b hold a VAR's values? | One pattern per value, the value as its own tokens (`[VAR|1] [new] [york]`). | Spell: a line's parameter is the tokens at the placeholder. ADIOS: a class is a set of members tied to its pattern. Neither stores combinations of alternatives. |
+| How does node_2b hold a VAR's values? | One pattern per value, the value as its own tokens: VAR 1, then `new`, then `york`. | Spell: a line's parameter is the tokens at the placeholder. ADIOS: a class is a set of members tied to its pattern. Neither stores combinations of alternatives. |
 | What decides constant or variable, and when a rule is reused? | Spell's loop: compare a new sequence with the templates, not with every earlier sequence; join the best one; replace that template with its generalisation. | Du and Li (2016) |
 | What gives a VAR its identity? | Shared members. | ABL: a constituent seen before keeps its type, and types that cover the same constituent merge. ADIOS: an existing class is adopted when the overlap passes 0.65. |
 | How is a VAR refined, and how do chunks nest? | ADIOS: significant patterns, classes of interchangeable units, and patterns becoming units. Not built yet. | Solan, Horn, Ruppin and Edelman (2005) |
@@ -122,7 +122,7 @@ One open point of design. Spell needs no node of raw sequences: a type's first l
 
 1. **Spell on dialogue is outside what its authors showed.** The probe says it does no worse than my own procedures there. It does not say it is right for language.
 2. **My Spell is from the paper's description.** It matches the paper's two examples. Until it is run on the benchmark, "as published" means "as described".
-3. **ADIOS is described, not built.** Its criterion needs counts of how many sequences pass through each stretch, and four parameters. That is real work, and its published numbers come from many learners combined.
+3. **ADIOS is described, not built.** Its criterion needs counts of how many sequences pass through each stretch, and four parameters. That is real work, and its best published result on the large artificial grammar combines 150 learners.
 4. **The retire mirror is not checked against a running KATO.** It follows the endpoint's own description.
 5. **Tau 0.5 comes from logs.** On the probe 0.7 finds fewer slots (9.2%). No value has been tuned.
 
