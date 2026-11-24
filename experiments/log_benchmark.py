@@ -15,11 +15,15 @@ repository. Run with -I: the script reads downloaded files.
 Per-system settings (tau, Drain's threshold and depth, the preprocessing expressions) are the ones in
 logparser's own benchmark scripts at the pinned commit. PUBLISHED is Table IV of the benchmark paper.
 
-Four parsers:
+Six parsers:
   reference   the benchmark's Spell, re-written here from logparser/Spell/Spell.py (Apache 2.0): a
               prefix tree, then a set-containment loop, then the longest common subsequence. It is
               here to check this harness against the published numbers.
+  plain       the same without the prefix tree and the set-containment loop: what those two
+              shortcuts add to, or take from, the published numbers.
   paper       Spell as its paper describes it (experiments/baselines.py): the subsequence step alone.
+  lone        the same with the one rule KATO adds: a line of one token is a type of its own,
+              because KATO does not learn a pattern of one symbol.
   on KATO     the same loop on KATO's matcher (hpcrd/templates.py), in-process.
   Drain       the drain3 package with the benchmark's threshold and depth, as a second check.
 """
@@ -114,6 +118,17 @@ def accuracy(parsed, labelled):
     return right / len(labelled)
 
 
+def apart(one, other):
+    """Lines that two groupings put with different sets of lines. 0: the same groups, whatever their names."""
+    def company(parsed):
+        groups = {}
+        for k, group in enumerate(parsed):
+            groups.setdefault(group, []).append(k)
+        return {k: tuple(members) for members in groups.values() for k in members}
+    a, b = company(one), company(other)
+    return sum(1 for k in a if a[k] != b[k])
+
+
 # -- the benchmark's own Spell, re-written from logparser/Spell/Spell.py --------------------------
 class TreeNode:
     def __init__(self):
@@ -126,8 +141,8 @@ class Cluster:
 
 
 class ReferenceSpell:
-    def __init__(self, tau):
-        self.tau, self.root, self.clusters = tau, TreeNode(), []
+    def __init__(self, tau, shortcuts=True):
+        self.tau, self.root, self.clusters, self.shortcuts = tau, TreeNode(), [], shortcuts
 
     @staticmethod
     def lcs(a, b):
@@ -217,7 +232,7 @@ class ReferenceSpell:
         member = []
         for tokens in lines:
             constants = [w for w in tokens if w != STAR]
-            cluster = self.by_tree(self.root, constants, 0) or self.by_loop(constants)
+            cluster = (self.by_tree(self.root, constants, 0) or self.by_loop(constants)) if self.shortcuts else None
             if cluster is None:
                 cluster = self.by_subsequence(tokens)
                 if cluster is None:
@@ -239,6 +254,10 @@ def run_reference(messages, system):
     return ReferenceSpell(SETTINGS[system][0]).parse([spell_tokens(m) for m in messages])
 
 
+def run_plain(messages, system):
+    return ReferenceSpell(SETTINGS[system][0], shortcuts=False).parse([spell_tokens(m) for m in messages])
+
+
 def run_paper(messages, system):
     from experiments.baselines import Spell
     parser, member = Spell(SETTINGS[system][0], star=STAR, star_matches=True), []
@@ -247,15 +266,30 @@ def run_paper(messages, system):
     return [' '.join(parser.templates[k]) for k in member]
 
 
+def run_lone(messages, system):
+    from experiments.baselines import Spell
+    parser, member = Spell(SETTINGS[system][0], star=STAR, star_matches=True), []
+    for message in messages:
+        tokens = spell_tokens(message)
+        member.append(parser.add(tokens)[0] if len(tokens) > 1 else ('one symbol', tuple(tokens)))
+    return [' '.join(parser.templates[k]) if isinstance(k, int) else k for k in member]
+
+
 def run_on_kato(messages, system):
+    from hpcrd.show import digest
     from hpcrd.templates import TemplateReader
     reader, member = TemplateReader(SETTINGS[system][0], parameter=STAR), []
     for message in messages:
         tokens = spell_tokens(message)
         name, _joined, _gaps = reader.read(tokens)
-        member.append(name if name else ('one symbol', tuple(tokens)))     # KATO does not learn one symbol
+        member.append(reader.kind if name else ('one symbol', tuple(tokens)))     # KATO does not learn one symbol
     run_on_kato.last = reader
-    return [reader.current(name) if isinstance(name, str) else name for name in member]
+    reader.check()
+    # a line belongs to its message type; the group is that type's template at the end
+    groups = [reader.now(kind) if isinstance(kind, int) else kind for kind in member]
+    # one sha1 over every line's group and over the node: the same in-process and through a KATO service
+    run_on_kato.digest = hashlib.sha1('\n'.join([str(g) for g in groups] + [digest([('templates', reader.node)])]).encode()).hexdigest()
+    return groups
 
 
 def run_drain(messages, system):
@@ -270,7 +304,8 @@ def run_drain(messages, system):
     return [templates[k] for k in member]
 
 
-RUNS = [('reference', run_reference), ('paper', run_paper), ('on KATO', run_on_kato), ('Drain', run_drain)]
+RUNS = [('reference', run_reference), ('plain', run_plain), ('paper', run_paper), ('lone', run_lone),
+        ('on KATO', run_on_kato), ('Drain', run_drain)]
 
 
 def main():
@@ -278,7 +313,7 @@ def main():
     parser.add_argument('--data', required=True, help='a directory outside the repository')
     parser.add_argument('--fetch', action='store_true')
     parser.add_argument('--only', nargs='*', help='system names')
-    parser.add_argument('--skip', nargs='*', default=[], help='runs to leave out: reference, paper, "on KATO", Drain')
+    parser.add_argument('--skip', nargs='*', default=[], help='runs to leave out: reference, plain, paper, lone, "on KATO", Drain')
     parser.add_argument('--save')
     args = parser.parse_args()
     data = pathlib.Path(args.data).resolve()
@@ -295,18 +330,23 @@ def main():
         messages, labelled = [m for m, _ in rows], [e for _, e in rows]
         result = {'lines': len(rows), 'labelled events': len(set(labelled)),
                   'published': {'Spell': PUBLISHED[system][0], 'Drain': PUBLISHED[system][1]}}
-        note = ''
+        note, groupings = '', {}
         for name, function in runs:
             began = time.perf_counter()
-            parsed = function(messages, system)
+            parsed = groupings[name] = function(messages, system)
             result[name] = {'accuracy': round(accuracy(parsed, labelled), 4), 'groups': len(set(parsed)),
                             'seconds': round(time.perf_counter() - began, 1)}
             totals[name] += result[name]['accuracy']
             if name == 'on KATO':
                 node = run_on_kato.last.node
                 result[name].update(stored=len(node.patterns), retired=len(node.retired), learns=node.learns,
-                                    predictions=node.predicts, revived=run_on_kato.last.revived)
+                                    predictions=node.predicts, revived=run_on_kato.last.revived,
+                                    merged=run_on_kato.last.merged, digest=run_on_kato.digest)
                 note = f"{len(node.patterns) - len(node.retired)} / {len(node.patterns)}, {result[name]['seconds']} s"
+        for other in ('paper', 'lone'):     # not only the same score: the same groups?
+            if other in groupings and 'on KATO' in groupings:
+                result['on KATO'][f"lines grouped otherwise than by {other}"] = apart(groupings['on KATO'], groupings[other])
+                note += f", {result['on KATO'][f'lines grouped otherwise than by {other}']} lines grouped otherwise than by {other}"
         totals['n'] += 1
         totals['Spell published'] += PUBLISHED[system][0]
         totals['Drain published'] += PUBLISHED[system][1]

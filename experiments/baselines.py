@@ -1,13 +1,16 @@
 """Two published log parsers on the probe of sgd_probe.py, judged the same way.
 
     ./run.sh experiments/baselines.py --data ../sgd-data [--limit 1200] [--save out.json]
+    ./run.sh experiments/baselines.py --data ../sgd-data --sweep        Spell alone, over tau
 
 Drain   He, Zhu, Zheng and Lyu (2017), https://doi.org/10.1109/ICWS.2017.13
         Run through the drain3 package (version 0.9.11 here), with its defaults and with a second
         similarity threshold. Nothing is masked. One wildcard per token position.
 Spell   Du and Li (2016), https://doi.org/10.1109/ICDM.2016.0103
         Written here from the paper's description, because the published implementations work on
-        log files. NOT checked against the paper's own data. A line joins the message type whose
+        log files. Not checked against the paper's own data. On the log benchmark it gives the
+        accuracy of the benchmark's implementation without its two shortcuts on 13 of 16 systems
+        and is within 0.008 on the others (experiments/log_benchmark.py). A line joins the message type whose
         template shares the longest common subsequence with it, when that subsequence is at least
         tau of the line's length (ties: the shorter template, then the older one); the template
         becomes that subsequence, with one `*` wherever either side had something else.
@@ -110,14 +113,16 @@ def run_spell_on_kato(data, tau):
     from hpcrd.templates import PARAMETER, TemplateReader
     reader, online, member = TemplateReader(tau), [], []
     for tokens, _slots in data:
-        name, joined, found = reader.read(tokens)
-        member.append(name)
+        _name, joined, found = reader.read(tokens)
+        member.append(reader.kind)      # a line belongs to its message type, whatever its template becomes
         online.append((found if joined else [], joined))
-    sizes = Counter(reader.current(name) for name in member if name)
-    final = [reader.gaps(tokens, name) if name and sizes[reader.current(name)] > 1 else []
+    reader.check()
+    member = [reader.now(kind) if kind is not None else None for kind in member]
+    sizes = Counter(name for name in member if name)
+    final = [reader.gaps(tokens, name) if name and sizes[name] > 1 else []
              for (tokens, _slots), name in zip(data, member)]
     run_spell_on_kato.last = reader
-    return online, final, [reader.current(n) if n else None for n in member], [sizes[k] for k in sorted(sizes)]
+    return online, final, member, [sizes[k] for k in sorted(sizes)]
 
 
 def run_drain(data, sim_th):
@@ -193,11 +198,37 @@ longer  slot spans inside a longer parameter;  VARs: parameter spans;  =slot: th
 """
 
 
+def sweep(data, save):
+    """Spell alone over tau: what its one threshold trades. Lower, and more sentences join a template
+    but the templates wear down and the slots end up inside longer parameters. Higher, and the
+    parameters are tighter but most sentences that hold a slot have no template yet."""
+    total = sum(len(slots) for _, slots in data)
+    print(f"{'tau':>4s} {'templ':>6s} {'joined':>7s} | as it arrived: {'exact':>6s} {'longer':>6s} {'partly':>6s} {'const':>6s} {'none':>6s}"
+          f" {'exact, of slots in a line with a template':>42s} | at the end: {'exact':>6s} {'longer':>6s} {'none':>6s}")
+    saved = {}
+    for tau in (0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8):
+        began = time.perf_counter()
+        online, final, member, sizes = run_spell(data, tau)
+        r = describe(f"Spell, tau {tau}", data, online, final, member, sizes, time.perf_counter() - began)
+        a, e = r['as it arrived']['slots'], r['at the end']['slots']
+        covered = total - a.get('no rule for the sentence', 0)
+        print(f"{tau:4.1f} {r['templates']:6d} {rate(r['lines that joined an existing template'], r['lines']):>7s} |"
+              f"                {rate(a.get('one VAR, exactly', 0), total)} {rate(a.get('inside a longer VAR', 0), total)}"
+              f" {rate(a.get('partly in a VAR', 0), total)} {rate(a.get('constant in a rule, or dropped', 0), total)}"
+              f" {rate(a.get('no rule for the sentence', 0), total)} {rate(a.get('one VAR, exactly', 0), covered):>42s} |"
+              f"             {rate(e.get('one VAR, exactly', 0), total)} {rate(e.get('inside a longer VAR', 0), total)}"
+              f" {rate(e.get('no rule for the sentence', 0), total)}", flush=True)
+        saved[f"Spell, tau {tau}"] = r
+    if save:
+        pathlib.Path(save).write_text(json.dumps(saved, indent=1, sort_keys=True) + '\n')
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data', required=True)
     parser.add_argument('--limit', type=int, default=0)
     parser.add_argument('--save')
+    parser.add_argument('--sweep', action='store_true', help='Spell alone over tau, and nothing else')
     args = parser.parse_args()
     data_dir = pathlib.Path(args.data).resolve()
     if HERE.parent in data_dir.parents or data_dir == HERE.parent:
@@ -206,6 +237,8 @@ def main():
     if args.limit:
         data = data[:args.limit]
     print(json.dumps({'sentences': len(data), 'slot spans': sum(len(slots) for _, slots in data)}))
+    if args.sweep:
+        return sweep(data, args.save)
     print(HEADER)
     saved = {}
     runs = [('Drain (drain3), threshold 0.4', run_drain, 0.4), ('Drain (drain3), threshold 0.6', run_drain, 0.6),
@@ -219,7 +252,8 @@ def main():
             reader = run_spell_on_kato.last
             result['kato'] = {'patterns stored': len(reader.node.patterns), 'retired': len(reader.node.retired),
                               'learns': reader.node.learns, 'predictions asked': reader.node.predicts,
-                              'retired content that came back': reader.revived}
+                              'retired content that came back': reader.revived,
+                              'edits that met another live template': reader.merged}
         print(line(name, result), flush=True)
         saved[name] = result
     print(LEGEND)

@@ -151,6 +151,7 @@ def test_invariants(label):
     if label in ('cities, inside', 'party, inside', "party, Spell's loop, inside"):
         assert inner > 0
     if m.reader is not None:    # the template node and node_1b say the same thing, live and retired
+        m.reader.check()
         live = [e for e in m.reader.node.patterns.values() if e['name'] not in m.reader.node.retired]
         rules = {tuple(ev[0] for ev in e['pattern_data']) for e in m.node1b.patterns.values()
                  if e['name'] not in m.node1b.retired and any(ev[0].startswith(VAR) for ev in e['pattern_data'])}
@@ -234,6 +235,7 @@ def test_cut_gives_the_boundary_without_a_marker():
     assert len(b.node0.patterns) == 1               # without a cut the text is one sequence
 
 
+@pytest.mark.through_api
 def test_spells_loop_as_the_outer_loop_gives_one_rule_and_keeps_its_var_through_edits():
     m, steps = run(CITIES, **GAP, loop='templates')
     live = [e for e in m.node1b.patterns.values() if e['name'] not in m.node1b.retired]
@@ -244,6 +246,7 @@ def test_spells_loop_as_the_outer_loop_gives_one_rule_and_keeps_its_var_through_
     assert len(m.reader.node.patterns) == 2 and len(m.reader.node.retired) == 1   # the first sentence, retired
 
 
+@pytest.mark.through_api
 def test_an_edit_keeps_the_var_and_retires_the_old_rule():
     text = "book for two at seven . book for six at seven . book for six at nine ."
     m, steps = run(text, **GAP, loop='templates')

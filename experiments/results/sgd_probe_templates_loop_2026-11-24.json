@@ -84,6 +84,7 @@
    },
    "nodes": {
     "VAR ids": 2096,
+    "digest": "2b6ab7278adc1e042d7f2bb7140849e818f08171",
     "node_0 patterns": 2877,
     "node_0 stored symbols": 25648,
     "node_1a chunks": 645,
@@ -101,7 +102,7 @@
     "templates live": 942,
     "templates stored": 2230
    },
-   "seconds": 120.1,
+   "seconds": 127.2,
    "settings": {
     "loop": "templates",
     "slots": "gap",
@@ -166,6 +167,7 @@
    },
    "nodes": {
     "VAR ids": 2428,
+    "digest": "c3f81b1b84462a6876831b787905ed107c66a221",
     "node_0 patterns": 2877,
     "node_0 stored symbols": 25648,
     "node_1a chunks": 666,
@@ -183,7 +185,7 @@
     "templates live": 942,
     "templates stored": 2230
    },
-   "seconds": 229.4,
+   "seconds": 229.7,
    "settings": {
     "inside": true,
     "loop": "templates",

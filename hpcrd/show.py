@@ -206,11 +206,26 @@ def print_sequence(step, m, readings=True):
 
 
 def dump_node(node, title, node1a=None, limit=None):
-    print(f"  {title}: {len(node.patterns)} patterns, {node.learns} learns")
+    retired = getattr(node, 'retired', set())
+    print(f"  {title}: {len(node.patterns)} patterns, {node.learns} learns" + (f", {len(retired)} retired" if retired else ''))
     rows = sorted(node.patterns.values(), key=lambda e: (-e['frequency'], e['name']))
     shown = rows if limit is None else rows[:limit]
     for entry in shown:
         symbols = [event[0] for event in entry['pattern_data']]
-        print(f"    PTRN|{entry['name'][:6]}  f={entry['frequency']}  {seq(symbols, node1a)}")
+        print(f"    PTRN|{entry['name'][:6]}  f={entry['frequency']}  {seq(symbols, node1a)}"
+              + ('   (retired)' if entry['name'] in retired else ''))
     if limit is not None and len(rows) > limit and limit > 0:
         print(f"    ... and {len(rows) - limit} more")
+
+
+def digest(nodes):
+    """One sha1 over what the nodes hold: each pattern's name (the hash of its content), its
+    frequency, and whether it is retired. `nodes` is [(title, node)]. In-process and through a
+    KATO service it has to be the same."""
+    import hashlib
+    lines = []
+    for title, node in nodes:
+        retired = getattr(node, 'retired', set())
+        for name, entry in sorted(node.patterns.items()):
+            lines.append(f"{title}\t{name}\t{entry['frequency']}\t{int(name in retired)}")
+    return hashlib.sha1('\n'.join(lines).encode()).hexdigest()
