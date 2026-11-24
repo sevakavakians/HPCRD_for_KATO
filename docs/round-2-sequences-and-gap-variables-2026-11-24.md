@@ -364,6 +364,8 @@ Links checked on 24 Nov 2026. I read the abstracts and, for Drain, asked one que
    4. This round's report through a KATO service.
 4. **The data rule.** I followed the lab's proposed rule here (fetch at run time, pin by hash, numbers only in the results file). It is still yours to decide. This write-up quotes a handful of short utterances from the set, with its name and licence. Say if the rule should exclude that too.
 
+**Answered on 24 Nov.** Points 1 and 3: decide by prior art, and use what others have shown to work. `round-3-published-methods-2026-11-24.md` does that.
+
 ## 13. Checks and how to rerun
 
 **Checks (24 Nov 2026).**

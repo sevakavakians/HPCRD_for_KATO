@@ -38,8 +38,12 @@ Two rounds so far:
 - Round 2. Whole sequences at node_0, one VAR per gap, reading inside a VAR, a learned rule reading a new
   sequence (`examples/sequences.py`), and a probe on annotated dialogue text (`experiments/sgd_probe.py`).
 
-The write-ups are in `docs/`: `worked-examples-2026-11-24.md` (round 1) and
-`round-2-sequences-and-gap-variables-2026-11-24.md` (round 2). `examples/report.txt` and
+- Round 3. What published methods already settle: Spell's loop (Du and Li 2016) on a KATO node
+  (`hpcrd/templates.py`), and two published log parsers on the same probe (`experiments/baselines.py`).
+
+The write-ups are in `docs/`: `worked-examples-2026-11-24.md` (round 1),
+`round-2-sequences-and-gap-variables-2026-11-24.md` (round 2) and
+`round-3-published-methods-2026-11-24.md` (round 3). `examples/report.txt` and
 `examples/report_sequences.txt` are the full outputs they quote, and `experiments/results/` has the probe's numbers.
 
 ## Layout
@@ -50,9 +54,11 @@ The write-ups are in `docs/`: `worked-examples-2026-11-24.md` (round 1) and
 | `hpcrd/kato_api_node.py` | The same interface over KATO's REST API. Set `KATO_API` and every node lives in a running service. |
 | `hpcrd/alignment.py` | Rebuilds the position-level alignment of one prediction from `missing`, `extras`, `past`, `present`, `future` (one symbol per event). |
 | `hpcrd/modeler.py` | The module between node_0 and nodes 1a, 1b, 2a, 2b. Every open choice is a field of `Settings`. |
+| `hpcrd/templates.py` | Spell's loop on a KATO node: one template per type, edited by learning the new pattern and retiring the old one. |
 | `hpcrd/show.py` | Printing helpers. |
 | `examples/worked_examples.py` | Round 1's worked examples (1 to 6). Prints `examples/report.txt`. |
 | `examples/sequences.py` | Round 2's examples (7 to 12). Prints `examples/report_sequences.txt`. |
+| `experiments/baselines.py` | Drain (through `drain3`), Spell (from the paper's description) and Spell's loop on KATO, on the same probe. |
 | `experiments/sgd_probe.py` | VAR spans against annotated slot spans on pinned Schema-Guided Dialogue files. The data is fetched at run time and kept outside the repository; `experiments/results/` holds numbers only. |
 | `examples/explore.py` | Any text, any settings, from the command line. |
 | `scripts/check_alignment.py` | The full alignment check: 502,184 of 502,184 predictions. About a minute. |
@@ -77,6 +83,8 @@ uv pip install --python .venv/bin/python -r $KATO_REPO/requirements.txt pytest
 ./run.sh examples/sequences.py                  # examples 7 to 12
 ./run.sh scripts/check_alignment.py
 ./run.sh experiments/sgd_probe.py --data ../sgd-data --fetch    # the probe; a directory outside the repository
+uv pip install --python .venv/bin/python drain3                 # only for the next line
+./run.sh experiments/baselines.py --data ../sgd-data            # published parsers on the same probe
 
 # any text, any settings
 ./run.sh examples/explore.py E4 verbose=1 span=stream markers=. slots=gap recall_threshold=0.5 unexplained=break
