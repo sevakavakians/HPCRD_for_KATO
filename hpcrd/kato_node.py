@@ -13,7 +13,9 @@ same calls KATO's request path makes, in the same order:
 What is mirrored by hand, from kato/informatics/knowledge_base.py and
 kato/storage/redis_writer.py: frequency counting and the node counters, the
 "fewer than two symbols is not learned" rule, the observe order (append,
-predict, auto-learn), ROLLING/CLEAR, and the single-symbol candidate path.
+predict, auto-learn), ROLLING/CLEAR, and the single-symbol candidate path. Also, from
+kato/api/endpoints/sessions.py, retiring a pattern: a tombstone that every read path skips,
+reversible. The retire mirror has not been checked against a running KATO.
 
 Not mirrored: storage, sessions, emotives, metadata, vectors, retirement, and
 the metrics that describe one prediction at a time (entropy, tf-idf, ...).
@@ -51,6 +53,7 @@ class InProcessNode:
         self.stm_mode = stm_mode
         self.rank_sort_algo = rank_sort_algo
         self.patterns = {}            # bare sha1 -> {'name','pattern_data','length','frequency','emotives'}
+        self.retired = set()          # bare sha1 of tombstoned patterns: stored, and skipped by every read
         self.learn_order = []         # bare sha1, in order of first learn
         self.symbol_freq = Counter()  # symbols:freq
         self.symbol_pmf = Counter()   # symbols:pmf
@@ -92,7 +95,15 @@ class InProcessNode:
 
     def frequency(self, name):
         entry = self.patterns.get(bare(name))
-        return entry['frequency'] if entry else 0
+        return entry['frequency'] if entry and bare(name) not in self.retired else 0
+
+    def retire(self, names):
+        """KATO: POST /sessions/{id}/patterns/retire. The patterns stay stored; reads skip them."""
+        self.retired.update(bare(n) for n in names if bare(n) in self.patterns)
+
+    def unretire(self, names):
+        """KATO: POST /sessions/{id}/patterns/un-retire."""
+        self.retired.difference_update(bare(n) for n in names)
 
     def pattern(self, name):
         return self.patterns[bare(name)]['pattern_data']
@@ -128,6 +139,8 @@ class InProcessNode:
         built = []
         if len(state) == 1:   # single-symbol path: every pattern holding the symbol, no threshold
             for name in sorted(self.patterns):
+                if name in self.retired:
+                    continue
                 entry = self.patterns[name]
                 flat = list(chain(*entry['pattern_data']))
                 if state[0] not in flat:
@@ -138,6 +151,8 @@ class InProcessNode:
         else:
             cutoff = self.recall_threshold * 100 - 1e-6
             for name in sorted(self.patterns):
+                if name in self.retired:
+                    continue
                 entry = self.patterns[name]
                 flat = list(chain(*entry['pattern_data']))
                 score = _lcs_ratio_scorer(state, flat)

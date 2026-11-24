@@ -1,0 +1,242 @@
+{
+ "Drain (drain3), threshold 0.4": {
+  "as it arrived": {
+   "VARs": {
+    "exactly a slot": 150,
+    "no annotated slot": 5546,
+    "part of a slot": 568
+   },
+   "slots": {
+    "constant in a rule, or dropped": 8,
+    "no rule for the sentence": 997,
+    "one VAR, exactly": 150,
+    "partly in a VAR": 66,
+    "tiled by several VARs": 167
+   }
+  },
+  "at the end": {
+   "VARs": {
+    "exactly a slot": 202,
+    "no annotated slot": 7366,
+    "part of a slot": 871
+   },
+   "slots": {
+    "constant in a rule, or dropped": 17,
+    "no rule for the sentence": 819,
+    "one VAR, exactly": 202,
+    "partly in a VAR": 103,
+    "tiled by several VARs": 247
+   }
+  },
+  "lines": 3873,
+  "lines that joined an existing template": 2151,
+  "seconds": 0.1,
+  "templates": 1722,
+  "templates with two or more lines": 482
+ },
+ "Drain (drain3), threshold 0.6": {
+  "as it arrived": {
+   "VARs": {
+    "exactly a slot": 68,
+    "no annotated slot": 2156,
+    "part of a slot": 186
+   },
+   "slots": {
+    "constant in a rule, or dropped": 6,
+    "no rule for the sentence": 1217,
+    "one VAR, exactly": 68,
+    "partly in a VAR": 38,
+    "tiled by several VARs": 59
+   }
+  },
+  "at the end": {
+   "VARs": {
+    "exactly a slot": 100,
+    "no annotated slot": 3089,
+    "part of a slot": 311
+   },
+   "slots": {
+    "constant in a rule, or dropped": 11,
+    "no rule for the sentence": 1115,
+    "one VAR, exactly": 100,
+    "partly in a VAR": 68,
+    "tiled by several VARs": 94
+   }
+  },
+  "lines": 3873,
+  "lines that joined an existing template": 1627,
+  "seconds": 0.1,
+  "templates": 2246,
+  "templates with two or more lines": 451
+ },
+ "Spell's loop on KATO, tau 0.5": {
+  "as it arrived": {
+   "VARs": {
+    "across a slot edge": 64,
+    "exactly a slot": 224,
+    "longer than a slot": 213,
+    "no annotated slot": 3320,
+    "part of a slot": 219
+   },
+   "slots": {
+    "constant in a rule, or dropped": 49,
+    "inside a longer VAR": 221,
+    "no rule for the sentence": 674,
+    "one VAR, exactly": 224,
+    "partly in a VAR": 220
+   }
+  },
+  "at the end": {
+   "VARs": {
+    "across a slot edge": 122,
+    "exactly a slot": 237,
+    "longer than a slot": 552,
+    "no annotated slot": 4755,
+    "part of a slot": 293
+   },
+   "slots": {
+    "constant in a rule, or dropped": 55,
+    "inside a longer VAR": 612,
+    "no rule for the sentence": 146,
+    "one VAR, exactly": 237,
+    "partly in a VAR": 338
+   }
+  },
+  "kato": {
+   "learns": 3841,
+   "patterns stored": 2193,
+   "predictions asked": 3841,
+   "retired": 1260,
+   "retired content that came back": 52
+  },
+  "lines": 3873,
+  "lines that joined an existing template": 2896,
+  "seconds": 107.0,
+  "templates": 933,
+  "templates with two or more lines": 749
+ },
+ "Spell's loop on KATO, tau 0.7": {
+  "as it arrived": {
+   "VARs": {
+    "across a slot edge": 6,
+    "exactly a slot": 128,
+    "longer than a slot": 41,
+    "no annotated slot": 1403,
+    "part of a slot": 113
+   },
+   "slots": {
+    "constant in a rule, or dropped": 57,
+    "inside a longer VAR": 41,
+    "no rule for the sentence": 1062,
+    "one VAR, exactly": 128,
+    "partly in a VAR": 100
+   }
+  },
+  "at the end": {
+   "VARs": {
+    "across a slot edge": 29,
+    "exactly a slot": 164,
+    "longer than a slot": 238,
+    "no annotated slot": 2721,
+    "part of a slot": 199
+   },
+   "slots": {
+    "constant in a rule, or dropped": 103,
+    "inside a longer VAR": 259,
+    "no rule for the sentence": 669,
+    "one VAR, exactly": 164,
+    "partly in a VAR": 193
+   }
+  },
+  "kato": {
+   "learns": 3841,
+   "patterns stored": 2762,
+   "predictions asked": 3841,
+   "retired": 1025,
+   "retired content that came back": 47
+  },
+  "lines": 3873,
+  "lines that joined an existing template": 2096,
+  "seconds": 239.1,
+  "templates": 1737,
+  "templates with two or more lines": 806
+ },
+ "Spell, tau 0.5": {
+  "as it arrived": {
+   "VARs": {
+    "across a slot edge": 67,
+    "exactly a slot": 223,
+    "longer than a slot": 215,
+    "no annotated slot": 3286,
+    "part of a slot": 212
+   },
+   "slots": {
+    "constant in a rule, or dropped": 52,
+    "inside a longer VAR": 225,
+    "no rule for the sentence": 673,
+    "one VAR, exactly": 223,
+    "partly in a VAR": 215
+   }
+  },
+  "at the end": {
+   "VARs": {
+    "across a slot edge": 124,
+    "exactly a slot": 224,
+    "longer than a slot": 565,
+    "no annotated slot": 4711,
+    "part of a slot": 288
+   },
+   "slots": {
+    "constant in a rule, or dropped": 65,
+    "inside a longer VAR": 627,
+    "no rule for the sentence": 143,
+    "one VAR, exactly": 224,
+    "partly in a VAR": 329
+   }
+  },
+  "lines": 3873,
+  "lines that joined an existing template": 2929,
+  "seconds": 1.7,
+  "templates": 944,
+  "templates with two or more lines": 771
+ },
+ "Spell, tau 0.7": {
+  "as it arrived": {
+   "VARs": {
+    "across a slot edge": 8,
+    "exactly a slot": 128,
+    "longer than a slot": 42,
+    "no annotated slot": 1393,
+    "part of a slot": 111
+   },
+   "slots": {
+    "constant in a rule, or dropped": 57,
+    "inside a longer VAR": 42,
+    "no rule for the sentence": 1060,
+    "one VAR, exactly": 128,
+    "partly in a VAR": 101
+   }
+  },
+  "at the end": {
+   "VARs": {
+    "across a slot edge": 32,
+    "exactly a slot": 165,
+    "longer than a slot": 238,
+    "no annotated slot": 2762,
+    "part of a slot": 194
+   },
+   "slots": {
+    "constant in a rule, or dropped": 104,
+    "inside a longer VAR": 256,
+    "no rule for the sentence": 671,
+    "one VAR, exactly": 165,
+    "partly in a VAR": 192
+   }
+  },
+  "lines": 3873,
+  "lines that joined an existing template": 2131,
+  "seconds": 3.2,
+  "templates": 1742,
+  "templates with two or more lines": 825
+ }
+}
