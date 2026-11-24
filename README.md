@@ -28,7 +28,7 @@ module   reads each prediction's matches / missing / extras
 
 From "the cat sat on the mat ." and "the dog sat on the mat ." the module learns the chunk `sat on the mat .`, the rule `[the] [VAR|1] [PTRN|76a6fb]` and the values `cat`, `dog`. A third sentence with `bird` is recognised as the same rule, and node_1b's own prediction binds the value: `missing [[], ["VAR|1"], []]`, `extras [[], ["bird"], []]`.
 
-The write-up with the worked examples is not in the repository yet. `examples/report.txt` is the full output it quotes.
+`docs/worked-examples-2026-11-24.md` is the write-up: six worked examples with every node's content shown. `examples/report.txt` is the full output it quotes.
 
 ## Layout
 
@@ -43,6 +43,7 @@ The write-up with the worked examples is not in the repository yet. `examples/re
 | `examples/explore.py` | Any text, any settings, from the command line. |
 | `scripts/check_alignment.py` | The full alignment check: 502,184 of 502,184 predictions. About a minute. |
 | `tests/` | The report is reproduced; the alignment is rebuilt; the invariants hold. |
+| `docs/` | Write-ups, dated. |
 
 ## Set up and run
 
