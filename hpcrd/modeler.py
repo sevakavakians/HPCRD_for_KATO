@@ -1,24 +1,28 @@
 """The module between node_0 and nodes 1a, 1b, 2a, 2b.
 
-    node_0   rolling windows of tokens (KATO: stm_mode=ROLLING, max_pattern_length=window)
-       | prediction ensemble, one per token
+    node_0   sequences of symbols: rolling windows (KATO: stm_mode=ROLLING,
+       |     max_pattern_length=window), or whole sequences as the application cuts them
+       | prediction ensemble
     module   reads each prediction's matches / missing / extras (alignment.read)
        |-> node_1a   contiguous matches                    -> PTRN|<chunk>
        |-> node_1b   [chunk names, single tokens, VAR|n]   -> PTRN|<rule>
        |       '-> node_2a   names of node_1b patterns, in order
-       '-> node_2b   VAR|n with its values, joint values, runs of VARs
+       '-> node_2b   VAR|n with its values, joint values, runs of VARs, what a VAR is made of
 
 Every choice the description leaves open is a named setting (Settings), so the
 experiments can run the alternatives side by side. Nothing is random, no clock
 is read, and every loop over a set or dict runs in sorted order.
 
-The module keeps one record of its own: at which step node_0 learned each
-window (`learned_at`). KATO returns a pattern's name and frequency with a
-prediction, not where it was learned, and the module needs that to hold out
-echoes and to count evidence in earlier places of the stream.
+With rolling windows the module keeps one record of its own: at which step
+node_0 learned each window (`learned_at`). KATO returns a pattern's name and
+frequency with a prediction, not where it was learned, and the module needs
+that to hold out echoes and to count evidence in earlier places of the stream.
+With whole sequences it keeps none: nothing echoes, and a pattern's frequency
+is the number of earlier places it stands for.
 """
 from collections import Counter
 from dataclasses import dataclass
+from fractions import Fraction
 
 from .alignment import flat, read
 from .kato_node import PREFIX, Node, bare, Pattern
@@ -28,10 +32,11 @@ VAR = 'VAR|'
 
 @dataclass(frozen=True)
 class Settings:
-    window: int = 7              # node_0's rolling window
+    window: int = 7              # node_0's rolling window (span 'window' and 'stream')
     recall_threshold: float = 0.1  # node_0: how unlike a learned pattern may be and still be read
     span: str = 'window'         # 'window': one rule per ensemble | 'stream': stitched along the stream
-    markers: tuple = ()          # span='stream': tokens that close a stretch (the application's cut)
+                                 # | 'sequence': node_0 learns whole sequences, one rule per sequence
+    markers: tuple = ()          # tokens that close a stretch ('stream') or a sequence ('sequence')
     naming: str = 'rule'         # what gives a slot its VAR id: 'rule' | 'neighbours' | 'values'
     slots: str = 'position'      # 'position': one VAR per aligned position | 'gap': one VAR per gap
     edge_vars: bool = False      # read an extra that lines up with `past`/`future` as a variable too
@@ -40,14 +45,26 @@ class Settings:
     unexplained: str = 'drop'    # a token no learned pattern accounts for: 'drop' it as noise | 'break' the stretch there
     rejoin: bool = True          # constants left side by side once noise is dropped are joined when node_1a holds the joined chunk
     node2a_window: int = 2       # node_2a's own rolling window over rule names
+    values: str = 'name'         # a value of two or more tokens in node_2b: 'name' (a node_1a chunk, by name)
+                                 # | 'sequence' (its tokens, so that KATO can match inside it)
+    fold: str = 'all'            # the readings that decide constant / variable: 'all' that were read
+                                 # | 'nearest' (the most similar ones that differ, and exact repeats)
+    inside: bool = False         # values='sequence': read each new value against its VAR's earlier values
+    topdown: bool = False        # span='sequence': a learned rule that fits a new sequence reads it, before node_0 is asked
+    rule_threshold: float = 0.5  # topdown: how much of a sequence a rule's constants must account for (node_1t's recall_threshold)
 
 
 def pattern_name(events):
     return PREFIX + Pattern([list(e) for e in events]).name
 
 
+def shape(symbols):
+    """A rule with its VARs blanked: the constants, and where the slots are."""
+    return tuple(None if x.startswith(VAR) else x for x in symbols)
+
+
 class Evidence:
-    """What the held-out ensemble says about each position of a stretch of tokens.
+    """What the ensemble says about each position of a stretch of tokens.
 
     Evidence is counted in earlier places of the stream. A learned window that
     lines up with the stretch stands for one earlier place per time it was
@@ -65,22 +82,25 @@ class Evidence:
         self.blocks = {}                            # (lo, hi) -> earlier positions of the token at lo
         self.readings = []                          # (offset, Reading, places)
 
-    def add(self, reading, places, offset=0, edge_vars=False):
-        """`places`: the stream position of the pattern's first token, once per earlier learn."""
+    def add(self, reading, places, offset=0, edge_vars=False, decides=True):
+        """`places`: the stream position of the pattern's first token, once per earlier learn.
+        `decides`: this reading takes part in labelling positions constant or variable. One that
+        does not still says where tokens stood together (blocks) and what else filled a gap."""
         n = len(self.tokens)
-        for i, rel in enumerate(reading.relation):
-            p = i + offset
-            if not 0 <= p < n:
-                continue
-            kind = rel[0]
-            if kind == 'M':
-                self.match[p].update(base + rel[1] for base in places)
-            elif kind == 'S' or (kind == 'E' and edge_vars):
-                self.alts[p].setdefault(rel[2], set()).update(base + rel[1] for base in places)
-            elif kind == 'U':
-                self.unequal[p].update(base + rel[3] for base in places)
-            elif kind == 'I':
-                self.inserted[p].update(base + rel[1] for base in places)
+        if decides:
+            for i, rel in enumerate(reading.relation):
+                p = i + offset
+                if not 0 <= p < n:
+                    continue
+                kind = rel[0]
+                if kind == 'M':
+                    self.match[p].update(base + rel[1] for base in places)
+                elif kind == 'S' or (kind == 'E' and edge_vars):
+                    self.alts[p].setdefault(rel[2], set()).update(base + rel[1] for base in places)
+                elif kind == 'U':
+                    self.unequal[p].update(base + rel[3] for base in places)
+                elif kind == 'I':
+                    self.inserted[p].update(base + rel[1] for base in places)
         for (q, i, length) in reading.blocks:
             lo, hi = max(i + offset, 0), min(i + offset + length, n)
             if hi > lo:
@@ -129,13 +149,14 @@ class Evidence:
         return len(where)
 
     def chunk_support(self, lo, hi, window):
-        k = min(hi - lo, window)
+        k = hi - lo if window is None else min(hi - lo, window)
         return min(self.covered(x, x + k) for x in range(lo, hi - k + 1))
 
     def split_constants(self, lo, hi, window):
         """Cut a run of constants into chunks. A chunk is a stretch that was seen whole before:
-        one contiguous match covers it (for a stretch longer than the window, one contiguous
-        match covers every window-length piece of it). The longest such stretch is taken first,
+        one contiguous match covers it (with rolling windows, for a stretch longer than the window,
+        one contiguous match covers every window-length piece of it; `window` None means node_0
+        holds whole sequences and there is no such limit). The longest such stretch is taken first,
         then the one seen in more places, then the leftmost; what is left on either side is cut
         the same way."""
         if hi <= lo:
@@ -157,19 +178,27 @@ class Evidence:
     # -- variables: what else has stood in a slot ----------------------------
     def gap_alternatives(self, lo, hi):
         """Fillers that learned patterns hold where tokens lo..hi-1 stand, read gap to gap:
-        a pattern that matches the token before and the token after gives what it has between."""
+        a pattern that matches the token before and the token after gives what it has between.
+        When both are whole sequences, the start and the end are anchors as well."""
         where = {}
         for offset, r, places in self.readings:
             i_l, i_r = lo - 1 - offset, hi - offset
-            if i_l < 0 or i_r >= len(r.relation):
+            if i_l == -1 and r.whole:
+                q_l = -1
+            elif 0 <= i_l < len(r.relation) and r.relation[i_l][0] == 'M':
+                q_l = r.relation[i_l][1]
+            else:
                 continue
-            rel_l, rel_r = r.relation[i_l], r.relation[i_r]
-            if rel_l[0] != 'M' or rel_r[0] != 'M':
+            if i_r == len(r.relation) and r.whole:
+                q_r = len(r.pattern)
+            elif 0 <= i_r < len(r.relation) and r.relation[i_r][0] == 'M':
+                q_r = r.relation[i_r][1]
+            else:
                 continue
-            filler = tuple(r.pattern[rel_l[1] + 1:rel_r[1]])
+            filler = tuple(r.pattern[q_l + 1:q_r])
             if not filler or list(filler) == self.tokens[lo:hi]:
                 continue
-            where.setdefault(filler, set()).update(base + rel_l[1] for base in places)
+            where.setdefault(filler, set()).update(base + q_l for base in places)
         return Counter({filler: len(w) for filler, w in where.items()})
 
     def rows(self, positions, edge_vars=False):
@@ -189,28 +218,70 @@ class Evidence:
         return sorted(out)
 
 
+def whole_places(readings):
+    """Whole sequences: a pattern learned f times stands for f earlier places. Each gets a range of
+    positions of its own (one before the first token and one after the last included, for the two
+    ends), so that evidence can be counted in distinct earlier places."""
+    out, base = [], 0
+    for r in readings:
+        step = len(r.pattern) + 2
+        out.append((r, [base + 1 + k * step for k in range(r.frequency)]))
+        base += r.frequency * step
+    return out
+
+
 class Modeler:
-    def __init__(self, settings=Settings()):
+    def __init__(self, settings=Settings(), trace=True):
         self.s = s = settings
+        whole = s.span == 'sequence'
         self.node0 = Node('node_0', recall_threshold=s.recall_threshold, max_predictions=10000,
-                          max_pattern_length=s.window, stm_mode='ROLLING')
+                          max_pattern_length=0 if whole else s.window,
+                          stm_mode='CLEAR' if whole else 'ROLLING')
         self.node1a = Node('node_1a')
         self.node1b = Node('node_1b', max_predictions=10000)
         self.node2a = Node('node_2a', max_pattern_length=s.node2a_window, stm_mode='ROLLING')
         self.node2b = Node('node_2b', max_predictions=10000)
-        self.learned_at = {}        # node_0 pattern name -> steps at which that window was learned
+        # topdown: every rule again with its chunks spelled out, so that KATO can line a raw sequence
+        # up with it. `rule_of` links that pattern to the node_1b rule; it holds nothing KATO does not
+        # (the pattern is the rule with its names unravelled through node_1a).
+        self.node1t = Node('node_1t', recall_threshold=s.rule_threshold, max_predictions=10000) if s.topdown else None
+        self.rule_of = {}
+        self.reach = None if whole else s.window    # the longest stretch one node_0 pattern can show whole
+        self.learned_at = {}        # rolling windows: node_0 pattern name -> steps at which it was learned
         self.var_count = 0
         self.frames = {}            # naming='neighbours': (left token, right token, k, run length) -> VAR id
         self.t = -1
         self.tokens = []            # the stream so far
-        self.windows = []           # span='stream': (start position, held-out readings) per step
-        self.closed = 0             # span='stream': first stream position not yet modelled
+        self.windows = []           # span='stream': (start position, held-out readings, which decide) per step
+        self.closed = 0             # span='stream' / 'sequence': first stream position not yet modelled
+        self.cuts = set()           # stream positions where the application ended a stretch or sequence (cut())
+        self.keep_trace = trace
         self.trace = []
 
     # -- stream in ----------------------------------------------------------
+    def decides(self, readings, n):
+        """fold='nearest': only the learned patterns most like the observed tokens decide what is
+        constant and what varies, and exact repeats with them. Likeness is KATO's similarity for
+        one symbol per event, 2 * matches / (pattern length + observed length), kept as an exact
+        fraction so that ties are ties."""
+        if self.s.fold == 'all':
+            return [True] * len(readings)
+        like = [Fraction(2 * len(r.pairs), len(r.pattern) + n) for r, _places in readings]
+        best = max((x for x in like if x < 1), default=None)
+        return [x == 1 or x == best for x in like]
+
     def feed(self, token):
         self.t += 1
         self.tokens.append(token)
+        if self.s.span == 'sequence':
+            if token in self.s.markers:
+                step = self.read_sequence(self.closed, len(self.tokens))
+            else:
+                step = {'t': self.t, 'stm': [], 'readings': [], 'echoes': 0, 'ensemble': 0,
+                        'learned': None, 'raw': [], 'stretches': []}
+            if self.keep_trace:
+                self.trace.append(step)
+            return step
         out = self.node0.observe([token])
         stm = flat(out['stm'])
         # A window learned at step u covers the stream positions that end at u. It shares no token
@@ -226,30 +297,83 @@ class Modeler:
             r = read(p, out['stm'])._replace(frequency=len(steps))
             readings.append((r, [u - len(r.pattern) + 1 for u in steps]))
         readings.sort(key=lambda pair: pair[0].name)
+        decides = self.decides(readings, len(stm))
         step = {'t': self.t, 'stm': stm, 'readings': readings, 'echoes': echoes,
                 'ensemble': len(out['predictions']), 'learned': out['auto_learned_pattern'],
                 'raw': out['predictions']}
         if self.s.span == 'window':
             ev = Evidence(stm)
-            for r, places in readings:
-                ev.add(r, places, 0, self.s.edge_vars)
+            for (r, places), d in zip(readings, decides):
+                ev.add(r, places, 0, self.s.edge_vars, d)
             step.update(self.emit(ev))
             step['evidence'] = ev
         else:
-            self.windows.append((self.t - len(stm) + 1, readings))
+            self.windows.append((self.t - len(stm) + 1, readings, decides))
             step['stretches'] = self.close_stretches(final=False)
         if out['auto_learned_pattern']:
             self.learned_at.setdefault(bare(out['auto_learned_pattern']), []).append(self.t)
-        self.trace.append(step)
+        if self.keep_trace:
+            self.trace.append(step)
+        return step
+
+    def cut(self):
+        """The application ends the sequence here (a line, a turn, a sentence), without a marker
+        token. span='sequence': the open sequence is read and learned. span='stream': the open
+        stretch ends here; node_0's window still rolls across the cut. span='window': nothing."""
+        if self.s.span == 'sequence':
+            if self.closed >= len(self.tokens):
+                return None
+            step = self.read_sequence(self.closed, len(self.tokens))
+            if self.keep_trace:
+                self.trace.append(step)
+            return step
+        self.cuts.add(len(self.tokens))
+        return None
+
+    def read_sequence(self, a, b):
+        """span='sequence': predict on the whole sequence, model it, then let node_0 learn it.
+        The sequence is not in node_0 when it is read, so nothing has to be held out, and the
+        learned patterns are whole sequences too, so their ends line up with its ends."""
+        tokens = self.tokens[a:b]
+        events = [[x] for x in tokens]
+        step = {'t': b - 1, 'stm': tokens, 'readings': [], 'echoes': 0, 'ensemble': 0,
+                'learned': None, 'raw': [], 'stretches': []}
+        self.closed = b
+        if len(tokens) < 2:     # one symbol is not a pattern
+            return step
+        if self.s.topdown:
+            result = self.read_by_rule(tokens)
+            if result is not None:
+                result['stretch'] = (a, b)
+                step.update(stretches=[result], by_rule=result['by_rule'], learned=self.node0.learn(events))
+                return step
+        out = self.node0.predict(events)
+        readings = whole_places(read(p, events, whole=True)
+                                for p in sorted(out['predictions'], key=lambda p: p['name']))
+        decides = self.decides(readings, len(tokens))
+        ev = Evidence(tokens)
+        for (r, places), d in zip(readings, decides):
+            ev.add(r, places, 0, False, d)
+        result = self.emit(ev)
+        result['stretch'] = (a, b)
+        result['evidence'] = ev
+        step.update(readings=readings, ensemble=len(out['predictions']), raw=out['predictions'],
+                    stretches=[result], decides=decides, learned=self.node0.learn(events))
         return step
 
     def finish(self):
-        """span='stream': model what is still open at the end of the stream."""
+        """Model what is still open at the end of the stream."""
         if self.s.span == 'stream':
             out = self.close_stretches(final=True)
-            self.trace.append({'t': self.t, 'stm': [], 'readings': [], 'echoes': 0, 'ensemble': 0,
-                               'learned': None, 'raw': [], 'stretches': out, 'final': True})
+            if self.keep_trace:
+                self.trace.append({'t': self.t, 'stm': [], 'readings': [], 'echoes': 0, 'ensemble': 0,
+                                   'learned': None, 'raw': [], 'stretches': out, 'final': True})
             return out
+        if self.s.span == 'sequence' and self.closed < len(self.tokens):
+            step = self.read_sequence(self.closed, len(self.tokens))
+            if self.keep_trace:
+                self.trace.append(step)
+            return step['stretches']
         return []
 
     def close_stretches(self, final):
@@ -259,7 +383,7 @@ class Modeler:
         while True:
             end = None
             for n in range(self.closed, len(self.tokens)):
-                if self.tokens[n] in self.s.markers:
+                if self.tokens[n] in self.s.markers or (n + 1) in self.cuts:
                     end = n + 1
                     break
             if end is None:
@@ -270,16 +394,18 @@ class Modeler:
                 break
             a, b = self.closed, end
             ev = Evidence(self.tokens[a:b])
-            for start, readings in self.windows:
+            for start, readings, decides in self.windows:
                 if start + self.s.window <= a or start >= b:
                     continue
-                for r, places in readings:
-                    ev.add(r, places, start - a, self.s.edge_vars)
+                for (r, places), d in zip(readings, decides):
+                    ev.add(r, places, start - a, self.s.edge_vars, d)
             result = self.emit(ev)
             result['stretch'] = (a, b)
             result['evidence'] = ev
             out.append(result)
             self.closed = b
+        if out:     # windows that end before the open stretch begins are not read again
+            self.windows = [w for w in self.windows if w[0] + self.s.window > self.closed]
         return out
 
     # -- one stretch of tokens -> chunks, rule, values ----------------------
@@ -352,7 +478,7 @@ class Modeler:
             while e < n and labels[e] == labels[p]:
                 e += 1
             if labels[p] == 'C':
-                for a, b, sup in ev.split_constants(p, e, s.window):
+                for a, b, sup in ev.split_constants(p, e, self.reach):
                     items.append({'kind': 'C', 'lo': a, 'hi': b, 'tokens': tokens[a:b], 'support': sup})
             elif s.slots == 'gap':
                 items.append({'kind': 'V', 'lo': p, 'hi': e, 'tokens': tokens[p:e],
@@ -365,7 +491,8 @@ class Modeler:
         if s.rejoin:
             items = self.rejoin(items)
         result = {'span': (lo, hi), 'items': items, 'rule': None, 'sequence': None, 'chunks': [],
-                  'bindings': [], 'new_vars': [], 'recognised': False, 'probe': None, 'node2b': []}
+                  'bindings': [], 'new_vars': [], 'recognised': False, 'probe': None, 'node2b': [],
+                  'inside': []}
         kinds = [item['kind'] for item in items]
         if len(items) < 2 or 'C' not in kinds:
             # Nothing node_1b can learn: fewer than two symbols, or no constant to anchor a rule.
@@ -376,55 +503,92 @@ class Modeler:
                     result['chunks'].append((name, item['tokens'], item['support'], 'match', self.node1a.frequency(name)))
             return result
 
+        symbols, alternatives = self.stand_for(items, result)
+        ids = self.name_vars(items, kinds, symbols, alternatives, result)
+        self.record(result, items, symbols, alternatives, ids, ev)
+        return result
+
+    def stand_for(self, items, result, how='match'):
+        """What stands for each item: a constant is one symbol (a token, or a chunk's name, learned
+        in node_1a). A slot's value is one symbol too (values='name'), or its own tokens
+        (values='sequence')."""
+        spelled = self.s.values == 'sequence'
         symbols, alternatives = [], []
         for item in items:
-            symbol = self.chunk(item['tokens'])
-            symbols.append(symbol)
             if item['kind'] == 'C':
+                symbol = self.chunk(item['tokens'])
+                symbols.append((symbol,))
                 alternatives.append(None)
                 if len(item['tokens']) >= 2:
                     result['chunks'].append((symbol, item['tokens'], item['support'],
-                                             'rejoined' if item.get('rejoined') else 'match',
+                                             'rejoined' if item.get('rejoined') else how,
                                              self.node1a.frequency(symbol)))
+            elif spelled:
+                symbols.append(tuple(item['tokens']))
+                alternatives.append(Counter({tuple(filler): support
+                                             for filler, support in sorted(item['alts'].items())}))
             else:
+                symbol = self.chunk(item['tokens'])
+                symbols.append((symbol,))
                 if len(item['tokens']) >= 2:
                     result['chunks'].append((symbol, item['tokens'], 0, 'value', self.node1a.frequency(symbol)))
                 alts = Counter()
                 for filler, support in sorted(item['alts'].items()):
-                    alts[self.chunk(filler, learn=False)] += support
+                    alts[(self.chunk(filler, learn=False),)] += support
                 alternatives.append(alts)
+        return symbols, alternatives
 
-        ids = self.name_vars(items, kinds, symbols, alternatives, result)
+    def record(self, result, items, symbols, alternatives, ids, ev):
+        """One instance of a rule, into the nodes: the rule (node_1b), each VAR with its value, the
+        values together, VARs side by side (node_2b), and the rule's name in order (node_2a)."""
+        s = self.s
+        spelled = s.values == 'sequence'
+        kinds = [item['kind'] for item in items]
+
+        def shown(value):       # a value as the result reports it
+            return list(value) if spelled else value[0]
+
         sequence, k = [], 0
-        for kind, symbol in zip(kinds, symbols):
+        for kind, value in zip(kinds, symbols):
             if kind == 'C':
-                sequence.append(symbol)
+                sequence.append(value[0])
             else:
                 sequence.append(ids[k])
                 k += 1
         before = self.node1b.frequency(pattern_name([[x] for x in sequence]))
         rule = self.node1b.learn([[x] for x in sequence])
-        result.update(rule=rule, sequence=sequence, rule_frequency=before + 1, symbols=symbols)
+        result.update(rule=rule, sequence=sequence, rule_frequency=before + 1,
+                      symbols=[shown(value) if kind == 'V' else value[0] for kind, value in zip(kinds, symbols)])
+        if s.topdown:
+            spelled_out = [x for item, symbol in zip(items, sequence)
+                           for x in (item['tokens'] if item['kind'] == 'C' else [symbol])]
+            self.rule_of[bare(self.node1t.learn([[x] for x in spelled_out]))] = sequence
 
         # node_2b: each VAR with its value; the values of one instance together; VARs side by side
         row, k = [], 0
-        for kind, symbol, alts in zip(kinds, symbols, alternatives):
-            if kind != 'V':
+        for item, value, alts in zip(items, symbols, alternatives):
+            if item['kind'] != 'V':
                 continue
             var = ids[k]
             k += 1
-            known = self.node2b.frequency(pattern_name([[var], [symbol]])) > 0
-            self.node2b.learn([[var], [symbol]])
-            result['bindings'].append((var, symbol, 'known' if known else 'new', dict(sorted(alts.items()))))
+            entry = [var] + list(value)
+            if s.inside and spelled:    # before the value is learned, as at node_0
+                item['inside'] = self.read_inside(var, list(value))
+                result['inside'].append(item['inside'])
+            known = self.node2b.frequency(pattern_name([[x] for x in entry])) > 0
+            self.node2b.learn([[x] for x in entry])
+            result['bindings'].append((var, shown(value), 'known' if known else 'new',
+                                       {(tuple(a) if spelled else a[0]): c for a, c in sorted(alts.items())}))
             for alt in sorted(alts):
-                if self.node2b.frequency(pattern_name([[var], [alt]])) == 0:
-                    self.node2b.learn([[var], [alt]])
-                    result['node2b'].append(('value a learned pattern has there', [var, alt]))
-            row += [var, symbol]
+                other = [var] + list(alt)
+                if self.node2b.frequency(pattern_name([[x] for x in other])) == 0:
+                    self.node2b.learn([[x] for x in other])
+                    result['node2b'].append(('value a learned pattern has there', other))
+            row += entry
         if len(ids) >= 2:
             self.node2b.learn([[x] for x in row])
             result['node2b'].append(('values together', row))
-            if s.slots == 'position':
+            if s.slots == 'position' and ev is not None:
                 positions = [item['lo'] for item in items if item['kind'] == 'V']
                 for values in ev.rows(positions, s.edge_vars):
                     other = [x for pair in zip(ids, values) for x in pair]
@@ -441,7 +605,57 @@ class Modeler:
                 result['node2b'].append(('VARs side by side', list(run)))
             run = []
         self.node2a.observe([rule], predict=False)
-        return result
+
+    # -- top-down: a learned rule reads a new sequence -----------------------
+    def read_by_rule(self, tokens):
+        """Is the sequence an instance of a rule already learned?
+
+        node_1t holds each rule with its chunks spelled out: [show] [flights] [from] [VAR|1] [to]
+        [denver] [.]. KATO lines the raw sequence up with those. A rule fits when every one of its
+        constants is matched, in order, and what is left of the sequence stands, gap for gap,
+        against exactly one VAR. Then the gaps are the values, of any length, with no earlier
+        sequence needed to compare with. Of the rules that fit, the one with the most constants
+        reads the sequence; then the one learned most often; then the first by name."""
+        events = [[x] for x in tokens]
+        best = None
+        for p in sorted(self.node1t.predict(events)['predictions'], key=lambda p: p['name']):
+            r = read(p, events, whole=True)
+            slots, anchors = [], [(-1, -1)] + r.pairs + [(len(r.pattern), len(tokens))]
+            for (q0, i0), (q1, i1) in zip(anchors, anchors[1:]):
+                seen, held = i1 - i0 - 1, r.pattern[q0 + 1:q1]
+                if seen and len(held) == 1 and held[0].startswith(VAR):
+                    slots.append((i0 + 1, i1))
+                elif seen or held:
+                    slots = None
+                    break
+            if slots is None:
+                continue
+            key = (len(r.pairs), r.frequency)
+            if best is None or key > best[0]:
+                best = (key, r, slots)
+        if best is None:
+            return None
+        _key, r, slots = best
+        items, position, k = [], 0, 0
+        for symbol in self.rule_of[r.name]:
+            if symbol.startswith(VAR):
+                lo, hi = slots[k]
+                k += 1
+                items.append({'kind': 'V', 'lo': lo, 'hi': hi, 'tokens': tokens[lo:hi], 'alts': Counter()})
+            else:
+                hi = position + (len(self.node1a.pattern(symbol)) if symbol.startswith(PREFIX) else 1)
+                items.append({'kind': 'C', 'lo': position, 'hi': hi, 'tokens': tokens[position:hi],
+                              'support': r.frequency})
+            position = items[-1]['hi']
+        labels = [item['kind'] for item in items for _ in range(item['hi'] - item['lo'])]
+        part = {'span': (0, len(tokens)), 'items': items, 'rule': None, 'sequence': None, 'chunks': [],
+                'bindings': [], 'new_vars': [], 'recognised': True, 'probe': None, 'node2b': [],
+                'inside': [], 'by_rule': PREFIX + r.name}
+        symbols, alternatives = self.stand_for(items, part, how='rule')
+        self.record(part, items, symbols, alternatives,
+                    [x for x in self.rule_of[r.name] if x.startswith(VAR)], None)
+        return {'labels': labels, 'noise': [], 'parts': [part], 'evidence': None, 'by_rule': PREFIX + r.name,
+                'reading': r}
 
     # -- three ways to give a slot its VAR id -------------------------------
     def new_var(self, result):
@@ -458,18 +672,16 @@ class Modeler:
         if s.naming == 'rule':
             # Show node_1b the sequence with the observed values standing in the slots.
             # A learned rule with the same constants in the same places hands back its VAR ids.
-            probe = [[x] for x in symbols]
-            result['probe'] = symbols
-            out = self.node1b.predict(probe)
+            probe = [x for value in symbols for x in value]
+            result['probe'] = probe
+            want = tuple(value[0] if kind == 'C' else None for kind, value in zip(kinds, symbols))
+            out = self.node1b.predict([[x] for x in probe])
             for p in sorted(out['predictions'], key=lambda p: p['name']):
                 learned = flat(p['past']) + flat(p['present']) + flat(p['future'])
-                if len(learned) != len(symbols):
-                    continue
-                if all((learned[i] == symbols[i]) if kinds[i] == 'C' else learned[i].startswith(VAR)
-                       for i in range(len(symbols))):
+                if shape(learned) == want:
                     result['recognised'] = True
                     result['recognition'] = p
-                    return [learned[i] for i in range(len(symbols)) if kinds[i] == 'V']
+                    return [x for x in learned if x.startswith(VAR)]
             return [self.new_var(result) for _ in range(slot_count)]
 
         if s.naming == 'neighbours':
@@ -496,15 +708,15 @@ class Modeler:
             # A VAR is a class of values. Ask node_2b which VARs already hold the slot's values
             # (the observed one and those the learned patterns have there); most shared values wins.
             ids, here = [], {}      # here: VARs given earlier in this same sequence -> their values
-            for kind, symbol, alts in zip(kinds, symbols, alternatives):
+            for kind, value, alts in zip(kinds, symbols, alternatives):
                 if kind != 'V':
                     continue
-                values = set([symbol]) | set(alts)
+                values = set([value]) | set(alts)
                 shared = Counter()
-                for value in sorted(values):
-                    for p in self.node2b.predict([[value]])['predictions']:
+                for v in sorted(values):
+                    for p in self.node2b.predict([[x] for x in v])['predictions']:
                         learned = flat(p['past']) + flat(p['present']) + flat(p['future'])
-                        if len(learned) == 2 and learned[0].startswith(VAR) and learned[1] == value:
+                        if learned[0].startswith(VAR) and tuple(learned[1:]) == v:
                             shared[learned[0]] += 1
                 for var, held in here.items():
                     shared[var] = max(shared[var], len(values & held))
@@ -518,3 +730,127 @@ class Modeler:
                 ids.append(var)
             return ids
         raise ValueError(f"unknown naming {s.naming!r}")
+
+    # -- inside a VAR: the same reading, one level down ----------------------
+    def read_inside(self, var, tokens):
+        """What a VAR's earlier values say about the inside of a new value, before it is learned.
+
+        node_2b holds each value as [VAR, token, ...], so its ensemble for the new value lines the
+        value up with the VAR's earlier values, the way node_0's ensemble lines a sequence up with
+        earlier sequences. An earlier value is
+            the same      the value was seen whole before: a unit;
+            apart         it shares no token with the value: another unit, silent about the inside;
+            partly alike  it shares some tokens: the shared parts and the differing parts are the
+                          value's own constants and slots.
+        A value with two or more parts, one of them varying, is recorded as what the VAR is made of:
+        an inner rule in node_1b, and [VAR, PTRN|<inner rule>] in node_2b. The rule that holds the
+        VAR is not touched.
+        """
+        tokens = list(tokens)
+        n = len(tokens)
+        events = [[var]] + [[t] for t in tokens]
+        info = {'var': var, 'value': tokens, 'same': 0, 'apart': 0, 'partly': [], 'parts': [],
+                'rule': None, 'sequence': None, 'rule_frequency': 0, 'recognised': False,
+                'bindings': [], 'chunks': [], 'inside': [], 'new_vars': []}
+        related = []
+        for p in sorted(self.node2b.predict(events)['predictions'], key=lambda p: p['name']):
+            learned = flat(p['past']) + flat(p['present']) + flat(p['future'])
+            if learned[0] != var or any(x.startswith(VAR) or x.startswith(PREFIX) for x in learned[1:]):
+                continue    # values together, VARs side by side, what a VAR is made of, other VARs' values
+            r = read(p, events, whole=True)
+            if r.relation[0][0] != 'M':
+                continue
+            if learned[1:] == tokens:
+                info['same'] = r.frequency
+            elif len(r.pairs) == 1:
+                info['apart'] += 1
+            else:
+                related.append(r)
+                info['partly'].append((learned[1:], r.frequency))
+        if not related:
+            return info
+        ev = Evidence(tokens)
+        for r, places in whole_places(related):
+            ev.add(r, places, offset=-1)
+        # Parts: a stretch seen whole in an earlier value stays whole; the rest stands as it is.
+        matched = [bool(ev.match[p]) for p in range(n)]
+        parts, p = [], 0
+        while p < n:
+            e = p
+            while e < n and matched[e] == matched[p]:
+                e += 1
+            cuts = ev.split_constants(p, e, None) if matched[p] else [(p, e, 0)]
+            for a, b, support in cuts:
+                alts = ev.gap_alternatives(a, b)
+                # shared and never replaced: a constant of the VAR. Otherwise a slot of its own.
+                kind = 'C' if matched[p] and not alts else 'V'
+                parts.append({'kind': kind, 'lo': a, 'hi': b, 'tokens': tokens[a:b], 'support': support,
+                              'alts': alts, 'shared': matched[p]})
+            p = e
+        info['parts'] = parts
+        kinds = [part['kind'] for part in parts]
+        if len(parts) < 2 or 'V' not in kinds:
+            return info
+
+        symbols = []
+        for part in parts:
+            if part['kind'] == 'C':
+                symbol = self.chunk(part['tokens'])
+                symbols.append(symbol)
+                if len(part['tokens']) >= 2:
+                    info['chunks'].append((symbol, part['tokens'], part['support'], 'match',
+                                           self.node1a.frequency(symbol)))
+            else:
+                symbols.append(None)
+        want = tuple(symbols)
+        # The ids of the inner slots: from what this VAR is already made of; else, when the inner
+        # rule has a constant, from any learned rule of the same shape; else new.
+        ids = None
+        for p in sorted(self.node2b.predict([[var]])['predictions'], key=lambda p: p['name']):
+            learned = flat(p['past']) + flat(p['present']) + flat(p['future'])
+            if len(learned) == 2 and learned[0] == var and self.node1b.frequency(learned[1]):
+                inner = [event[0] for event in self.node1b.pattern(learned[1])]
+                if shape(inner) == want:
+                    ids = [x for x in inner if x.startswith(VAR)]
+                    break
+        if ids is None and 'C' in kinds:
+            probe = [x for part, symbol in zip(parts, symbols) for x in ([symbol] if symbol else part['tokens'])]
+            for p in sorted(self.node1b.predict([[x] for x in probe])['predictions'], key=lambda p: p['name']):
+                learned = flat(p['past']) + flat(p['present']) + flat(p['future'])
+                if shape(learned) == want:
+                    ids = [x for x in learned if x.startswith(VAR)]
+                    break
+        info['recognised'] = ids is not None
+        if ids is None:
+            ids = [self.new_var(info) for _ in range(kinds.count('V'))]
+        sequence, k = [], 0
+        for symbol in symbols:
+            if symbol is None:
+                sequence.append(ids[k])
+                k += 1
+            else:
+                sequence.append(symbol)
+        before = self.node1b.frequency(pattern_name([[x] for x in sequence]))
+        rule = self.node1b.learn([[x] for x in sequence])
+        self.node2b.learn([[var], [rule]])
+        info.update(rule=rule, sequence=sequence, rule_frequency=before + 1)
+        k = 0
+        for part in parts:
+            if part['kind'] != 'V':
+                continue
+            inner_var = ids[k]
+            k += 1
+            entry = [inner_var] + part['tokens']
+            part['var'] = inner_var
+            if len(part['tokens']) >= 2:    # shorter than the value it is part of, so this ends
+                part['inside'] = self.read_inside(inner_var, part['tokens'])
+                info['inside'].append(part['inside'])
+            known = self.node2b.frequency(pattern_name([[x] for x in entry])) > 0
+            self.node2b.learn([[x] for x in entry])
+            info['bindings'].append((inner_var, part['tokens'], 'known' if known else 'new',
+                                     dict(sorted(part['alts'].items()))))
+            for alt in sorted(part['alts']):
+                other = [inner_var] + list(alt)
+                if self.node2b.frequency(pattern_name([[x] for x in other])) == 0:
+                    self.node2b.learn([[x] for x in other])
+        return info

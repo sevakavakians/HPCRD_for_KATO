@@ -1,0 +1,2162 @@
+{
+ "all sentences": {
+  "data": {
+   "median sentence length": 7,
+   "sentences": 3873,
+   "slot spans": 1393,
+   "slot spans cut by a sentence end": 5,
+   "slot spans in these sentences": 1388,
+   "tokens": 30373,
+   "user turns": 2967
+  },
+  "runs": {
+   "sentences, one VAR per gap, all readings, 0.4": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 50,
+      "exactly a slot": 50,
+      "longer than a slot": 457,
+      "no annotated slot": 1258,
+      "part of a slot": 44
+     },
+     "rule instances": 1401,
+     "rule instances of a known rule": 1048,
+     "sentences": 3873,
+     "sentences with a rule": 1401,
+     "slots": {
+      "constant in a rule, or dropped": 14,
+      "inside a longer VAR": 543,
+      "no rule for the sentence": 720,
+      "one VAR, exactly": 50,
+      "partly in a VAR": 61
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 29,
+     "ids per slot name": {
+      "city": 17,
+      "cuisine": 7,
+      "date": 4,
+      "time": 4,
+      "title": 2
+     },
+     "of those, ids holding one slot name only": 26
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 9,
+      "exactly a slot": 11,
+      "longer than a slot": 150,
+      "no annotated slot": 251,
+      "part of a slot": 5
+     },
+     "rule instances": 320,
+     "rule instances of a known rule": 259,
+     "sentences": 1291,
+     "sentences with a rule": 320,
+     "slots": {
+      "constant in a rule, or dropped": 5,
+      "inside a longer VAR": 199,
+      "no rule for the sentence": 341,
+      "one VAR, exactly": 11,
+      "partly in a VAR": 13
+     }
+    },
+    "nodes": {
+     "VAR ids": 637,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 172,
+     "node_1b rules": 353,
+     "node_1b rules seen again": 82,
+     "node_1b top frequencies": [
+      249,
+      227,
+      112,
+      53,
+      49
+     ],
+     "node_2b patterns": 12686
+    },
+    "seconds": 75.7,
+    "settings": {
+     "recall_threshold": 0.4,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, all readings, 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 107,
+      "exactly a slot": 89,
+      "longer than a slot": 606,
+      "no annotated slot": 2506,
+      "part of a slot": 146
+     },
+     "rule instances": 2419,
+     "rule instances of a known rule": 1621,
+     "sentences": 3873,
+     "sentences with a rule": 2419,
+     "slots": {
+      "constant in a rule, or dropped": 70,
+      "inside a longer VAR": 708,
+      "no rule for the sentence": 359,
+      "one VAR, exactly": 89,
+      "partly in a VAR": 162
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 61,
+     "ids per slot name": {
+      "city": 22,
+      "cuisine": 9,
+      "date": 6,
+      "restaurant_name": 6,
+      "time": 14,
+      "title": 8
+     },
+     "of those, ids holding one slot name only": 57
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 32,
+      "exactly a slot": 28,
+      "longer than a slot": 258,
+      "no annotated slot": 644,
+      "part of a slot": 44
+     },
+     "rule instances": 699,
+     "rule instances of a known rule": 510,
+     "sentences": 1291,
+     "sentences with a rule": 699,
+     "slots": {
+      "constant in a rule, or dropped": 23,
+      "inside a longer VAR": 322,
+      "no rule for the sentence": 145,
+      "one VAR, exactly": 28,
+      "partly in a VAR": 51
+     }
+    },
+    "nodes": {
+     "VAR ids": 1373,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 455,
+     "node_1b rules": 798,
+     "node_1b rules seen again": 171,
+     "node_1b top frequencies": [
+      222,
+      181,
+      159,
+      130,
+      90
+     ],
+     "node_2b patterns": 16640
+    },
+    "seconds": 70.8,
+    "settings": {
+     "recall_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, all readings, 0.5, support 2": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 86,
+      "exactly a slot": 118,
+      "longer than a slot": 535,
+      "no annotated slot": 2897,
+      "part of a slot": 180
+     },
+     "rule instances": 2830,
+     "rule instances of a known rule": 1784,
+     "sentences": 3873,
+     "sentences with a rule": 2827,
+     "slots": {
+      "constant in a rule, or dropped": 152,
+      "inside a longer VAR": 620,
+      "no rule for the sentence": 320,
+      "one VAR, exactly": 118,
+      "partly in a VAR": 178
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 81,
+     "ids per slot name": {
+      "city": 35,
+      "cuisine": 13,
+      "date": 9,
+      "restaurant_name": 7,
+      "time": 14,
+      "title": 10
+     },
+     "of those, ids holding one slot name only": 75
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 27,
+      "exactly a slot": 46,
+      "longer than a slot": 255,
+      "no annotated slot": 852,
+      "part of a slot": 54
+     },
+     "rule instances": 874,
+     "rule instances of a known rule": 614,
+     "sentences": 1291,
+     "sentences with a rule": 874,
+     "slots": {
+      "constant in a rule, or dropped": 53,
+      "inside a longer VAR": 310,
+      "no rule for the sentence": 101,
+      "one VAR, exactly": 46,
+      "partly in a VAR": 59
+     }
+    },
+    "nodes": {
+     "VAR ids": 1525,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 734,
+     "node_1b rules": 1046,
+     "node_1b rules seen again": 191,
+     "node_1b top frequencies": [
+      293,
+      160,
+      114,
+      106,
+      100
+     ],
+     "node_2b patterns": 19959
+    },
+    "seconds": 93.9,
+    "settings": {
+     "min_support": 2,
+     "recall_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, all readings, 0.6": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 61,
+      "exactly a slot": 110,
+      "longer than a slot": 314,
+      "no annotated slot": 3204,
+      "part of a slot": 193
+     },
+     "rule instances": 2544,
+     "rule instances of a known rule": 1387,
+     "sentences": 3873,
+     "sentences with a rule": 2544,
+     "slots": {
+      "constant in a rule, or dropped": 101,
+      "inside a longer VAR": 348,
+      "no rule for the sentence": 642,
+      "one VAR, exactly": 110,
+      "partly in a VAR": 187
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 86,
+     "ids per slot name": {
+      "city": 28,
+      "cuisine": 15,
+      "date": 10,
+      "restaurant_name": 6,
+      "time": 16,
+      "title": 13
+     },
+     "of those, ids holding one slot name only": 84
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 21,
+      "exactly a slot": 44,
+      "longer than a slot": 166,
+      "no annotated slot": 1081,
+      "part of a slot": 56
+     },
+     "rule instances": 862,
+     "rule instances of a known rule": 542,
+     "sentences": 1291,
+     "sentences with a rule": 862,
+     "slots": {
+      "constant in a rule, or dropped": 43,
+      "inside a longer VAR": 188,
+      "no rule for the sentence": 231,
+      "one VAR, exactly": 44,
+      "partly in a VAR": 63
+     }
+    },
+    "nodes": {
+     "VAR ids": 1835,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 760,
+     "node_1b rules": 1157,
+     "node_1b rules seen again": 215,
+     "node_1b top frequencies": [
+      148,
+      66,
+      64,
+      62,
+      57
+     ],
+     "node_2b patterns": 13488
+    },
+    "seconds": 68.7,
+    "settings": {
+     "recall_threshold": 0.6,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, all readings, 0.7": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 27,
+      "exactly a slot": 92,
+      "longer than a slot": 87,
+      "no annotated slot": 2407,
+      "part of a slot": 84
+     },
+     "rule instances": 1925,
+     "rule instances of a known rule": 919,
+     "sentences": 3873,
+     "sentences with a rule": 1925,
+     "slots": {
+      "constant in a rule, or dropped": 86,
+      "inside a longer VAR": 92,
+      "no rule for the sentence": 1027,
+      "one VAR, exactly": 92,
+      "partly in a VAR": 91
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 74,
+     "ids per slot name": {
+      "city": 30,
+      "cuisine": 18,
+      "date": 2,
+      "restaurant_name": 9,
+      "time": 5,
+      "title": 11
+     },
+     "of those, ids holding one slot name only": 73
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 16,
+      "exactly a slot": 47,
+      "longer than a slot": 42,
+      "no annotated slot": 908,
+      "part of a slot": 38
+     },
+     "rule instances": 693,
+     "rule instances of a known rule": 384,
+     "sentences": 1291,
+     "sentences with a rule": 693,
+     "slots": {
+      "constant in a rule, or dropped": 31,
+      "inside a longer VAR": 44,
+      "no rule for the sentence": 407,
+      "one VAR, exactly": 47,
+      "partly in a VAR": 40
+     }
+    },
+    "nodes": {
+     "VAR ids": 1285,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 843,
+     "node_1b rules": 1006,
+     "node_1b rules seen again": 231,
+     "node_1b top frequencies": [
+      48,
+      35,
+      31,
+      30,
+      26
+     ],
+     "node_2b patterns": 6438
+    },
+    "seconds": 37.2,
+    "settings": {
+     "recall_threshold": 0.7,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, all readings, 0.8": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 1,
+      "exactly a slot": 31,
+      "longer than a slot": 18,
+      "no annotated slot": 1200,
+      "part of a slot": 32
+     },
+     "rule instances": 1133,
+     "rule instances of a known rule": 500,
+     "sentences": 3873,
+     "sentences with a rule": 1133,
+     "slots": {
+      "constant in a rule, or dropped": 56,
+      "inside a longer VAR": 18,
+      "no rule for the sentence": 1251,
+      "one VAR, exactly": 31,
+      "partly in a VAR": 32
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 25,
+     "ids per slot name": {
+      "city": 12,
+      "cuisine": 8,
+      "date": 1,
+      "restaurant_name": 1,
+      "time": 1,
+      "title": 3
+     },
+     "of those, ids holding one slot name only": 24
+    },
+    "last third": {
+     "VARs": {
+      "exactly a slot": 11,
+      "longer than a slot": 7,
+      "no annotated slot": 488,
+      "part of a slot": 26
+     },
+     "rule instances": 433,
+     "rule instances of a known rule": 216,
+     "sentences": 1291,
+     "sentences with a rule": 433,
+     "slots": {
+      "constant in a rule, or dropped": 25,
+      "inside a longer VAR": 7,
+      "no rule for the sentence": 501,
+      "one VAR, exactly": 11,
+      "partly in a VAR": 25
+     }
+    },
+    "nodes": {
+     "VAR ids": 584,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 776,
+     "node_1b rules": 633,
+     "node_1b rules seen again": 141,
+     "node_1b top frequencies": [
+      37,
+      34,
+      32,
+      17,
+      14
+     ],
+     "node_2b patterns": 1952
+    },
+    "seconds": 17.5,
+    "settings": {
+     "recall_threshold": 0.8,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, nearest, 0.4": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 61,
+      "exactly a slot": 241,
+      "longer than a slot": 315,
+      "no annotated slot": 2191,
+      "part of a slot": 277
+     },
+     "rule instances": 2666,
+     "rule instances of a known rule": 556,
+     "sentences": 3873,
+     "sentences with a rule": 2666,
+     "slots": {
+      "constant in a rule, or dropped": 383,
+      "inside a longer VAR": 360,
+      "no rule for the sentence": 111,
+      "one VAR, exactly": 241,
+      "partly in a VAR": 293
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 197,
+     "ids per slot name": {
+      "city": 71,
+      "cuisine": 44,
+      "date": 17,
+      "restaurant_name": 27,
+      "time": 23,
+      "title": 23
+     },
+     "of those, ids holding one slot name only": 190
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 15,
+      "exactly a slot": 108,
+      "longer than a slot": 131,
+      "no annotated slot": 625,
+      "part of a slot": 104
+     },
+     "rule instances": 837,
+     "rule instances of a known rule": 204,
+     "sentences": 1291,
+     "sentences with a rule": 837,
+     "slots": {
+      "constant in a rule, or dropped": 167,
+      "inside a longer VAR": 158,
+      "no rule for the sentence": 26,
+      "one VAR, exactly": 108,
+      "partly in a VAR": 110
+     }
+    },
+    "nodes": {
+     "VAR ids": 2483,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1734,
+     "node_1b rules": 2110,
+     "node_1b rules seen again": 269,
+     "node_1b top frequencies": [
+      36,
+      25,
+      14,
+      14,
+      13
+     ],
+     "node_2b patterns": 25971
+    },
+    "seconds": 122.2,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.4,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, nearest, 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 46,
+      "exactly a slot": 222,
+      "longer than a slot": 248,
+      "no annotated slot": 1943,
+      "part of a slot": 256
+     },
+     "rule instances": 2454,
+     "rule instances of a known rule": 519,
+     "sentences": 3873,
+     "sentences with a rule": 2454,
+     "slots": {
+      "constant in a rule, or dropped": 356,
+      "inside a longer VAR": 284,
+      "no rule for the sentence": 263,
+      "one VAR, exactly": 222,
+      "partly in a VAR": 263
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 182,
+     "ids per slot name": {
+      "city": 66,
+      "cuisine": 39,
+      "date": 15,
+      "restaurant_name": 25,
+      "time": 22,
+      "title": 22
+     },
+     "of those, ids holding one slot name only": 176
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 13,
+      "exactly a slot": 101,
+      "longer than a slot": 109,
+      "no annotated slot": 578,
+      "part of a slot": 102
+     },
+     "rule instances": 798,
+     "rule instances of a known rule": 195,
+     "sentences": 1291,
+     "sentences with a rule": 798,
+     "slots": {
+      "constant in a rule, or dropped": 156,
+      "inside a longer VAR": 131,
+      "no rule for the sentence": 78,
+      "one VAR, exactly": 101,
+      "partly in a VAR": 103
+     }
+    },
+    "nodes": {
+     "VAR ids": 2162,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1654,
+     "node_1b rules": 1935,
+     "node_1b rules seen again": 251,
+     "node_1b top frequencies": [
+      32,
+      25,
+      14,
+      14,
+      13
+     ],
+     "node_2b patterns": 13528
+    },
+    "seconds": 80.7,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, nearest, 0.6": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 23,
+      "exactly a slot": 153,
+      "longer than a slot": 117,
+      "no annotated slot": 1456,
+      "part of a slot": 184
+     },
+     "rule instances": 1913,
+     "rule instances of a known rule": 403,
+     "sentences": 3873,
+     "sentences with a rule": 1913,
+     "slots": {
+      "constant in a rule, or dropped": 253,
+      "inside a longer VAR": 128,
+      "no rule for the sentence": 671,
+      "one VAR, exactly": 153,
+      "partly in a VAR": 183
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 126,
+     "ids per slot name": {
+      "city": 45,
+      "cuisine": 27,
+      "date": 11,
+      "restaurant_name": 18,
+      "time": 11,
+      "title": 18
+     },
+     "of those, ids holding one slot name only": 122
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 8,
+      "exactly a slot": 77,
+      "longer than a slot": 52,
+      "no annotated slot": 450,
+      "part of a slot": 80
+     },
+     "rule instances": 644,
+     "rule instances of a known rule": 161,
+     "sentences": 1291,
+     "sentences with a rule": 644,
+     "slots": {
+      "constant in a rule, or dropped": 117,
+      "inside a longer VAR": 57,
+      "no rule for the sentence": 240,
+      "one VAR, exactly": 77,
+      "partly in a VAR": 78
+     }
+    },
+    "nodes": {
+     "VAR ids": 1506,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1446,
+     "node_1b rules": 1510,
+     "node_1b rules seen again": 210,
+     "node_1b top frequencies": [
+      25,
+      12,
+      12,
+      10,
+      7
+     ],
+     "node_2b patterns": 6189
+    },
+    "seconds": 39.1,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.6,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, nearest, 0.7": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 11,
+      "exactly a slot": 82,
+      "longer than a slot": 38,
+      "no annotated slot": 907,
+      "part of a slot": 78
+     },
+     "rule instances": 1281,
+     "rule instances of a known rule": 301,
+     "sentences": 3873,
+     "sentences with a rule": 1281,
+     "slots": {
+      "constant in a rule, or dropped": 134,
+      "inside a longer VAR": 42,
+      "no rule for the sentence": 1049,
+      "one VAR, exactly": 82,
+      "partly in a VAR": 81
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 66,
+     "ids per slot name": {
+      "city": 22,
+      "cuisine": 19,
+      "date": 3,
+      "restaurant_name": 10,
+      "time": 2,
+      "title": 12
+     },
+     "of those, ids holding one slot name only": 64
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 6,
+      "exactly a slot": 40,
+      "longer than a slot": 16,
+      "no annotated slot": 292,
+      "part of a slot": 41
+     },
+     "rule instances": 439,
+     "rule instances of a known rule": 126,
+     "sentences": 1291,
+     "sentences with a rule": 439,
+     "slots": {
+      "constant in a rule, or dropped": 58,
+      "inside a longer VAR": 17,
+      "no rule for the sentence": 414,
+      "one VAR, exactly": 40,
+      "partly in a VAR": 40
+     }
+    },
+    "nodes": {
+     "VAR ids": 803,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1151,
+     "node_1b rules": 980,
+     "node_1b rules seen again": 161,
+     "node_1b top frequencies": [
+      25,
+      11,
+      10,
+      7,
+      7
+     ],
+     "node_2b patterns": 2582
+    },
+    "seconds": 20.0,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.7,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per position, 0.6": {
+    "all": {
+     "VARs": {
+      "exactly a slot": 138,
+      "no annotated slot": 5621,
+      "part of a slot": 590
+     },
+     "rule instances": 2580,
+     "rule instances of a known rule": 923,
+     "sentences": 3873,
+     "sentences with a rule": 2561,
+     "slots": {
+      "constant in a rule, or dropped": 214,
+      "no rule for the sentence": 703,
+      "one VAR, exactly": 138,
+      "partly in a VAR": 225,
+      "tiled by several VARs": 108
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 122,
+     "ids per slot name": {
+      "city": 53,
+      "cuisine": 48,
+      "date": 2,
+      "restaurant_name": 14,
+      "title": 6
+     },
+     "of those, ids holding one slot name only": 121
+    },
+    "last third": {
+     "VARs": {
+      "exactly a slot": 48,
+      "no annotated slot": 2299,
+      "part of a slot": 308
+     },
+     "rule instances": 929,
+     "rule instances of a known rule": 377,
+     "sentences": 1291,
+     "sentences with a rule": 919,
+     "slots": {
+      "constant in a rule, or dropped": 98,
+      "no rule for the sentence": 259,
+      "one VAR, exactly": 48,
+      "partly in a VAR": 91,
+      "tiled by several VARs": 73
+     }
+    },
+    "nodes": {
+     "VAR ids": 3796,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1092,
+     "node_1b rules": 1657,
+     "node_1b rules seen again": 282,
+     "node_1b top frequencies": [
+      46,
+      27,
+      24,
+      24,
+      21
+     ],
+     "node_2b patterns": 16657
+    },
+    "seconds": 84.6,
+    "settings": {
+     "recall_threshold": 0.6,
+     "slots": "position",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "name"
+    }
+   },
+   "sentences, per gap, all 0.6, rules read first 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 62,
+      "exactly a slot": 142,
+      "longer than a slot": 342,
+      "no annotated slot": 3368,
+      "part of a slot": 187
+     },
+     "rule instances": 2999,
+     "rule instances of a known rule": 2208,
+     "sentences": 3873,
+     "sentences with a rule": 2999,
+     "slots": {
+      "constant in a rule, or dropped": 81,
+      "inside a longer VAR": 388,
+      "no rule for the sentence": 584,
+      "one VAR, exactly": 142,
+      "partly in a VAR": 193
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 76,
+     "ids per slot name": {
+      "city": 26,
+      "cuisine": 16,
+      "date": 8,
+      "restaurant_name": 8,
+      "time": 18,
+      "title": 11
+     },
+     "of those, ids holding one slot name only": 69
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 19,
+      "exactly a slot": 68,
+      "longer than a slot": 160,
+      "no annotated slot": 1193,
+      "part of a slot": 62
+     },
+     "rule instances": 1075,
+     "rule instances of a known rule": 859,
+     "sentences": 1291,
+     "sentences with a rule": 1075,
+     "slots": {
+      "constant in a rule, or dropped": 34,
+      "inside a longer VAR": 190,
+      "no rule for the sentence": 206,
+      "one VAR, exactly": 68,
+      "partly in a VAR": 71
+     }
+    },
+    "nodes": {
+     "VAR ids": 1223,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 631,
+     "node_1b rules": 791,
+     "node_1b rules seen again": 329,
+     "node_1b top frequencies": [
+      188,
+      91,
+      77,
+      57,
+      53
+     ],
+     "node_2b patterns": 6813
+    },
+    "seconds": 21.1,
+    "settings": {
+     "recall_threshold": 0.6,
+     "rule_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, all 0.7, rules read first 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 37,
+      "exactly a slot": 74,
+      "longer than a slot": 174,
+      "no annotated slot": 2234,
+      "part of a slot": 77
+     },
+     "rule instances": 2181,
+     "rule instances of a known rule": 1594,
+     "sentences": 3873,
+     "sentences with a rule": 2181,
+     "slots": {
+      "constant in a rule, or dropped": 62,
+      "inside a longer VAR": 195,
+      "no rule for the sentence": 955,
+      "one VAR, exactly": 74,
+      "partly in a VAR": 102
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 47,
+     "ids per slot name": {
+      "city": 18,
+      "cuisine": 12,
+      "date": 2,
+      "restaurant_name": 9,
+      "time": 5,
+      "title": 4
+     },
+     "of those, ids holding one slot name only": 45
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 16,
+      "exactly a slot": 43,
+      "longer than a slot": 87,
+      "no annotated slot": 796,
+      "part of a slot": 28
+     },
+     "rule instances": 808,
+     "rule instances of a known rule": 647,
+     "sentences": 1291,
+     "sentences with a rule": 808,
+     "slots": {
+      "constant in a rule, or dropped": 22,
+      "inside a longer VAR": 98,
+      "no rule for the sentence": 366,
+      "one VAR, exactly": 43,
+      "partly in a VAR": 40
+     }
+    },
+    "nodes": {
+     "VAR ids": 661,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 626,
+     "node_1b rules": 587,
+     "node_1b rules seen again": 255,
+     "node_1b top frequencies": [
+      101,
+      73,
+      59,
+      54,
+      41
+     ],
+     "node_2b patterns": 3074
+    },
+    "seconds": 16.4,
+    "settings": {
+     "recall_threshold": 0.7,
+     "rule_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, nearest 0.5, inside": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 45,
+      "exactly a slot": 241,
+      "longer than a slot": 225,
+      "no annotated slot": 1983,
+      "part of a slot": 268
+     },
+     "rule instances": 2454,
+     "rule instances of a known rule": 519,
+     "sentences": 3873,
+     "sentences with a rule": 2454,
+     "slots": {
+      "constant in a rule, or dropped": 357,
+      "inside a longer VAR": 255,
+      "no rule for the sentence": 263,
+      "one VAR, exactly": 241,
+      "partly in a VAR": 272
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 198,
+     "ids per slot name": {
+      "city": 69,
+      "cuisine": 46,
+      "date": 16,
+      "restaurant_name": 30,
+      "time": 22,
+      "title": 22
+     },
+     "of those, ids holding one slot name only": 192
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 13,
+      "exactly a slot": 107,
+      "longer than a slot": 99,
+      "no annotated slot": 593,
+      "part of a slot": 108
+     },
+     "rule instances": 798,
+     "rule instances of a known rule": 195,
+     "sentences": 1291,
+     "sentences with a rule": 798,
+     "slots": {
+      "constant in a rule, or dropped": 157,
+      "inside a longer VAR": 119,
+      "no rule for the sentence": 78,
+      "one VAR, exactly": 107,
+      "partly in a VAR": 108
+     }
+    },
+    "nodes": {
+     "VAR ids": 2263,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1655,
+     "node_1b rules": 2006,
+     "node_1b rules seen again": 266,
+     "node_1b top frequencies": [
+      32,
+      25,
+      14,
+      14,
+      13
+     ],
+     "node_2b patterns": 13944
+    },
+    "seconds": 172.6,
+    "settings": {
+     "fold": "nearest",
+     "inside": true,
+     "recall_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, nearest 0.5, rules first 0.5, inside": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 41,
+      "exactly a slot": 300,
+      "longer than a slot": 238,
+      "no annotated slot": 3489,
+      "part of a slot": 336
+     },
+     "rule instances": 3374,
+     "rule instances of a known rule": 2169,
+     "sentences": 3873,
+     "sentences with a rule": 3374,
+     "slots": {
+      "constant in a rule, or dropped": 281,
+      "inside a longer VAR": 266,
+      "no rule for the sentence": 226,
+      "one VAR, exactly": 300,
+      "partly in a VAR": 312,
+      "tiled by several VARs": 3
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 211,
+     "ids per slot name": {
+      "city": 72,
+      "cuisine": 49,
+      "date": 19,
+      "restaurant_name": 32,
+      "time": 30,
+      "title": 21
+     },
+     "of those, ids holding one slot name only": 202
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 10,
+      "exactly a slot": 128,
+      "longer than a slot": 101,
+      "no annotated slot": 1192,
+      "part of a slot": 149
+     },
+     "rule instances": 1180,
+     "rule instances of a known rule": 828,
+     "sentences": 1291,
+     "sentences with a rule": 1180,
+     "slots": {
+      "constant in a rule, or dropped": 124,
+      "inside a longer VAR": 120,
+      "no rule for the sentence": 65,
+      "one VAR, exactly": 128,
+      "partly in a VAR": 129,
+      "tiled by several VARs": 3
+     }
+    },
+    "nodes": {
+     "VAR ids": 2317,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1139,
+     "node_1b rules": 1753,
+     "node_1b rules seen again": 541,
+     "node_1b top frequencies": [
+      164,
+      88,
+      66,
+      53,
+      47
+     ],
+     "node_2b patterns": 11591
+    },
+    "seconds": 190.0,
+    "settings": {
+     "fold": "nearest",
+     "inside": true,
+     "recall_threshold": 0.5,
+     "rule_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, nearest 0.5, rules read first 0.4": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 71,
+      "exactly a slot": 155,
+      "longer than a slot": 525,
+      "no annotated slot": 3200,
+      "part of a slot": 186
+     },
+     "rule instances": 3435,
+     "rule instances of a known rule": 2513,
+     "sentences": 3873,
+     "sentences with a rule": 3435,
+     "slots": {
+      "constant in a rule, or dropped": 196,
+      "inside a longer VAR": 602,
+      "no rule for the sentence": 207,
+      "one VAR, exactly": 155,
+      "partly in a VAR": 228
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 89,
+     "ids per slot name": {
+      "city": 30,
+      "cuisine": 17,
+      "date": 10,
+      "restaurant_name": 13,
+      "time": 21,
+      "title": 9
+     },
+     "of those, ids holding one slot name only": 83
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 22,
+      "exactly a slot": 73,
+      "longer than a slot": 222,
+      "no annotated slot": 1092,
+      "part of a slot": 65
+     },
+     "rule instances": 1202,
+     "rule instances of a known rule": 941,
+     "sentences": 1291,
+     "sentences with a rule": 1202,
+     "slots": {
+      "constant in a rule, or dropped": 89,
+      "inside a longer VAR": 265,
+      "no rule for the sentence": 57,
+      "one VAR, exactly": 73,
+      "partly in a VAR": 85
+     }
+    },
+    "nodes": {
+     "VAR ids": 1139,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 869,
+     "node_1b rules": 922,
+     "node_1b rules seen again": 332,
+     "node_1b top frequencies": [
+      189,
+      89,
+      84,
+      69,
+      59
+     ],
+     "node_2b patterns": 7097
+    },
+    "seconds": 26.2,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.5,
+     "rule_threshold": 0.4,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, nearest 0.5, rules read first 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 65,
+      "exactly a slot": 200,
+      "longer than a slot": 385,
+      "no annotated slot": 3066,
+      "part of a slot": 225
+     },
+     "rule instances": 3374,
+     "rule instances of a known rule": 2167,
+     "sentences": 3873,
+     "sentences with a rule": 3374,
+     "slots": {
+      "constant in a rule, or dropped": 267,
+      "inside a longer VAR": 440,
+      "no rule for the sentence": 226,
+      "one VAR, exactly": 200,
+      "partly in a VAR": 255
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 121,
+     "ids per slot name": {
+      "city": 44,
+      "cuisine": 22,
+      "date": 13,
+      "restaurant_name": 16,
+      "time": 27,
+      "title": 11
+     },
+     "of those, ids holding one slot name only": 113
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 18,
+      "exactly a slot": 93,
+      "longer than a slot": 171,
+      "no annotated slot": 1018,
+      "part of a slot": 84
+     },
+     "rule instances": 1180,
+     "rule instances of a known rule": 827,
+     "sentences": 1291,
+     "sentences with a rule": 1180,
+     "slots": {
+      "constant in a rule, or dropped": 115,
+      "inside a longer VAR": 204,
+      "no rule for the sentence": 65,
+      "one VAR, exactly": 93,
+      "partly in a VAR": 92
+     }
+    },
+    "nodes": {
+     "VAR ids": 1473,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1062,
+     "node_1b rules": 1207,
+     "node_1b rules seen again": 394,
+     "node_1b top frequencies": [
+      148,
+      88,
+      66,
+      53,
+      47
+     ],
+     "node_2b patterns": 8070
+    },
+    "seconds": 29.8,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.5,
+     "rule_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, nearest 0.5, rules read first 0.6": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 56,
+      "exactly a slot": 209,
+      "longer than a slot": 323,
+      "no annotated slot": 2708,
+      "part of a slot": 246
+     },
+     "rule instances": 3249,
+     "rule instances of a known rule": 1756,
+     "sentences": 3873,
+     "sentences with a rule": 3249,
+     "slots": {
+      "constant in a rule, or dropped": 316,
+      "inside a longer VAR": 366,
+      "no rule for the sentence": 232,
+      "one VAR, exactly": 209,
+      "partly in a VAR": 265
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 140,
+     "ids per slot name": {
+      "city": 51,
+      "cuisine": 30,
+      "date": 13,
+      "restaurant_name": 20,
+      "time": 21,
+      "title": 15
+     },
+     "of those, ids holding one slot name only": 131
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 17,
+      "exactly a slot": 98,
+      "longer than a slot": 144,
+      "no annotated slot": 868,
+      "part of a slot": 90
+     },
+     "rule instances": 1131,
+     "rule instances of a known rule": 683,
+     "sentences": 1291,
+     "sentences with a rule": 1131,
+     "slots": {
+      "constant in a rule, or dropped": 136,
+      "inside a longer VAR": 169,
+      "no rule for the sentence": 69,
+      "one VAR, exactly": 98,
+      "partly in a VAR": 97
+     }
+    },
+    "nodes": {
+     "VAR ids": 1788,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 1236,
+     "node_1b rules": 1493,
+     "node_1b rules seen again": 419,
+     "node_1b top frequencies": [
+      53,
+      41,
+      38,
+      35,
+      35
+     ],
+     "node_2b patterns": 9593
+    },
+    "seconds": 40.3,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.5,
+     "rule_threshold": 0.6,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, nearest 0.6, rules read first 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 40,
+      "exactly a slot": 130,
+      "longer than a slot": 255,
+      "no annotated slot": 2310,
+      "part of a slot": 155
+     },
+     "rule instances": 2712,
+     "rule instances of a known rule": 1767,
+     "sentences": 3873,
+     "sentences with a rule": 2712,
+     "slots": {
+      "constant in a rule, or dropped": 179,
+      "inside a longer VAR": 289,
+      "no rule for the sentence": 612,
+      "one VAR, exactly": 130,
+      "partly in a VAR": 178
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 88,
+     "ids per slot name": {
+      "city": 27,
+      "cuisine": 17,
+      "date": 9,
+      "restaurant_name": 13,
+      "time": 16,
+      "title": 12
+     },
+     "of those, ids holding one slot name only": 84
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 13,
+      "exactly a slot": 74,
+      "longer than a slot": 115,
+      "no annotated slot": 782,
+      "part of a slot": 60
+     },
+     "rule instances": 975,
+     "rule instances of a known rule": 707,
+     "sentences": 1291,
+     "sentences with a rule": 975,
+     "slots": {
+      "constant in a rule, or dropped": 75,
+      "inside a longer VAR": 133,
+      "no rule for the sentence": 220,
+      "one VAR, exactly": 74,
+      "partly in a VAR": 67
+     }
+    },
+    "nodes": {
+     "VAR ids": 999,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 947,
+     "node_1b rules": 945,
+     "node_1b rules seen again": 324,
+     "node_1b top frequencies": [
+      74,
+      72,
+      54,
+      53,
+      44
+     ],
+     "node_2b patterns": 4385
+    },
+    "seconds": 20.8,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.6,
+     "rule_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, nearest 0.7, rules read first 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 30,
+      "exactly a slot": 76,
+      "longer than a slot": 139,
+      "no annotated slot": 1677,
+      "part of a slot": 69
+     },
+     "rule instances": 2031,
+     "rule instances of a known rule": 1392,
+     "sentences": 3873,
+     "sentences with a rule": 2031,
+     "slots": {
+      "constant in a rule, or dropped": 89,
+      "inside a longer VAR": 155,
+      "no rule for the sentence": 973,
+      "one VAR, exactly": 76,
+      "partly in a VAR": 95
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 49,
+     "ids per slot name": {
+      "city": 13,
+      "cuisine": 12,
+      "date": 4,
+      "restaurant_name": 7,
+      "time": 4,
+      "title": 11
+     },
+     "of those, ids holding one slot name only": 48
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 14,
+      "exactly a slot": 49,
+      "longer than a slot": 63,
+      "no annotated slot": 624,
+      "part of a slot": 33
+     },
+     "rule instances": 772,
+     "rule instances of a known rule": 591,
+     "sentences": 1291,
+     "sentences with a rule": 772,
+     "slots": {
+      "constant in a rule, or dropped": 33,
+      "inside a longer VAR": 71,
+      "no rule for the sentence": 373,
+      "one VAR, exactly": 49,
+      "partly in a VAR": 43
+     }
+    },
+    "nodes": {
+     "VAR ids": 536,
+     "node_0 patterns": 2877,
+     "node_0 stored symbols": 25648,
+     "node_1a chunks": 764,
+     "node_1b rules": 639,
+     "node_1b rules seen again": 242,
+     "node_1b top frequencies": [
+      74,
+      68,
+      59,
+      54,
+      41
+     ],
+     "node_2b patterns": 2280
+    },
+    "seconds": 15.8,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.7,
+     "rule_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   }
+  }
+ },
+ "first 1200 sentences": {
+  "data": {
+   "median sentence length": 7,
+   "sentences": 1200,
+   "slot spans": 1393,
+   "slot spans cut by a sentence end": 5,
+   "slot spans in these sentences": 377,
+   "tokens": 9406,
+   "user turns": 2967
+  },
+  "runs": {
+   "sentences, one VAR per gap, all readings, 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 29,
+      "exactly a slot": 30,
+      "longer than a slot": 141,
+      "no annotated slot": 976,
+      "part of a slot": 59
+     },
+     "rule instances": 844,
+     "rule instances of a known rule": 491,
+     "sentences": 1200,
+     "sentences with a rule": 844,
+     "slots": {
+      "constant in a rule, or dropped": 24,
+      "inside a longer VAR": 155,
+      "no rule for the sentence": 115,
+      "one VAR, exactly": 30,
+      "partly in a VAR": 53
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 22,
+     "ids per slot name": {
+      "city": 12,
+      "cuisine": 4,
+      "date": 3,
+      "time": 4
+     },
+     "of those, ids holding one slot name only": 21
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 14,
+      "exactly a slot": 7,
+      "longer than a slot": 69,
+      "no annotated slot": 322,
+      "part of a slot": 21
+     },
+     "rule instances": 287,
+     "rule instances of a known rule": 199,
+     "sentences": 400,
+     "sentences with a rule": 287,
+     "slots": {
+      "constant in a rule, or dropped": 7,
+      "inside a longer VAR": 73,
+      "no rule for the sentence": 20,
+      "one VAR, exactly": 7,
+      "partly in a VAR": 21
+     }
+    },
+    "nodes": {
+     "VAR ids": 604,
+     "node_0 patterns": 992,
+     "node_0 stored symbols": 8442,
+     "node_1a chunks": 212,
+     "node_1b rules": 353,
+     "node_1b rules seen again": 75,
+     "node_1b top frequencies": [
+      130,
+      79,
+      25,
+      25,
+      20
+     ],
+     "node_2b patterns": 4729
+    },
+    "seconds": 8.4,
+    "settings": {
+     "recall_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per gap, nearest, 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 16,
+      "exactly a slot": 48,
+      "longer than a slot": 68,
+      "no annotated slot": 672,
+      "part of a slot": 65
+     },
+     "rule instances": 785,
+     "rule instances of a known rule": 142,
+     "sentences": 1200,
+     "sentences with a rule": 785,
+     "slots": {
+      "constant in a rule, or dropped": 69,
+      "inside a longer VAR": 79,
+      "no rule for the sentence": 114,
+      "one VAR, exactly": 48,
+      "partly in a VAR": 67
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 45,
+     "ids per slot name": {
+      "city": 23,
+      "cuisine": 11,
+      "date": 5,
+      "time": 7
+     },
+     "of those, ids holding one slot name only": 44
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 8,
+      "exactly a slot": 15,
+      "longer than a slot": 31,
+      "no annotated slot": 237,
+      "part of a slot": 24
+     },
+     "rule instances": 279,
+     "rule instances of a known rule": 53,
+     "sentences": 400,
+     "sentences with a rule": 279,
+     "slots": {
+      "constant in a rule, or dropped": 38,
+      "inside a longer VAR": 32,
+      "no rule for the sentence": 15,
+      "one VAR, exactly": 15,
+      "partly in a VAR": 28
+     }
+    },
+    "nodes": {
+     "VAR ids": 720,
+     "node_0 patterns": 992,
+     "node_0 stored symbols": 8442,
+     "node_1a chunks": 583,
+     "node_1b rules": 643,
+     "node_1b rules seen again": 75,
+     "node_1b top frequencies": [
+      10,
+      10,
+      7,
+      7,
+      6
+     ],
+     "node_2b patterns": 3128
+    },
+    "seconds": 7.1,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, one VAR per position, 0.6": {
+    "all": {
+     "VARs": {
+      "exactly a slot": 22,
+      "no annotated slot": 1159,
+      "part of a slot": 75
+     },
+     "rule instances": 660,
+     "rule instances of a known rule": 185,
+     "sentences": 1200,
+     "sentences with a rule": 657,
+     "slots": {
+      "constant in a rule, or dropped": 42,
+      "no rule for the sentence": 267,
+      "one VAR, exactly": 22,
+      "partly in a VAR": 40,
+      "tiled by several VARs": 6
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 22,
+     "ids per slot name": {
+      "city": 12,
+      "cuisine": 10
+     },
+     "of those, ids holding one slot name only": 22
+    },
+    "last third": {
+     "VARs": {
+      "exactly a slot": 13,
+      "no annotated slot": 559,
+      "part of a slot": 35
+     },
+     "rule instances": 282,
+     "rule instances of a known rule": 99,
+     "sentences": 400,
+     "sentences with a rule": 280,
+     "slots": {
+      "constant in a rule, or dropped": 24,
+      "no rule for the sentence": 69,
+      "one VAR, exactly": 13,
+      "partly in a VAR": 20,
+      "tiled by several VARs": 2
+     }
+    },
+    "nodes": {
+     "VAR ids": 831,
+     "node_0 patterns": 992,
+     "node_0 stored symbols": 8442,
+     "node_1a chunks": 422,
+     "node_1b rules": 475,
+     "node_1b rules seen again": 74,
+     "node_1b top frequencies": [
+      11,
+      11,
+      11,
+      11,
+      9
+     ],
+     "node_2b patterns": 3078
+    },
+    "seconds": 4.3,
+    "settings": {
+     "recall_threshold": 0.6,
+     "slots": "position",
+     "span": "sequence",
+     "unexplained": "break",
+     "values": "name"
+    }
+   },
+   "sentences, per gap, nearest 0.5, rules first 0.5, inside": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 16,
+      "exactly a slot": 66,
+      "longer than a slot": 65,
+      "no annotated slot": 1019,
+      "part of a slot": 68
+     },
+     "rule instances": 958,
+     "rule instances of a known rule": 523,
+     "sentences": 1200,
+     "sentences with a rule": 958,
+     "slots": {
+      "constant in a rule, or dropped": 58,
+      "inside a longer VAR": 74,
+      "no rule for the sentence": 111,
+      "one VAR, exactly": 66,
+      "partly in a VAR": 68
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 58,
+     "ids per slot name": {
+      "city": 27,
+      "cuisine": 19,
+      "date": 5,
+      "time": 8
+     },
+     "of those, ids holding one slot name only": 57
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 9,
+      "exactly a slot": 26,
+      "longer than a slot": 26,
+      "no annotated slot": 388,
+      "part of a slot": 30
+     },
+     "rule instances": 365,
+     "rule instances of a known rule": 231,
+     "sentences": 400,
+     "sentences with a rule": 365,
+     "slots": {
+      "constant in a rule, or dropped": 29,
+      "inside a longer VAR": 27,
+      "no rule for the sentence": 15,
+      "one VAR, exactly": 26,
+      "partly in a VAR": 31
+     }
+    },
+    "nodes": {
+     "VAR ids": 775,
+     "node_0 patterns": 992,
+     "node_0 stored symbols": 8442,
+     "node_1a chunks": 429,
+     "node_1b rules": 598,
+     "node_1b rules seen again": 172,
+     "node_1b top frequencies": [
+      34,
+      28,
+      25,
+      24,
+      22
+     ],
+     "node_2b patterns": 3091
+    },
+    "seconds": 13.9,
+    "settings": {
+     "fold": "nearest",
+     "inside": true,
+     "recall_threshold": 0.5,
+     "rule_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "sentences, per gap, nearest 0.5, rules read first 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 18,
+      "exactly a slot": 46,
+      "longer than a slot": 87,
+      "no annotated slot": 920,
+      "part of a slot": 57
+     },
+     "rule instances": 958,
+     "rule instances of a known rule": 523,
+     "sentences": 1200,
+     "sentences with a rule": 958,
+     "slots": {
+      "constant in a rule, or dropped": 56,
+      "inside a longer VAR": 101,
+      "no rule for the sentence": 111,
+      "one VAR, exactly": 46,
+      "partly in a VAR": 63
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 37,
+     "ids per slot name": {
+      "city": 20,
+      "cuisine": 7,
+      "date": 4,
+      "time": 7
+     },
+     "of those, ids holding one slot name only": 36
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 8,
+      "exactly a slot": 14,
+      "longer than a slot": 41,
+      "no annotated slot": 346,
+      "part of a slot": 22
+     },
+     "rule instances": 365,
+     "rule instances of a known rule": 231,
+     "sentences": 400,
+     "sentences with a rule": 365,
+     "slots": {
+      "constant in a rule, or dropped": 29,
+      "inside a longer VAR": 44,
+      "no rule for the sentence": 15,
+      "one VAR, exactly": 14,
+      "partly in a VAR": 26
+     }
+    },
+    "nodes": {
+     "VAR ids": 539,
+     "node_0 patterns": 992,
+     "node_0 stored symbols": 8442,
+     "node_1a chunks": 410,
+     "node_1b rules": 435,
+     "node_1b rules seen again": 132,
+     "node_1b top frequencies": [
+      34,
+      28,
+      25,
+      24,
+      22
+     ],
+     "node_2b patterns": 2268
+    },
+    "seconds": 4.3,
+    "settings": {
+     "fold": "nearest",
+     "recall_threshold": 0.5,
+     "rule_threshold": 0.5,
+     "slots": "gap",
+     "span": "sequence",
+     "topdown": true,
+     "unexplained": "break",
+     "values": "sequence"
+    }
+   },
+   "windows of 7, one VAR per gap, 0.5": {
+    "all": {
+     "VARs": {
+      "across a slot edge": 67,
+      "exactly a slot": 48,
+      "longer than a slot": 113,
+      "no annotated slot": 1234,
+      "part of a slot": 68
+     },
+     "rule instances": 928,
+     "rule instances of a known rule": 336,
+     "sentences": 1200,
+     "sentences with a rule": 881,
+     "slots": {
+      "constant in a rule, or dropped": 74,
+      "inside a longer VAR": 114,
+      "no rule for the sentence": 52,
+      "one VAR, exactly": 48,
+      "partly in a VAR": 89
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 38,
+     "ids per slot name": {
+      "city": 13,
+      "cuisine": 11,
+      "date": 6,
+      "time": 9
+     },
+     "of those, ids holding one slot name only": 37
+    },
+    "last third": {
+     "VARs": {
+      "across a slot edge": 29,
+      "exactly a slot": 15,
+      "longer than a slot": 53,
+      "no annotated slot": 389,
+      "part of a slot": 19
+     },
+     "rule instances": 290,
+     "rule instances of a known rule": 143,
+     "sentences": 400,
+     "sentences with a rule": 275,
+     "slots": {
+      "constant in a rule, or dropped": 15,
+      "inside a longer VAR": 53,
+      "no rule for the sentence": 16,
+      "one VAR, exactly": 15,
+      "partly in a VAR": 29
+     }
+    },
+    "nodes": {
+     "VAR ids": 1081,
+     "node_0 patterns": 8970,
+     "node_0 stored symbols": 62790,
+     "node_1a chunks": 2278,
+     "node_1b rules": 592,
+     "node_1b rules seen again": 81,
+     "node_1b top frequencies": [
+      109,
+      34,
+      11,
+      10,
+      9
+     ],
+     "node_2b patterns": 5191
+    },
+    "seconds": 152.2,
+    "settings": {
+     "recall_threshold": 0.5,
+     "slots": "gap",
+     "span": "stream",
+     "unexplained": "break",
+     "window": 7
+    }
+   },
+   "windows of 7, one VAR per position, 0.5 (round 1)": {
+    "all": {
+     "VARs": {
+      "exactly a slot": 67,
+      "no annotated slot": 3003,
+      "part of a slot": 313
+     },
+     "rule instances": 1029,
+     "rule instances of a known rule": 168,
+     "sentences": 1200,
+     "sentences with a rule": 971,
+     "slots": {
+      "constant in a rule, or dropped": 110,
+      "no rule for the sentence": 53,
+      "one VAR, exactly": 67,
+      "partly in a VAR": 118,
+      "tiled by several VARs": 29
+     }
+    },
+    "ids": {
+     "VAR ids that hold exactly a slot": 65,
+     "ids per slot name": {
+      "city": 32,
+      "cuisine": 33
+     },
+     "of those, ids holding one slot name only": 65
+    },
+    "last third": {
+     "VARs": {
+      "exactly a slot": 30,
+      "no annotated slot": 1395,
+      "part of a slot": 147
+     },
+     "rule instances": 369,
+     "rule instances of a known rule": 76,
+     "sentences": 400,
+     "sentences with a rule": 351,
+     "slots": {
+      "constant in a rule, or dropped": 32,
+      "no rule for the sentence": 3,
+      "one VAR, exactly": 30,
+      "partly in a VAR": 46,
+      "tiled by several VARs": 17
+     }
+    },
+    "nodes": {
+     "VAR ids": 2775,
+     "node_0 patterns": 8970,
+     "node_0 stored symbols": 62790,
+     "node_1a chunks": 479,
+     "node_1b rules": 861,
+     "node_1b rules seen again": 80,
+     "node_1b top frequencies": [
+      20,
+      14,
+      8,
+      7,
+      7
+     ],
+     "node_2b patterns": 10736
+    },
+    "seconds": 158.4,
+    "settings": {
+     "recall_threshold": 0.5,
+     "slots": "position",
+     "span": "stream",
+     "unexplained": "break",
+     "window": 7
+    }
+   }
+  }
+ },
+ "kato": "main at f32bac0a49cc80dd2d1af78326e5e6140059d1ec (v7.1.0-34-gf32bac0), its matcher and Pattern classes in-process",
+ "pins": {
+  "commit": "e852981ae34990f4358979625854259302feaa78",
+  "dataset": "Schema-Guided Dialogue (Rastogi et al. 2020), CC BY-SA 4.0",
+  "files": {
+   "train/dialogues_001.json": {
+    "bytes": 3128575,
+    "sha256": "5ce28a6e656bc88c1da29c983d243d5a81eb37de92698da3864d1cf02894ca24"
+   },
+   "train/dialogues_002.json": {
+    "bytes": 2233395,
+    "sha256": "56a06f9762593b27f5b34225de4ce37da5e83c9c5747e56bca2899f147d88b3e"
+   },
+   "train/dialogues_003.json": {
+    "bytes": 1804298,
+    "sha256": "aae3d8d141c8c36bc5268ca573044b4e82d4534947c169d951a1f229b9852029"
+   }
+  },
+  "source": "https://github.com/google-research-datasets/dstc8-schema-guided-dialogue"
+ },
+ "what": "hpcrd experiments/sgd_probe.py, in-process, 24 Nov 2026. Numbers only; the dataset files are not in this repository."
+}

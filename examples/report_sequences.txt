@@ -1,0 +1,554 @@
+
+====================================================================================================
+EXAMPLE 7  Whole sequences at node_0 instead of rolling windows
+====================================================================================================
+node_0 learns each sentence as one pattern. The module asks for predictions on the whole sentence
+before node_0 learns it, so nothing echoes. Two whole sentences line up end to end, so what stands
+before the first match or after the last one is a gap like any other.
+
+--- 7.1  text 1, sentence by sentence
+settings: span=sequence markers=['.'] recall_threshold=0.5 slots=position values=name naming=rule unexplained=break
+sequence  the cat sat on the mat .
+      ensemble  0 predictions.  node_0 then learns the sequence as PTRN|a3719f
+      labels    the/N:unexplained  cat/N:unexplained  sat/N:unexplained  on/N:unexplained  the/N:unexplained  mat/N:unexplained  ./N:unexplained
+      nothing to learn above node_0
+sequence  the dog sat on the mat .
+      ensemble  1 prediction.  node_0 then learns the sequence as PTRN|1a3d0c
+        a3719f  the cat sat on the mat .                     x1 | =  ~cat  =  =  =  =  =
+      labels    the/C  dog/V  sat/C  on/C  the/C  mat/C  ./C
+      node_1a   PTRN|76a6fb = [sat on the mat .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [the] [dog] [PTRN|76a6fb(sat on the mat .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|16f905 = [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   frequency 1
+      node_2b   [VAR|1] [dog]   (new value; earlier: cat x1)
+      node_2b   [VAR|1] [cat]   (value a learned pattern has there)
+sequence  the bird sat on the mat .
+      ensemble  2 predictions.  node_0 then learns the sequence as PTRN|103075
+        1a3d0c  the dog sat on the mat .                     x1 | =  ~dog  =  =  =  =  =
+        a3719f  the cat sat on the mat .                     x1 | =  ~cat  =  =  =  =  =
+      labels    the/C  bird/V  sat/C  on/C  the/C  mat/C  ./C
+      node_1a   PTRN|76a6fb = [sat on the mat .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [the] [bird] [PTRN|76a6fb(sat on the mat .)]   -> RECOGNISED
+      node_1b   PTRN|16f905 = [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]   frequency 2
+      node_2b   [VAR|1] [bird]   (new value; earlier: cat x1, dog x1)
+
+  node_0: 3 patterns, 3 learns
+    PTRN|103075  f=1  [the] [bird] [sat] [on] [the] [mat] [.]
+    PTRN|1a3d0c  f=1  [the] [dog] [sat] [on] [the] [mat] [.]
+    PTRN|a3719f  f=1  [the] [cat] [sat] [on] [the] [mat] [.]
+  node_1a: 1 patterns, 2 learns
+    PTRN|76a6fb  f=2  [sat] [on] [the] [mat] [.]
+  node_1b: 1 patterns, 2 learns
+    PTRN|16f905  f=2  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+  node_2a: 1 patterns, 1 learns
+    PTRN|5df69e  f=1  [PTRN|16f905] [PTRN|16f905]
+  node_2b: 3 patterns, 3 learns
+    PTRN|5dce77  f=1  [VAR|1] [dog]
+    PTRN|9651e3  f=1  [VAR|1] [bird]
+    PTRN|db6f9e  f=1  [VAR|1] [cat]
+
+--- 7.2  the same texts three ways (window 7, recall_threshold 0.5, one VAR per position)
+
+text 1 (3 sentences, 21 tokens)
+                            per window      stitched         whole
+node_0 patterns                     15            15             3
+node_0 symbols stored              105           105            21
+node_0 predictions asked            21            21             3
+module's own records                15            15             0
+node_1a chunks                       9             1             1
+longest chunk                        6             5             5
+node_1b rules                        5             1             1
+rules seen again                     1             1             1
+VARs                                 5             1             1
+node_2b patterns                    13             3             3
+
+text 2 (3 sentences, 33 tokens)
+                            per window      stitched         whole
+node_0 patterns                     21            21             3
+node_0 symbols stored              147           147            33
+node_0 predictions asked            33            33             3
+module's own records                21            21             0
+node_1a chunks                      14             2             2
+longest chunk                        7             8             8
+node_1b rules                        7             1             1
+rules seen again                     2             1             1
+VARs                                 7             1             1
+node_2b patterns                    18             3             3
+
+text 4 (8 sentences, 60 tokens)
+                            per window      stitched         whole
+node_0 patterns                     43            43             6
+node_0 symbols stored              301           301            44
+node_0 predictions asked            60            60             8
+module's own records                43            43             0
+node_1a chunks                      26             5             4
+longest chunk                        6             5             5
+node_1b rules                       29             3             3
+rules seen again                     7             2             2
+VARs                                34             5             5
+node_2b patterns                    82            16            16
+
+text 5 (9 sentences, 72 tokens)
+                            per window      stitched         whole
+node_0 patterns                     63            63             9
+node_0 symbols stored              441           441            72
+node_0 predictions asked            72            72             9
+module's own records                63            63             0
+node_1a chunks                      38             5             6
+longest chunk                        7             6             6
+node_1b rules                       25             4             3
+rules seen again                     7             3             3
+VARs                                19             4             3
+node_2b patterns                    51            11             9
+
+--- 7.3  two instances closer together than a window (section 9.2 of the first write-up)
+text: the cat says meow . the dog says woof . the cat says meow . the dog says woof .
+rolling windows of 7 found no rule here: the earlier sentence was still an echo.
+settings: span=sequence markers=['.'] recall_threshold=0.5 slots=position values=name naming=rule unexplained=break
+sequence  the dog says woof .
+      ensemble  1 prediction.  node_0 then learns the sequence as PTRN|e2f8de
+      labels    the/C  dog/V  says/C  woof/V  ./C
+      probe     [the] [dog] [says] [woof] [.]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|0c8fce = [the] [VAR|1] [says] [VAR|2] [.]   frequency 1
+      node_2b   [VAR|1] [dog]   (new value; earlier: cat x1)
+      node_2b   [VAR|2] [woof]   (new value; earlier: meow x1)
+      node_2b   [VAR|1] [cat]   (value a learned pattern has there)
+      node_2b   [VAR|2] [meow]   (value a learned pattern has there)
+      node_2b   [VAR|1] [dog] [VAR|2] [woof]   (values together)
+      node_2b   [VAR|1] [cat] [VAR|2] [meow]   (values together in a learned pattern)
+sequence  the dog says woof .
+      ensemble  2 predictions.  node_0 then learns the sequence as PTRN|e2f8de
+      labels    the/C  dog/V  says/C  woof/V  ./C
+      probe     [the] [dog] [says] [woof] [.]   -> RECOGNISED
+      node_1b   PTRN|0c8fce = [the] [VAR|1] [says] [VAR|2] [.]   frequency 3
+      node_2b   [VAR|1] [dog]   (known value; earlier: cat x2)
+      node_2b   [VAR|2] [woof]   (known value; earlier: meow x2)
+      node_2b   [VAR|1] [dog] [VAR|2] [woof]   (values together)
+
+  node_0: 2 patterns, 4 learns
+    PTRN|b489b5  f=2  [the] [cat] [says] [meow] [.]
+    PTRN|e2f8de  f=2  [the] [dog] [says] [woof] [.]
+  node_1a: 0 patterns, 0 learns
+  node_1b: 1 patterns, 3 learns
+    PTRN|0c8fce  f=3  [the] [VAR|1] [says] [VAR|2] [.]
+  node_2a: 1 patterns, 2 learns
+    PTRN|c52155  f=2  [PTRN|0c8fce] [PTRN|0c8fce]
+  node_2b: 6 patterns, 12 learns
+    PTRN|151a6b  f=2  [VAR|1] [dog] [VAR|2] [woof]
+    PTRN|5dce77  f=2  [VAR|1] [dog]
+    PTRN|9a5f7b  f=2  [VAR|2] [meow]
+    PTRN|9a8188  f=2  [VAR|1] [cat] [VAR|2] [meow]
+    PTRN|9ebc1b  f=2  [VAR|2] [woof]
+    PTRN|db6f9e  f=2  [VAR|1] [cat]
+
+--- 7.4  a chunk longer than any window: text 2
+  node_1a: 2 patterns, 4 learns
+    PTRN|1c5c3e  f=2  [sat] [on] [the] [mat] [by] [the] [door] [.]
+    PTRN|9c5d3c  f=2  [the] [old]
+  node_1b: 1 patterns, 2 learns
+    PTRN|d81498  f=2  [PTRN|9c5d3c(the old)] [VAR|1] [PTRN|1c5c3e(sat on the mat by the door .)]
+  node_2a: 1 patterns, 1 learns
+    PTRN|6dd409  f=1  [PTRN|d81498] [PTRN|d81498]
+  node_2b: 3 patterns, 3 learns
+    PTRN|5dce77  f=1  [VAR|1] [dog]
+    PTRN|9651e3  f=1  [VAR|1] [bird]
+    PTRN|db6f9e  f=1  [VAR|1] [cat]
+
+====================================================================================================
+EXAMPLE 8  One VAR per gap, its value kept whole as a sequence of tokens
+====================================================================================================
+slots='gap': a run of positions that vary is one VAR, whatever its length.
+values='sequence': node_2b holds the value as [VAR, token, token, ...], so KATO can match inside it.
+
+--- 8.1  values of one, two and three tokens in the same slot
+settings: span=sequence markers=['.'] recall_threshold=0.5 slots=gap values=sequence naming=rule unexplained=break
+sequence  show flights from dallas to denver .
+      ensemble  1 prediction.  node_0 then learns the sequence as PTRN|cabc40
+        4d00c5  show flights from boston to denver .         x1 | =  =  =  ~boston  =  =  =
+      labels    show/C  flights/C  from/C  dallas/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [PTRN|ac5190(show flights from)] [dallas] [PTRN|c97f0b(to denver .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 1
+      node_2b   [VAR|1] [dallas]   (new value; earlier: boston x1)
+      node_2b   [VAR|1] [boston]   (value a learned pattern has there)
+sequence  show flights from new york to denver .
+      ensemble  2 predictions.  node_0 then learns the sequence as PTRN|089fd0
+        4d00c5  show flights from boston to denver .         x1 | =  =  =  u  u  =  =  =
+        cabc40  show flights from dallas to denver .         x1 | =  =  =  u  u  =  =  =
+      labels    show/C  flights/C  from/C  new/V  york/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [new] [york] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 2
+      node_2b   [VAR|1] [new york]   (new value; earlier: boston x1, dallas x1)
+sequence  show flights from new york to denver .
+      ensemble  4 predictions.  node_0 then learns the sequence as PTRN|089fd0
+        089fd0  show flights from new york to denver .       x1 | =  =  =  =  =  =  =  =
+        4d00c5  show flights from boston to denver .         x1 | =  =  =  u  u  =  =  =
+        75b9df  show flights from los angeles to denver .    x1 | =  =  =  ~los  ~angeles  =  =  =
+        cabc40  show flights from dallas to denver .         x1 | =  =  =  u  u  =  =  =
+      labels    show/C  flights/C  from/C  new/V  york/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 4   (contiguous match, seen whole in 4 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 4   (contiguous match, seen whole in 4 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [new] [york] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 4
+      node_2b   [VAR|1] [new york]   (known value; earlier: boston x1, dallas x1, los angeles x1)
+sequence  show flights from new york city to denver .
+      ensemble  4 predictions.  node_0 then learns the sequence as PTRN|f64010
+        089fd0  show flights from new york to denver .       x2 | =  =  =  =  =  +  =  =  =
+        4d00c5  show flights from boston to denver .         x1 | =  =  =  u  u  u  =  =  =
+        75b9df  show flights from los angeles to denver .    x1 | =  =  =  u  u  u  =  =  =
+        cabc40  show flights from dallas to denver .         x1 | =  =  =  u  u  u  =  =  =
+      labels    show/C  flights/C  from/C  new/V  york/V  city/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 5   (contiguous match, seen whole in 5 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 5   (contiguous match, seen whole in 5 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [new] [york] [city] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 5
+      node_2b   [VAR|1] [new york city]   (new value; earlier: boston x1, dallas x1, los angeles x1, new york x2)
+
+  node_1a: 2 patterns, 12 learns
+    PTRN|ac5190  f=6  [show] [flights] [from]
+    PTRN|c97f0b  f=6  [to] [denver] [.]
+  node_1b: 1 patterns, 6 learns
+    PTRN|27641b  f=6  [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]
+  node_2a: 1 patterns, 5 learns
+    PTRN|27e8d9  f=5  [PTRN|27641b] [PTRN|27641b]
+  node_2b: 6 patterns, 7 learns
+    PTRN|2c97b9  f=2  [VAR|1] [new] [york]
+    PTRN|04857c  f=1  [VAR|1] [los] [angeles]
+    PTRN|c132e1  f=1  [VAR|1] [dallas]
+    PTRN|c796e9  f=1  [VAR|1] [new] [jersey]
+    PTRN|d6656e  f=1  [VAR|1] [boston]
+    PTRN|f88dfc  f=1  [VAR|1] [new] [york] [city]
+
+--- 8.2  node_1b's own prediction binds a value of any length to the VAR
+  observe at node_1b: [PTRN|ac5190(show flights from)] [new] [york] [city] [PTRN|c97f0b(to denver .)]
+      matches  ["PTRN|ac5190", "PTRN|c97f0b"]
+      missing  [[], ["VAR|1"], []]
+      extras   [[], ["new"], ["york"], ["city"], []]
+      one gap: 3 extras against 1 missing -> [VAR|1] <- [new york city]
+
+--- 8.3  the sketch text of the brief: one VAR per position against one VAR per gap (whole sentences)
+  one VAR per position: 1 rule(s), 5 VARs, 18 node_2b patterns
+      f=3  [VAR|1] [PTRN|6454f3(book a table for)] [VAR|2] [VAR|3] [VAR|4] [PTRN|8a0c5a(at seven)] [VAR|5] [.]
+  one VAR per gap: 1 rule(s), 3 VARs, 10 node_2b patterns
+      f=3  [VAR|1] [PTRN|6454f3(book a table for)] [VAR|2] [PTRN|8a0c5a(at seven)] [VAR|3] [.]
+  With one VAR per gap, [two quiet adults] is one value. Nothing in the text says it is three.
+
+--- 8.4  the flights text of Example 3 (a value of another length), per position against per gap
+  one VAR per position: 2 rule(s), 3 VARs
+      f=2  [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]
+      f=1  [PTRN|ac5190(show flights from)] [VAR|2] [VAR|3] [PTRN|c97f0b(to denver .)]
+  one VAR per gap: 1 rule(s), 1 VARs
+      f=4  [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]
+
+====================================================================================================
+EXAMPLE 9  Start long, refine inside: what a VAR's earlier values say about a new value
+====================================================================================================
+inside=True. Before a value is learned, node_2b is asked for predictions on [VAR, token, ...].
+Its ensemble lines the value up with the VAR's earlier values. The rule that holds the VAR is not touched.
+
+--- 9.1  units, and values that share a part
+settings: span=sequence markers=['.'] recall_threshold=0.5 slots=gap values=sequence naming=rule unexplained=break inside=True
+sequence  show flights from new york to denver .
+      ensemble  2 predictions.  node_0 then learns the sequence as PTRN|089fd0
+      labels    show/C  flights/C  from/C  new/V  york/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [new] [york] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 2
+      node_2b   [VAR|1] [new york]   (new value; earlier: boston x1, dallas x1)
+      inside    [VAR|1] <- [new york]: seen whole 0 times before; 2 other values share no token with it
+sequence  show flights from new york to denver .
+      ensemble  4 predictions.  node_0 then learns the sequence as PTRN|089fd0
+      labels    show/C  flights/C  from/C  new/V  york/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 4   (contiguous match, seen whole in 4 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 4   (contiguous match, seen whole in 4 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [new] [york] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 4
+      node_2b   [VAR|1] [new york]   (known value; earlier: boston x1, dallas x1, los angeles x1)
+      inside    [VAR|1] <- [new york]: seen whole 1 time before; 3 other values share no token with it
+sequence  show flights from new york city to denver .
+      ensemble  4 predictions.  node_0 then learns the sequence as PTRN|f64010
+      labels    show/C  flights/C  from/C  new/V  york/V  city/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 5   (contiguous match, seen whole in 5 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 5   (contiguous match, seen whole in 5 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [new] [york] [city] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 5
+      node_2b   [VAR|1] [new york city]   (new value; earlier: boston x1, dallas x1, los angeles x1, new york x2)
+      inside    [VAR|1] <- [new york city]: seen whole 0 times before; partly like [new york] x2; 3 other values share no token with it
+        parts   [new york]/const  [city]/slot
+        node_1a PTRN|86a351 = [new york]   frequency 1
+        node_1b PTRN|8b6907 = [PTRN|86a351(new york)] [VAR|2]   frequency 1   (new inner rule)
+        node_2b [VAR|1] [PTRN|8b6907]   (what the VAR is made of)
+        node_2b [VAR|2] [city]   (new value)
+sequence  show flights from new jersey to denver .
+      ensemble  5 predictions.  node_0 then learns the sequence as PTRN|071daa
+      labels    show/C  flights/C  from/C  new/V  jersey/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 6   (contiguous match, seen whole in 6 earlier places)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 6   (contiguous match, seen whole in 6 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [new] [jersey] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 6
+      node_2b   [VAR|1] [new jersey]   (new value; earlier: boston x1, dallas x1, los angeles x1, new york x2, new york city x1)
+      inside    [VAR|1] <- [new jersey]: seen whole 0 times before; partly like [new york] x2, [new york city] x1; 3 other values share no token with it
+        parts   [new]/const  [jersey]/slot
+        node_1b PTRN|beb930 = [new] [VAR|3]   frequency 1   (new inner rule)
+        node_2b [VAR|1] [PTRN|beb930]   (what the VAR is made of)
+        node_2b [VAR|3] [jersey]   (new value; earlier: york x2, york city x1)
+
+  node_1a: 3 patterns, 13 learns
+    PTRN|ac5190  f=6  [show] [flights] [from]
+    PTRN|c97f0b  f=6  [to] [denver] [.]
+    PTRN|86a351  f=1  [new] [york]
+  node_1b: 3 patterns, 8 learns
+    PTRN|27641b  f=6  [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]
+    PTRN|8b6907  f=1  [PTRN|86a351(new york)] [VAR|2]
+    PTRN|beb930  f=1  [new] [VAR|3]
+  node_2b: 12 patterns, 13 learns
+    PTRN|2c97b9  f=2  [VAR|1] [new] [york]
+    PTRN|04857c  f=1  [VAR|1] [los] [angeles]
+    PTRN|15eb25  f=1  [VAR|2] [city]
+    PTRN|baa426  f=1  [VAR|3] [york] [city]
+    PTRN|c132e1  f=1  [VAR|1] [dallas]
+    PTRN|c31071  f=1  [VAR|1] [PTRN|beb930]
+    PTRN|c796e9  f=1  [VAR|1] [new] [jersey]
+    PTRN|d6656e  f=1  [VAR|1] [boston]
+    PTRN|d8bad9  f=1  [VAR|3] [york]
+    PTRN|ec6df8  f=1  [VAR|1] [PTRN|8b6907]
+    PTRN|f88dfc  f=1  [VAR|1] [new] [york] [city]
+    PTRN|f89b52  f=1  [VAR|3] [jersey]
+
+--- 9.2  parts that recombine: one VAR becomes two inside, the rule stays one
+text: book a table for two quiet adults at seven . book a table for four hungry diners at seven . book a table for two hungry diners at seven . book a table for four quiet adults at seven .
+settings: span=sequence markers=['.'] recall_threshold=0.5 slots=gap values=sequence naming=rule unexplained=break inside=True
+sequence  book a table for four hungry diners at seven .
+      ensemble  1 prediction.  node_0 then learns the sequence as PTRN|a660cf
+      labels    book/C  a/C  table/C  for/C  four/V  hungry/V  diners/V  at/C  seven/C  ./C
+      node_1a   PTRN|6454f3 = [book a table for]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      node_1a   PTRN|6bb8f0 = [at seven .]   frequency 1   (contiguous match, seen whole in 1 earlier place)
+      probe     [PTRN|6454f3(book a table for)] [four] [hungry] [diners] [PTRN|6bb8f0(at seven .)]   -> no learned rule fits: new VAR ids
+      node_1b   PTRN|ab1799 = [PTRN|6454f3(book a table for)] [VAR|1] [PTRN|6bb8f0(at seven .)]   frequency 1
+      node_2b   [VAR|1] [four hungry diners]   (new value; earlier: two quiet adults x1)
+      node_2b   [VAR|1] [two] [quiet] [adults]   (value a learned pattern has there)
+sequence  book a table for two hungry diners at seven .
+      ensemble  2 predictions.  node_0 then learns the sequence as PTRN|c5a29a
+      labels    book/C  a/C  table/C  for/C  two/V  hungry/V  diners/V  at/C  seven/C  ./C
+      node_1a   PTRN|6454f3 = [book a table for]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      node_1a   PTRN|6bb8f0 = [at seven .]   frequency 2   (contiguous match, seen whole in 2 earlier places)
+      probe     [PTRN|6454f3(book a table for)] [two] [hungry] [diners] [PTRN|6bb8f0(at seven .)]   -> RECOGNISED
+      node_1b   PTRN|ab1799 = [PTRN|6454f3(book a table for)] [VAR|1] [PTRN|6bb8f0(at seven .)]   frequency 2
+      node_2b   [VAR|1] [two hungry diners]   (new value; earlier: four hungry diners x1, two quiet adults x1)
+      inside    [VAR|1] <- [two hungry diners]: seen whole 0 times before; partly like [four hungry diners] x1, [two quiet adults] x1
+        parts   [two]/slot  [hungry diners]/slot
+        node_1b PTRN|d9bcdc = [VAR|2] [VAR|3]   frequency 1   (new inner rule)
+        node_2b [VAR|1] [PTRN|d9bcdc]   (what the VAR is made of)
+        node_2b [VAR|2] [two]   (new value; earlier: four x1)
+        node_2b [VAR|3] [hungry diners]   (new value; earlier: quiet adults x1)
+sequence  book a table for four quiet adults at seven .
+      ensemble  3 predictions.  node_0 then learns the sequence as PTRN|aa1340
+      labels    book/C  a/C  table/C  for/C  four/V  quiet/V  adults/V  at/C  seven/C  ./C
+      node_1a   PTRN|6454f3 = [book a table for]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      node_1a   PTRN|6bb8f0 = [at seven .]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      probe     [PTRN|6454f3(book a table for)] [four] [quiet] [adults] [PTRN|6bb8f0(at seven .)]   -> RECOGNISED
+      node_1b   PTRN|ab1799 = [PTRN|6454f3(book a table for)] [VAR|1] [PTRN|6bb8f0(at seven .)]   frequency 3
+      node_2b   [VAR|1] [four quiet adults]   (new value; earlier: four hungry diners x1, two hungry diners x1, two quiet adults x1)
+      inside    [VAR|1] <- [four quiet adults]: seen whole 0 times before; partly like [four hungry diners] x1, [two quiet adults] x1; 1 other value shares no token with it
+        parts   [four]/slot  [quiet adults]/slot
+        node_1b PTRN|d9bcdc = [VAR|2] [VAR|3]   frequency 2   (known inner rule)
+        node_2b [VAR|1] [PTRN|d9bcdc]   (what the VAR is made of)
+        node_2b [VAR|2] [four]   (known value; earlier: two x1)
+        node_2b [VAR|3] [quiet adults]   (known value; earlier: hungry diners x1)
+          inside    [VAR|3] <- [quiet adults]: seen whole 1 time before; 1 other value shares no token with it
+
+  node_1b: 2 patterns, 5 learns
+    PTRN|ab1799  f=3  [PTRN|6454f3(book a table for)] [VAR|1] [PTRN|6bb8f0(at seven .)]
+    PTRN|d9bcdc  f=2  [VAR|2] [VAR|3]
+  node_2b: 9 patterns, 12 learns
+    PTRN|057c5c  f=2  [VAR|3] [quiet] [adults]
+    PTRN|bb8d30  f=2  [VAR|1] [PTRN|d9bcdc]
+    PTRN|e48391  f=2  [VAR|2] [four]
+    PTRN|2a90f0  f=1  [VAR|1] [four] [hungry] [diners]
+    PTRN|96dcfa  f=1  [VAR|1] [two] [quiet] [adults]
+    PTRN|a634c5  f=1  [VAR|1] [two] [hungry] [diners]
+    PTRN|bac0dc  f=1  [VAR|1] [four] [quiet] [adults]
+    PTRN|e369ad  f=1  [VAR|3] [hungry] [diners]
+    PTRN|e5808b  f=1  [VAR|2] [two]
+  seen whole: ['four hungry diners', 'four quiet adults', 'two hungry diners', 'two quiet adults']
+
+--- 9.3  parts that never recombine stay one value: the sketch text
+settings: span=sequence markers=['.'] recall_threshold=0.5 slots=gap values=sequence naming=rule unexplained=break inside=True
+sequence  kindly book a table for two quiet adults at seven today .
+      ensemble  3 predictions.  node_0 then learns the sequence as PTRN|8a19e2
+      labels    kindly/V  book/C  a/C  table/C  for/C  two/V  quiet/V  adults/V  at/C  seven/C  today/V  ./C
+      node_1a   PTRN|6454f3 = [book a table for]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      node_1a   PTRN|8a0c5a = [at seven]   frequency 3   (contiguous match, seen whole in 2 earlier places)
+      probe     [kindly] [PTRN|6454f3(book a table for)] [two] [quiet] [adults] [PTRN|8a0c5a(at seven)] [today] [.]   -> RECOGNISED
+      node_1b   PTRN|b69e0f = [VAR|1] [PTRN|6454f3(book a table for)] [VAR|2] [PTRN|8a0c5a(at seven)] [VAR|3] [.]   frequency 3
+      node_2b   [VAR|1] [kindly]   (known value; earlier: please x2)
+      node_2b   [VAR|2] [two quiet adults]   (known value; earlier: four tired guests x1, six hungry diners x1)
+      node_2b   [VAR|3] [today]   (known value; earlier: tonight x2)
+      node_2b   [VAR|1] [kindly] [VAR|2] [two] [quiet] [adults] [VAR|3] [today]   (values together)
+      inside    [VAR|2] <- [two quiet adults]: seen whole 1 time before; 2 other values share no token with it
+  inner rules: 0
+
+====================================================================================================
+EXAMPLE 10  A learned rule reads a new sequence (top-down), before node_0 is asked
+====================================================================================================
+topdown=True. node_1t holds each rule with its chunks spelled out. A rule fits a sequence when every
+constant is matched, in order, and each stretch that is left stands against exactly one VAR.
+text: show flights from boston to denver . show flights from dallas to denver . show flights from san francisco to denver . play yesterday . play imagine . play the long and winding road . show me flights from boston to denver .
+settings: span=sequence markers=['.'] recall_threshold=0.5 slots=gap values=sequence naming=rule unexplained=break topdown=True rule_threshold=0.3
+sequence  show flights from san francisco to denver .
+      node_1t   117f58  show flights from VAR|1 to denver .  x1 | =  =  =  u  u  =  =  =
+      a learned rule reads the sequence: every constant matched, each gap against one VAR.  node_0 then learns the sequence as PTRN|df81a8
+      labels    show/C  flights/C  from/C  san/V  francisco/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 2   (a constant of the rule that read the sequence)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 2   (a constant of the rule that read the sequence)
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 2
+      node_2b   [VAR|1] [san francisco]   (new value)
+sequence  play the long and winding road .
+      node_1t   d3e564  play VAR|2 .  x1 | =  u  u  u  u  u  =
+      a learned rule reads the sequence: every constant matched, each gap against one VAR.  node_0 then learns the sequence as PTRN|c31a76
+      labels    play/C  the/V  long/V  and/V  winding/V  road/V  ./C
+      node_1b   PTRN|d3e564 = [play] [VAR|2] [.]   frequency 2
+      node_2b   [VAR|2] [the long and winding road]   (new value)
+sequence  show me flights from boston to denver .
+      ensemble  3 predictions.  node_0 then learns the sequence as PTRN|2f7bc2
+        4d00c5  show flights from boston to denver .         x1 | =  +  =  =  =  =  =  =
+        cabc40  show flights from dallas to denver .         x1 | =  +  =  =  ~dallas  =  =  =
+        df81a8  show flights from san francisco to denver .  x1 | =  +  =  =  u  =  =  =
+      labels    show/C  me/N:inserted  flights/C  from/C  boston/V  to/C  denver/C  ./C
+      node_1a   PTRN|ac5190 = [show flights from]   frequency 3   (joined again after the noise between its parts was dropped)
+      node_1a   PTRN|c97f0b = [to denver .]   frequency 3   (contiguous match, seen whole in 3 earlier places)
+      probe     [PTRN|ac5190(show flights from)] [boston] [PTRN|c97f0b(to denver .)]   -> RECOGNISED
+      node_1b   PTRN|27641b = [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]   frequency 3
+      node_2b   [VAR|1] [boston]   (known value; earlier: dallas x1, san francisco x1)
+
+  node_1a: 2 patterns, 6 learns
+    PTRN|ac5190  f=3  [show] [flights] [from]
+    PTRN|c97f0b  f=3  [to] [denver] [.]
+  node_1b: 2 patterns, 5 learns
+    PTRN|27641b  f=3  [PTRN|ac5190(show flights from)] [VAR|1] [PTRN|c97f0b(to denver .)]
+    PTRN|d3e564  f=2  [play] [VAR|2] [.]
+  node_2a: 4 patterns, 4 learns
+    PTRN|27e8d9  f=1  [PTRN|27641b] [PTRN|27641b]
+    PTRN|2ea930  f=1  [PTRN|d3e564] [PTRN|27641b]
+    PTRN|859935  f=1  [PTRN|d3e564] [PTRN|d3e564]
+    PTRN|f96cf9  f=1  [PTRN|27641b] [PTRN|d3e564]
+  node_2b: 6 patterns, 7 learns
+    PTRN|d6656e  f=2  [VAR|1] [boston]
+    PTRN|251fad  f=1  [VAR|1] [san] [francisco]
+    PTRN|636262  f=1  [VAR|2] [the] [long] [and] [winding] [road]
+    PTRN|677503  f=1  [VAR|2] [yesterday]
+    PTRN|c132e1  f=1  [VAR|1] [dallas]
+    PTRN|cdcfcb  f=1  [VAR|2] [imagine]
+  node_1t: 2 patterns, 5 learns
+    PTRN|117f58  f=3  [show] [flights] [from] [VAR|1] [to] [denver] [.]
+    PTRN|d3e564  f=2  [play] [VAR|2] [.]
+
+  why node_0 alone cannot bind the five-token value at recall_threshold 0.5:
+      [play the long and winding road .] against [play imagine .]: 2*2/(7+3) = 0.40, not recalled
+      against the rule [play VAR|2 .] in node_1t:               2*2/(7+3) = 0.40, recalled at rule_threshold 0.3
+      the rule needs no earlier sentence of the same length; the sentence needs one that is close.
+
+====================================================================================================
+EXAMPLE 11  recall_threshold with whole sentences, and which readings decide
+====================================================================================================
+With one symbol per event KATO's similarity is 2 * matches / (pattern length + observed length).
+For two 7-token sentences: one token differs 0.857, two differ 0.714, three differ 0.571.
+fold='all': every recalled sentence decides what is constant. fold='nearest': only the most similar
+sentences that differ decide (exact repeats with them); the others still fill gaps with alternatives.
+
+--- text 4: rules / rules seen again / VARs
+  recall_threshold            0.1         0.3         0.5         0.7         0.9
+  fold=all              3 / 2 / 5   4 / 2 / 5   3 / 2 / 5   3 / 2 / 5   0 / 0 / 0
+  fold=nearest          5 / 1 / 7   5 / 1 / 7   4 / 1 / 6   4 / 1 / 6   0 / 0 / 0
+  rules at fold=all, recall_threshold=0.1:
+      f=4  [VAR|4] [the] [VAR|5] [.]
+      f=2  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+  rules at fold=all, recall_threshold=0.7:
+      f=3  [PTRN|3dc3ab(when the)] [VAR|4] [PTRN|f73d8d(is happy it)] [VAR|5] [.]
+      f=2  [the] [VAR|2] [PTRN|4e0120(sat on the)] [VAR|3] [.]
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+  rules at fold=nearest, recall_threshold=0.1:
+      f=3  [PTRN|3dc3ab(when the)] [VAR|6] [PTRN|f73d8d(is happy it)] [VAR|7] [.]
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=1  [PTRN|a4fb47(the cat sat on the)] [VAR|2] [.]
+      f=1  [PTRN|4894cb(the cat)] [VAR|5] [.]
+      f=1  [the] [VAR|3] [PTRN|4e0120(sat on the)] [VAR|4] [.]
+
+--- text 5: rules / rules seen again / VARs
+  recall_threshold            0.1         0.3         0.5         0.7         0.9
+  fold=all              5 / 1 / 7   4 / 2 / 6   5 / 3 / 8   3 / 3 / 3   0 / 0 / 0
+  fold=nearest          5 / 3 / 6   5 / 3 / 6   5 / 3 / 6   3 / 3 / 3   0 / 0 / 0
+  rules at fold=all, recall_threshold=0.1:
+      f=4  [the] [VAR|6] [.]
+      f=1  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=1  [PTRN|24d6a8(we saw the)] [VAR|4] [the] [VAR|5] [.]
+      f=1  [PTRN|24d6a8(we saw the)] [VAR|7] [.]
+      f=1  [the] [VAR|2] [the] [VAR|3] [.]
+  rules at fold=all, recall_threshold=0.7:
+      f=2  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=2  [the] [VAR|3] [PTRN|1661b6(sat by a warm fire .)]
+      f=2  [PTRN|24d6a8(we saw the)] [VAR|2] [PTRN|14fd2b(near the old barn .)]
+  rules at fold=nearest, recall_threshold=0.1:
+      f=2  [the] [VAR|1] [PTRN|76a6fb(sat on the mat .)]
+      f=2  [PTRN|24d6a8(we saw the)] [VAR|4] [PTRN|14fd2b(near the old barn .)]
+      f=2  [the] [VAR|6] [PTRN|1661b6(sat by a warm fire .)]
+      f=1  [PTRN|4894cb(the cat)] [VAR|2] [the] [VAR|3] [.]
+      f=1  [PTRN|9cf67b(the cat sat)] [VAR|5] [.]
+
+====================================================================================================
+EXAMPLE 12  node_2b: three ways to hold a VAR's values
+====================================================================================================
+P  one pattern per VAR and value, a value of several tokens by its node_1a name   (the first write-up)
+S  one pattern per VAR and value, the value as its own tokens                       [VAR|1] [new] [york]
+K  one pattern per combination: the values seen together in one ensemble, sorted    [VAR|1] [a1] [a2] [a3]
+
+--- 12.1  the cities text (7 sentences, 6 instances of one rule)
+  P: 6 patterns, 12 symbols stored, 7 learns, highest frequency 2
+  S: 6 patterns, 17 symbols stored, 7 learns, highest frequency 2
+  K: 5 patterns, 25 symbols stored, 6 learns, highest frequency 2
+  S: 6 patterns, 7 learns
+    PTRN|2c97b9  f=2  [VAR|1] [new] [york]
+    PTRN|04857c  f=1  [VAR|1] [los] [angeles]
+    PTRN|c132e1  f=1  [VAR|1] [dallas]
+    PTRN|c796e9  f=1  [VAR|1] [new] [jersey]
+    PTRN|d6656e  f=1  [VAR|1] [boston]
+    PTRN|f88dfc  f=1  [VAR|1] [new] [york] [city]
+  K: 5 patterns, 6 learns
+    PTRN|d8737e  f=2  [VAR|1] [PTRN|80d389(los angeles)] [PTRN|86a351(new york)] [boston] [dallas]
+    PTRN|629c1b  f=1  [VAR|1] [boston] [dallas]
+    PTRN|93190c  f=1  [VAR|1] [PTRN|86a351(new york)] [boston] [dallas]
+    PTRN|a45fbd  f=1  [VAR|1] [PTRN|80d389(los angeles)] [PTRN|82dc34(new york city)] [PTRN|86a351(new york)] [PTRN|ae84ba(new jersey)] [boston] [dallas]
+    PTRN|bd743c  f=1  [VAR|1] [PTRN|80d389(los angeles)] [PTRN|82dc34(new york city)] [PTRN|86a351(new york)] [boston] [dallas]
+
+--- 12.2  three questions, one KATO call each where the layout allows it
+  is [new york] a value of VAR|1?
+      P  frequency of [VAR|1] [PTRN|86a351] = 2   (by name; the chunk's name is the hash of its tokens)
+      S  frequency of [VAR|1] [new] [york]  = 2   (by name)
+      K  no pattern has that name; observe [PTRN|86a351] returns 4 combinations that hold it
+  which values are like [new jersey]?   observe [VAR|1] [new] [jersey]
+      S  c796e9  VAR|1 new jersey           x1 | =  =  =
+      S  2c97b9  VAR|1 new york             x2 | =  =  ~york
+      S  f88dfc  VAR|1 new york city        x1 | =  =  u
+      P  a name is opaque to matching: only the VAR symbol matches, for every value alike
+      K  the same: a combination is a list of names
+  how often did each value stand in the slot?
+      S  new york x2, new york city x1, new jersey x1, los angeles x1, dallas x1, boston x1
+      K  a combination of 2 x1, a combination of 3 x1, a combination of 4 x2, a combination of 5 x1, a combination of 6 x1   (frequency counts combinations, not values)
+
+--- 12.3  the same six instances arriving in another order (the VAR held fixed)
+  S: 5 patterns one way, 5 the other, 5 the same
+  K: 5 patterns one way, 5 the other, 1 the same
+  (the VAR is held fixed here. Which VAR ids and rules a text gives still depends on the order it arrives in.)
+
+--- 12.4  growth: one more instance of a rule
+  S and P add at most one pattern (a new value) or raise one frequency (a known value).
+  K adds one pattern per new combination, and a combination holds every value seen so far in the slot:
+      2 values  f=1
+      3 values  f=1
+      4 values  f=2
+      5 values  f=1
+      6 values  f=1

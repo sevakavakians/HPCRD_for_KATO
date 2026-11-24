@@ -1,8 +1,15 @@
-"""Scratch: run a text through the modeler and print what every node ends up holding."""
+"""Any text, any settings, from the command line. Prints what every node ends up holding.
+
+    ./run.sh examples/explore.py E4 span=sequence markers=. slots=gap values=sequence recall_threshold=0.5 inside=1
+    ./run.sh examples/explore.py "the cat sat . the dog sat ." span=sequence markers=.
+
+The first argument is a key of TEXTS or the text itself. Settings are name=value (hpcrd.modeler.Settings).
+"""
+import dataclasses
 import sys
 
 from hpcrd.modeler import Modeler, Settings
-from hpcrd.show import dump_node, print_result, print_step
+from hpcrd.show import dump_node, print_result, print_sequence, print_step
 
 TEXTS = {
     'A': ("the cat sat on the mat . the dog sat on the mat . the cat sat on the rug . "
@@ -37,6 +44,12 @@ TEXTS = {
 def run(text, verbose=True, **kw):
     s = Settings(**kw)
     m = Modeler(s)
+
+    def stretch(res):
+        a, b = res['stretch']
+        print(f"stretch {a}..{b - 1}: {' '.join(m.tokens[a:b])}")
+        print_result(res, m, m.tokens[a:b])
+
     for token in text.split():
         step = m.feed(token)
         if not verbose:
@@ -44,15 +57,16 @@ def run(text, verbose=True, **kw):
         if s.span == 'window':
             if step['parts']:
                 print_step(step, m, readings=verbose == 2)
+        elif s.span == 'sequence':
+            print_sequence(step, m, readings=verbose == 2)
         else:
             for res in step['stretches']:
-                a, b = res['stretch']
-                print(f"stretch {a}..{b - 1}: {' '.join(m.tokens[a:b])}")
-                print_result(res, m, m.tokens[a:b])
+                stretch(res)
     for res in m.finish():
-        a, b = res['stretch']
-        print(f"stretch {a}..{b - 1}: {' '.join(m.tokens[a:b])}")
-        print_result(res, m, m.tokens[a:b])
+        if s.span == 'sequence':
+            print_sequence(m.trace[-1], m, readings=verbose == 2)
+        else:
+            stretch(res)
     print()
     dump_node(m.node0, 'node_0', limit=0)
     print('  VARs:', m.var_count)
@@ -60,19 +74,23 @@ def run(text, verbose=True, **kw):
     dump_node(m.node1b, 'node_1b', m.node1a)
     dump_node(m.node2a, 'node_2a')
     dump_node(m.node2b, 'node_2b', m.node1a)
+    if m.node1t is not None:
+        dump_node(m.node1t, 'node_1t')
     return m
 
 
 if __name__ == '__main__':
-    args = dict(a.split('=') for a in sys.argv[2:])
-    for key in ('window', 'min_support', 'node2a_window'):
-        if key in args:
-            args[key] = int(args[key])
-    if 'recall_threshold' in args:
-        args['recall_threshold'] = float(args['recall_threshold'])
-    if 'edge_vars' in args:
-        args['edge_vars'] = args['edge_vars'] == 'True'
-    if 'markers' in args:
-        args['markers'] = tuple(args['markers'].split(','))
+    args = dict(a.split('=', 1) for a in sys.argv[2:])
     verbose = int(args.pop('verbose', 1))
-    run(TEXTS[sys.argv[1]], verbose=verbose, **args)
+    kinds = {f.name: f.type for f in dataclasses.fields(Settings)}
+    for key, value in args.items():
+        kind = kinds[key]
+        if kind in (bool, 'bool'):
+            args[key] = value in ('1', 'True', 'true')
+        elif kind in (int, 'int'):
+            args[key] = int(value)
+        elif kind in (float, 'float'):
+            args[key] = float(value)
+        elif kind in (tuple, 'tuple'):
+            args[key] = tuple(value.split(','))
+    run(TEXTS.get(sys.argv[1], sys.argv[1]), verbose=verbose, **args)

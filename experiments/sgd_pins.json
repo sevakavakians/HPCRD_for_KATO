@@ -1,0 +1,10 @@
+{
+  "dataset": "Schema-Guided Dialogue (Rastogi et al. 2020), CC BY-SA 4.0",
+  "source": "https://github.com/google-research-datasets/dstc8-schema-guided-dialogue",
+  "commit": "e852981ae34990f4358979625854259302feaa78",
+  "files": {
+    "train/dialogues_001.json": {"sha256": "5ce28a6e656bc88c1da29c983d243d5a81eb37de92698da3864d1cf02894ca24", "bytes": 3128575},
+    "train/dialogues_002.json": {"sha256": "56a06f9762593b27f5b34225de4ce37da5e83c9c5747e56bca2899f147d88b3e", "bytes": 2233395},
+    "train/dialogues_003.json": {"sha256": "aae3d8d141c8c36bc5268ca573044b4e82d4534947c169d951a1f229b9852029", "bytes": 1804298}
+  }
+}
