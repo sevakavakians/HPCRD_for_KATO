@@ -15,7 +15,7 @@ repository. Run with -I: the script reads downloaded files.
 Per-system settings (tau, Drain's threshold and depth, the preprocessing expressions) are the ones in
 logparser's own benchmark scripts at the pinned commit. PUBLISHED is Table IV of the benchmark paper.
 
-Six parsers:
+Eight parsers:
   reference   the benchmark's Spell, re-written here from logparser/Spell/Spell.py (Apache 2.0): a
               prefix tree, then a set-containment loop, then the longest common subsequence. It is
               here to check this harness against the published numbers.
@@ -26,6 +26,9 @@ Six parsers:
               because KATO does not learn a pattern of one symbol.
   on KATO     the same loop on KATO's matcher (hpcrd/templates.py), in-process.
   Drain       the drain3 package with the benchmark's threshold and depth, as a second check.
+  rules       Drain as three rules on the loop Spell uses, without Drain's tree (DrainRules below):
+              the same number of tokens, the same leading tokens, and the same token at enough positions.
+  rules on KATO   the same three rules on KATO's matcher (hpcrd/templates.py, PositionReader), in-process.
 """
 import argparse
 import csv
@@ -249,7 +252,47 @@ class ReferenceSpell:
         return [' '.join(cluster.template) for cluster in member]     # one event per final template text
 
 
-# -- the four runs -----------------------------------------------------------------------------
+# -- Drain as three rules on the same loop, without its tree -------------------------------------
+class DrainRules:
+    """Drain (He, Zhu, Zheng and Lyu 2017, https://doi.org/10.1109/ICWS.2017.13) keeps one template
+    per message type and updates it as Spell does. What differs is which type a line may join:
+
+        1. a type whose lines have the line's number of tokens;
+        2. whose template starts with the line's first `lead` tokens (a token that holds a digit counts
+           as a placeholder, and a placeholder in the template goes with any token);
+        3. and, of those, the one whose template holds the line's own token at the most positions, when
+           that is at least `threshold` of the positions (ties: more placeholders, then the older type).
+
+    Drain finds the types of rules 1 and 2 with a tree of fixed depth; `lead` is that depth less 3.
+    Here every template is looked at. Two things the tree does are not here: it caps the children of a
+    node, and a line whose leading token has a branch of its own is compared with the templates on
+    that branch only, where rule 2 also lets it join a template that starts with a placeholder."""
+
+    def __init__(self, threshold, lead):
+        self.threshold, self.lead, self.templates = threshold, lead, []
+
+    @staticmethod
+    def key(token):
+        return STAR if token == STAR or any(c.isdigit() for c in token) else token
+
+    def add(self, tokens):
+        best, where = None, None
+        for k, template in enumerate(self.templates):
+            if len(template) != len(tokens):
+                continue
+            if not all(self.key(a) in (STAR, self.key(b)) for a, b in zip(template[:self.lead], tokens[:self.lead])):
+                continue
+            key = (sum(1 for a, b in zip(template, tokens) if a != STAR and a == b), sum(1 for a in template if a == STAR), -k)
+            if best is None or key > best:
+                best, where = key, k
+        if where is None or (best[0] / len(tokens) if tokens else 1.0) < self.threshold:
+            self.templates.append(list(tokens))
+            return len(self.templates) - 1
+        self.templates[where] = [a if a == b else STAR for a, b in zip(self.templates[where], tokens)]
+        return where
+
+
+# -- the runs ----------------------------------------------------------------------------------
 def run_reference(messages, system):
     return ReferenceSpell(SETTINGS[system][0]).parse([spell_tokens(m) for m in messages])
 
@@ -304,8 +347,30 @@ def run_drain(messages, system):
     return [templates[k] for k in member]
 
 
+def run_rules(messages, system):
+    _tau, threshold, depth, _expressions = SETTINGS[system]
+    parser, member = DrainRules(threshold, depth - 3), []
+    for message in messages:
+        member.append(parser.add(message.strip().split()))
+    return [' '.join(parser.templates[k]) for k in member]
+
+
+def run_rules_on_kato(messages, system):
+    from hpcrd.templates import PositionReader
+    _tau, threshold, depth, _expressions = SETTINGS[system]
+    reader, member = PositionReader(threshold, depth - 3, parameter=STAR), []
+    for message in messages:
+        tokens = message.strip().split()
+        name, _joined, _gaps = reader.read(tokens)
+        member.append(reader.kind if name else ('one symbol', tuple(tokens)))     # KATO does not learn one symbol
+    run_rules_on_kato.last = reader
+    reader.check()
+    return [' '.join(reader.template(reader.now(kind))) if isinstance(kind, int) else ' '.join(kind[1]) for kind in member]
+
+
 RUNS = [('reference', run_reference), ('plain', run_plain), ('paper', run_paper), ('lone', run_lone),
-        ('on KATO', run_on_kato), ('Drain', run_drain)]
+        ('on KATO', run_on_kato), ('Drain', run_drain), ('rules', run_rules), ('rules on KATO', run_rules_on_kato)]
+DRAINS = ('Drain', 'rules', 'rules on KATO')
 
 
 def main():
@@ -313,7 +378,8 @@ def main():
     parser.add_argument('--data', required=True, help='a directory outside the repository')
     parser.add_argument('--fetch', action='store_true')
     parser.add_argument('--only', nargs='*', help='system names')
-    parser.add_argument('--skip', nargs='*', default=[], help='runs to leave out: reference, plain, paper, lone, "on KATO", Drain')
+    parser.add_argument('--skip', nargs='*', default=[],
+                        help='runs to leave out: reference, plain, paper, lone, "on KATO", Drain, rules, "rules on KATO"')
     parser.add_argument('--save')
     args = parser.parse_args()
     data = pathlib.Path(args.data).resolve()
@@ -322,8 +388,9 @@ def main():
     if args.fetch:
         fetch(data)
     runs = [(name, function) for name, function in RUNS if name not in args.skip]
-    print(f"{'system':12s} {'events':>6s} | {'Spell':>6s} " + ' '.join(f"{name:>9s}" for name, _ in runs if name != 'Drain')
-          + f" | {'Drain':>6s} {'drain3':>7s} | templates on KATO (live / stored), seconds")
+    print(f"{'system':12s} {'events':>6s} | {'Spell':>6s} " + ' '.join(f"{name:>9s}" for name, _ in runs if name not in DRAINS)
+          + f" | {'Drain':>6s} " + ' '.join(f"{'drain3' if name == 'Drain' else name:>13s}" for name, _ in runs if name in DRAINS)
+          + " | templates on KATO (live / stored), seconds")
     saved, totals = {}, Counter()
     for system in args.only or ORDER:
         rows = load(data, system)
@@ -343,25 +410,32 @@ def main():
                                     predictions=node.predicts, revived=run_on_kato.last.revived,
                                     merged=run_on_kato.last.merged, digest=run_on_kato.digest)
                 note = f"{len(node.patterns) - len(node.retired)} / {len(node.patterns)}, {result[name]['seconds']} s"
-        for other in ('paper', 'lone'):     # not only the same score: the same groups?
-            if other in groupings and 'on KATO' in groupings:
-                result['on KATO'][f"lines grouped otherwise than by {other}"] = apart(groupings['on KATO'], groupings[other])
-                note += f", {result['on KATO'][f'lines grouped otherwise than by {other}']} lines grouped otherwise than by {other}"
+            if name == 'rules on KATO':
+                node = run_rules_on_kato.last.node
+                result[name].update(stored=len(node.patterns), retired=len(node.retired), learns=node.learns,
+                                    predictions=node.predicts, revived=run_rules_on_kato.last.revived,
+                                    merged=run_rules_on_kato.last.merged)
+        for one, others in (('on KATO', ('paper', 'lone')), ('rules', ('Drain',)), ('rules on KATO', ('rules',))):
+            for other in others:            # not only the same score: the same groups?
+                if one in groupings and other in groupings:
+                    label = f"lines grouped otherwise than by {'drain3' if other == 'Drain' else other}"
+                    result[one][label] = apart(groupings[one], groupings[other])
+                    note += f", {one}: {result[one][label]} {label}"
         totals['n'] += 1
         totals['Spell published'] += PUBLISHED[system][0]
         totals['Drain published'] += PUBLISHED[system][1]
         saved[system] = result
         print(f"{system:12s} {result['labelled events']:6d} | {PUBLISHED[system][0]:6.3f} "
-              + ' '.join(f"{result[name]['accuracy']:9.3f}" for name, _ in runs if name != 'Drain')
-              + f" | {PUBLISHED[system][1]:6.3f} " + (f"{result['Drain']['accuracy']:7.3f}" if 'Drain' in result else f"{'-':>7s}")
+              + ' '.join(f"{result[name]['accuracy']:9.3f}" for name, _ in runs if name not in DRAINS)
+              + f" | {PUBLISHED[system][1]:6.3f} " + ' '.join(f"{result[name]['accuracy']:13.3f}" for name, _ in runs if name in DRAINS)
               + f" | {note}", flush=True)
         if args.save:
             pathlib.Path(args.save).write_text(json.dumps({'pins': {k: v for k, v in PINS.items() if k != 'files'},
                                                            'systems': saved}, indent=1, sort_keys=True) + '\n')
     n = totals['n']
     print(f"{'average':12s} {'':6s} | {totals['Spell published'] / n:6.3f} "
-          + ' '.join(f"{totals[name] / n:9.3f}" for name, _ in runs if name != 'Drain')
-          + f" | {totals['Drain published'] / n:6.3f} " + (f"{totals['Drain'] / n:7.3f}" if totals['Drain'] else ''))
+          + ' '.join(f"{totals[name] / n:9.3f}" for name, _ in runs if name not in DRAINS)
+          + f" | {totals['Drain published'] / n:6.3f} " + ' '.join(f"{totals[name] / n:13.3f}" for name, _ in runs if name in DRAINS))
 
 
 if __name__ == '__main__':
