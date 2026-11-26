@@ -9,6 +9,8 @@
 > 3. **What retiring does, section 3.** "Every read skips it" is not what KATO does. Predictions skip a retired pattern; `GET /pattern/{name}` still returns it. And KATO refuses to learn a retired pattern again until it is un-retired. Both were seen on a running service in round 4, and the in-process node now does the same.
 > 4. **"Nothing went through KATO's API"** and weak point 4 are no longer the state of things: round 4 ran the loop on a KATO service.
 
+> **Corrected on 26 Nov 2026.** The scoring of the Spell runs written in Python counted the sentences that joined the very first template as having no rule (the template's number, 0, was read as "none"). Fixed in `experiments/baselines.py`, with a test. No percentage in section 0 changes. In section 2, for Spell at tau 0.5: 16.5% of the slots inside a longer VAR as the lines arrived (not 16.2%), 4,011 VAR spans (not 4,003), and 45.5% inside a longer VAR at the end (not 45.2%). At tau 0.7: 1,686 VAR spans (not 1,682). Drain's rows and the rows for the loop on KATO are as they were. The corrected numbers are in `experiments/results/baselines_2026-11-26.json`.
+
 Round 2 ended with two questions. Your answer to both was the same: decide by prior art, and use what others have shown to work instead of reinventing it. This note does that. Everything ran in-process; nothing went through KATO's API.
 
 ## 0. In one screen
@@ -147,7 +149,7 @@ One open point of design. Spell needs no node of raw sequences: a type's first l
 
 1. 62 tests pass, in-process. The round 1 and round 2 reports are unchanged.
 2. Spell as written here, and the loop on KATO, both give the paper's two worked templates (`tests/test_templates.py`).
-3. The baseline numbers are in `experiments/results/baselines_2026-11-24.json`; round 2's are in `sgd_probe_2026-11-24.json`.
+3. The baseline numbers are in `experiments/results/baselines_2026-11-26.json`; round 2's are in `sgd_probe_2026-11-24.json`.
 
 ```sh
 uv pip install --python .venv/bin/python drain3

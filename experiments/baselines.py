@@ -156,7 +156,8 @@ def score(data, spans_per_sentence, member):
     slot_side, var_side = Counter(), Counter()
     for (tokens, slots), spans, k in zip(data, spans_per_sentence, member):
         items = [{'kind': 'V', 'lo': a, 'hi': b} for a, b in spans]
-        result = {'parts': [{'rule': k, 'rule_frequency': 2, 'items': items,
+        # the rule's name must be true to `judge`, which skips a part with no rule: template number 0 is a rule
+        result = {'parts': [{'rule': ('template', k), 'rule_frequency': 2, 'items': items,
                              'sequence': [f"{k}:{n}" for n in range(len(items))]}]} if items else None
         s, v, _pairs, _emissions, _known = judge(result, slots)
         slot_side.update(s)
