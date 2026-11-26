@@ -3,38 +3,38 @@
   "as it arrived": {
    "VARs": {
     "across a slot edge": 168,
-    "exactly a slot": 183,
-    "longer than a slot": 652,
-    "no annotated slot": 4626,
+    "exactly a slot": 193,
+    "longer than a slot": 658,
+    "no annotated slot": 4770,
     "part of a slot": 214
    },
    "slots": {
     "constant in a rule, or dropped": 15,
-    "inside a longer VAR": 734,
-    "no rule for the sentence": 217,
-    "one VAR, exactly": 183,
+    "inside a longer VAR": 740,
+    "no rule for the sentence": 201,
+    "one VAR, exactly": 193,
     "partly in a VAR": 239
    }
   },
   "at the end": {
    "VARs": {
     "across a slot edge": 237,
-    "exactly a slot": 132,
-    "longer than a slot": 834,
-    "no annotated slot": 4880,
+    "exactly a slot": 142,
+    "longer than a slot": 840,
+    "no annotated slot": 5021,
     "part of a slot": 184
    },
    "slots": {
     "constant in a rule, or dropped": 12,
-    "inside a longer VAR": 959,
-    "no rule for the sentence": 21,
-    "one VAR, exactly": 132,
+    "inside a longer VAR": 965,
+    "no rule for the sentence": 5,
+    "one VAR, exactly": 142,
     "partly in a VAR": 264
    }
   },
   "lines": 3873,
   "lines that joined an existing template": 3635,
-  "seconds": 0.4,
+  "seconds": 0.5,
   "templates": 238,
   "templates with two or more lines": 233
  },
@@ -42,38 +42,38 @@
   "as it arrived": {
    "VARs": {
     "across a slot edge": 133,
-    "exactly a slot": 185,
-    "longer than a slot": 520,
-    "no annotated slot": 4263,
+    "exactly a slot": 193,
+    "longer than a slot": 522,
+    "no annotated slot": 4314,
     "part of a slot": 223
    },
    "slots": {
     "constant in a rule, or dropped": 20,
-    "inside a longer VAR": 573,
-    "no rule for the sentence": 360,
-    "one VAR, exactly": 185,
+    "inside a longer VAR": 575,
+    "no rule for the sentence": 350,
+    "one VAR, exactly": 193,
     "partly in a VAR": 250
    }
   },
   "at the end": {
    "VARs": {
     "across a slot edge": 187,
-    "exactly a slot": 177,
-    "longer than a slot": 756,
-    "no annotated slot": 5132,
+    "exactly a slot": 185,
+    "longer than a slot": 758,
+    "no annotated slot": 5182,
     "part of a slot": 243
    },
    "slots": {
     "constant in a rule, or dropped": 19,
-    "inside a longer VAR": 859,
-    "no rule for the sentence": 32,
-    "one VAR, exactly": 177,
+    "inside a longer VAR": 861,
+    "no rule for the sentence": 22,
+    "one VAR, exactly": 185,
     "partly in a VAR": 301
    }
   },
   "lines": 3873,
   "lines that joined an existing template": 3413,
-  "seconds": 0.9,
+  "seconds": 0.7,
   "templates": 460,
   "templates with two or more lines": 433
  },
@@ -81,32 +81,32 @@
   "as it arrived": {
    "VARs": {
     "across a slot edge": 114,
-    "exactly a slot": 219,
-    "longer than a slot": 338,
-    "no annotated slot": 3830,
+    "exactly a slot": 221,
+    "longer than a slot": 344,
+    "no annotated slot": 3834,
     "part of a slot": 215
    },
    "slots": {
     "constant in a rule, or dropped": 40,
-    "inside a longer VAR": 363,
-    "no rule for the sentence": 515,
-    "one VAR, exactly": 219,
+    "inside a longer VAR": 369,
+    "no rule for the sentence": 507,
+    "one VAR, exactly": 221,
     "partly in a VAR": 251
    }
   },
   "at the end": {
    "VARs": {
     "across a slot edge": 181,
-    "exactly a slot": 211,
-    "longer than a slot": 645,
-    "no annotated slot": 5004,
+    "exactly a slot": 213,
+    "longer than a slot": 651,
+    "no annotated slot": 5016,
     "part of a slot": 245
    },
    "slots": {
     "constant in a rule, or dropped": 44,
-    "inside a longer VAR": 725,
-    "no rule for the sentence": 76,
-    "one VAR, exactly": 211,
+    "inside a longer VAR": 731,
+    "no rule for the sentence": 68,
+    "one VAR, exactly": 213,
     "partly in a VAR": 332
    }
   },
@@ -120,38 +120,38 @@
   "as it arrived": {
    "VARs": {
     "across a slot edge": 67,
-    "exactly a slot": 223,
-    "longer than a slot": 215,
-    "no annotated slot": 3286,
+    "exactly a slot": 224,
+    "longer than a slot": 219,
+    "no annotated slot": 3289,
     "part of a slot": 212
    },
    "slots": {
     "constant in a rule, or dropped": 52,
-    "inside a longer VAR": 225,
-    "no rule for the sentence": 673,
-    "one VAR, exactly": 223,
+    "inside a longer VAR": 229,
+    "no rule for the sentence": 668,
+    "one VAR, exactly": 224,
     "partly in a VAR": 215
    }
   },
   "at the end": {
    "VARs": {
     "across a slot edge": 124,
-    "exactly a slot": 224,
-    "longer than a slot": 565,
-    "no annotated slot": 4711,
+    "exactly a slot": 225,
+    "longer than a slot": 569,
+    "no annotated slot": 4718,
     "part of a slot": 288
    },
    "slots": {
     "constant in a rule, or dropped": 65,
-    "inside a longer VAR": 627,
-    "no rule for the sentence": 143,
-    "one VAR, exactly": 224,
+    "inside a longer VAR": 631,
+    "no rule for the sentence": 138,
+    "one VAR, exactly": 225,
     "partly in a VAR": 329
    }
   },
   "lines": 3873,
   "lines that joined an existing template": 2929,
-  "seconds": 1.8,
+  "seconds": 1.9,
   "templates": 944,
   "templates with two or more lines": 771
  },
@@ -159,38 +159,38 @@
   "as it arrived": {
    "VARs": {
     "across a slot edge": 20,
-    "exactly a slot": 186,
+    "exactly a slot": 187,
     "longer than a slot": 105,
-    "no annotated slot": 2374,
+    "no annotated slot": 2377,
     "part of a slot": 169
    },
    "slots": {
     "constant in a rule, or dropped": 59,
     "inside a longer VAR": 108,
-    "no rule for the sentence": 880,
-    "one VAR, exactly": 186,
+    "no rule for the sentence": 879,
+    "one VAR, exactly": 187,
     "partly in a VAR": 155
    }
   },
   "at the end": {
    "VARs": {
     "across a slot edge": 63,
-    "exactly a slot": 227,
+    "exactly a slot": 228,
     "longer than a slot": 393,
-    "no annotated slot": 4015,
+    "no annotated slot": 4022,
     "part of a slot": 254
    },
    "slots": {
     "constant in a rule, or dropped": 89,
     "inside a longer VAR": 434,
-    "no rule for the sentence": 376,
-    "one VAR, exactly": 227,
+    "no rule for the sentence": 375,
+    "one VAR, exactly": 228,
     "partly in a VAR": 262
    }
   },
   "lines": 3873,
   "lines that joined an existing template": 2554,
-  "seconds": 2.5,
+  "seconds": 2.4,
   "templates": 1319,
   "templates with two or more lines": 859
  },
@@ -200,7 +200,7 @@
     "across a slot edge": 8,
     "exactly a slot": 128,
     "longer than a slot": 42,
-    "no annotated slot": 1393,
+    "no annotated slot": 1397,
     "part of a slot": 111
    },
    "slots": {
@@ -216,7 +216,7 @@
     "across a slot edge": 32,
     "exactly a slot": 165,
     "longer than a slot": 238,
-    "no annotated slot": 2762,
+    "no annotated slot": 2770,
     "part of a slot": 194
    },
    "slots": {
@@ -229,7 +229,7 @@
   },
   "lines": 3873,
   "lines that joined an existing template": 2131,
-  "seconds": 3.3,
+  "seconds": 3.1,
   "templates": 1742,
   "templates with two or more lines": 825
  },
@@ -239,7 +239,7 @@
     "across a slot edge": 2,
     "exactly a slot": 72,
     "longer than a slot": 6,
-    "no annotated slot": 718,
+    "no annotated slot": 722,
     "part of a slot": 44
    },
    "slots": {
@@ -255,7 +255,7 @@
     "across a slot edge": 14,
     "exactly a slot": 94,
     "longer than a slot": 140,
-    "no annotated slot": 1799,
+    "no annotated slot": 1804,
     "part of a slot": 81
    },
    "slots": {
@@ -268,7 +268,7 @@
   },
   "lines": 3873,
   "lines that joined an existing template": 1763,
-  "seconds": 4.0,
+  "seconds": 3.7,
   "templates": 2110,
   "templates with two or more lines": 697
  }

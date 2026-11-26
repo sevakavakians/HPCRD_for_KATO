@@ -1,0 +1,43 @@
+{
+ "kato": {
+  "KATO, shown the 1 word before": {
+   "AUC, start against elsewhere": 0.598,
+   "AUC, start against inside a value": 0.694,
+   "boundaries with nothing to go on": 217,
+   "mean bits at a value's start": 1.61,
+   "mean bits elsewhere": 1.24,
+   "mean bits inside a value": 0.88
+  },
+  "KATO, shown the 2 words before": {
+   "AUC, start against elsewhere": 0.608,
+   "AUC, start against inside a value": 0.646,
+   "boundaries with nothing to go on": 93,
+   "mean bits at a value's start": 1.31,
+   "mean bits elsewhere": 1.03,
+   "mean bits inside a value": 0.9
+  },
+  "KATO, shown the sentence so far": {
+   "AUC, start against elsewhere": 0.599,
+   "AUC, start against inside a value": 0.509,
+   "boundaries with nothing to go on": 46,
+   "mean bits at a value's start": 1.38,
+   "mean bits elsewhere": 1.09,
+   "mean bits inside a value": 1.35
+  },
+  "boundaries": 1083,
+  "counts of what followed the word before": {
+   "AUC, start against elsewhere": 0.611,
+   "AUC, start against inside a value": 0.712,
+   "boundaries with nothing to go on": 217,
+   "mean bits at a value's start": 1.78,
+   "mean bits elsewhere": 1.34,
+   "mean bits inside a value": 0.92
+  },
+  "predictions asked": 3249,
+  "seconds": 141.8,
+  "sentences": 150
+ },
+ "second half starts at sentence": 75,
+ "sentences": 150,
+ "values": 53
+}

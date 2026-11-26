@@ -2,6 +2,24 @@
 
 24 Nov 2026. Follows `round-3-published-methods-2026-11-24.md`. Branch `claude/templates-as-outer-loop`, draft PR 3.
 
+> **Corrected on 26 Nov 2026.** The scoring of the Spell runs written in Python counted the sentences that joined the very first template as having no rule (the template's number, 0, was read as "none"). Fixed in `experiments/baselines.py`, with a test. It touches section 4 only, and only the rows for Spell alone. The text below is as it was written; these are the corrected rows. Nothing measured on KATO changes, and no conclusion does: the best value over tau is still 16.4%.
+>
+> | | Slots that are exactly one VAR | Slots inside a longer VAR | Slots in a sentence with no rule yet | Exact, of the slots in a sentence with a rule |
+> |---|---|---|---|---|
+> | Spell alone, tau 0.5 | 16.1% | 16.5% | 48.1% | 31.1% |
+>
+> | tau | Sentences that join | Exact | Inside a longer VAR | No rule yet | Exact, at the end of the run | Inside a longer VAR, at the end |
+> |---|---|---|---|---|---|---|
+> | 0.2 | 93.9% | 13.9% | 53.3% | 14.5% | 10.2% | 69.5% |
+> | 0.3 | 88.1% | 13.9% | 41.4% | 25.2% | 13.3% | 62.0% |
+> | 0.4 | 81.8% | 15.9% | 26.6% | 36.5% | 15.3% | 52.7% |
+> | 0.5 | 75.6% | 16.1% | 16.5% | 48.1% | 16.2% | 45.5% |
+> | 0.6 | 65.9% | 13.5% | 7.8% | 63.3% | 16.4% | 31.3% |
+> | 0.7 | 55.0% | 9.2% | 3.0% | 76.4% | 11.9% | 18.4% |
+> | 0.8 | 45.5% | 5.2% | 0.4% | 88.3% | 6.8% | 10.6% |
+>
+> The corrected numbers are in `experiments/results/baselines_2026-11-26.json` and `spell_tau_sweep_2026-11-26.json`.
+
 Two things were agreed: fetch the log benchmark and hold Spell's loop on KATO to its published numbers, then make that loop the module's outer loop. Both are done. A third was added on the way. The loop edits a rule by retiring a pattern, and until now only my in-process stand-in had done that, so the loop was run on a KATO service.
 
 ## 0. In one screen
@@ -237,7 +255,7 @@ Two things about it to settle with the design, before code:
 
 1. 81 tests pass in-process. 19 of them also pass through a KATO service.
 2. The reports of rounds 1 and 2 are unchanged: sha1 `818a4c2a` and `7c8150fb`.
-3. Numbers, in `experiments/results/`: `log_benchmark_2026-11-24.json`, `baselines_2026-11-24.json`, `spell_tau_sweep_2026-11-24.json`, `sgd_probe_templates_loop_2026-11-24.json`, and the service runs in `log_benchmark_through_a_kato_service_2026-11-24.json` and the two `sgd_probe_first_300_*` files.
+3. Numbers, in `experiments/results/`: `log_benchmark_2026-11-24.json`, `baselines_2026-11-26.json`, `spell_tau_sweep_2026-11-26.json`, `sgd_probe_templates_loop_2026-11-24.json`, and the service runs in `log_benchmark_through_a_kato_service_2026-11-24.json` and the two `sgd_probe_first_300_*` files.
 
 ```sh
 .venv/bin/python -I experiments/log_benchmark.py --data ../loghub-data --fetch

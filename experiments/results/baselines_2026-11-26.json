@@ -30,7 +30,7 @@
   },
   "lines": 3873,
   "lines that joined an existing template": 2151,
-  "seconds": 0.1,
+  "seconds": 0.2,
   "templates": 1722,
   "templates with two or more lines": 482
  },
@@ -112,7 +112,7 @@
   },
   "lines": 3873,
   "lines that joined an existing template": 2899,
-  "seconds": 104.0,
+  "seconds": 119.9,
   "templates": 941,
   "templates with two or more lines": 771
  },
@@ -159,7 +159,7 @@
   },
   "lines": 3873,
   "lines that joined an existing template": 2102,
-  "seconds": 224.4,
+  "seconds": 262.7,
   "templates": 1739,
   "templates with two or more lines": 815
  },
@@ -167,38 +167,38 @@
   "as it arrived": {
    "VARs": {
     "across a slot edge": 67,
-    "exactly a slot": 223,
-    "longer than a slot": 215,
-    "no annotated slot": 3286,
+    "exactly a slot": 224,
+    "longer than a slot": 219,
+    "no annotated slot": 3289,
     "part of a slot": 212
    },
    "slots": {
     "constant in a rule, or dropped": 52,
-    "inside a longer VAR": 225,
-    "no rule for the sentence": 673,
-    "one VAR, exactly": 223,
+    "inside a longer VAR": 229,
+    "no rule for the sentence": 668,
+    "one VAR, exactly": 224,
     "partly in a VAR": 215
    }
   },
   "at the end": {
    "VARs": {
     "across a slot edge": 124,
-    "exactly a slot": 224,
-    "longer than a slot": 565,
-    "no annotated slot": 4711,
+    "exactly a slot": 225,
+    "longer than a slot": 569,
+    "no annotated slot": 4718,
     "part of a slot": 288
    },
    "slots": {
     "constant in a rule, or dropped": 65,
-    "inside a longer VAR": 627,
-    "no rule for the sentence": 143,
-    "one VAR, exactly": 224,
+    "inside a longer VAR": 631,
+    "no rule for the sentence": 138,
+    "one VAR, exactly": 225,
     "partly in a VAR": 329
    }
   },
   "lines": 3873,
   "lines that joined an existing template": 2929,
-  "seconds": 1.7,
+  "seconds": 1.6,
   "templates": 944,
   "templates with two or more lines": 771
  },
@@ -208,7 +208,7 @@
     "across a slot edge": 8,
     "exactly a slot": 128,
     "longer than a slot": 42,
-    "no annotated slot": 1393,
+    "no annotated slot": 1397,
     "part of a slot": 111
    },
    "slots": {
@@ -224,7 +224,7 @@
     "across a slot edge": 32,
     "exactly a slot": 165,
     "longer than a slot": 238,
-    "no annotated slot": 2762,
+    "no annotated slot": 2770,
     "part of a slot": 194
    },
    "slots": {
@@ -237,7 +237,7 @@
   },
   "lines": 3873,
   "lines that joined an existing template": 2131,
-  "seconds": 3.1,
+  "seconds": 3.3,
   "templates": 1742,
   "templates with two or more lines": 825
  }

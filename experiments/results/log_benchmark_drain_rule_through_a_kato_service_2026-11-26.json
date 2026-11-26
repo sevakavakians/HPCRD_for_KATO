@@ -1,0 +1,61 @@
+{
+ "pins": {
+  "commit": "d9d4180784cde9afef990eeeb458591011933f9b",
+  "dataset": "Loghub 2k samples with hand-labelled templates, as distributed with logparser",
+  "path": "data/loghub_2k/<System>/<System>_2k.log_structured.csv",
+  "source": "https://github.com/logpai/logparser",
+  "terms": "LICENSE OF LOGHUB (data/loghub_2k/LICENSE): freely available for research or academic work; refer to https://github.com/logpai/loghub and cite the loghub paper"
+ },
+ "systems": {
+  "Apache": {
+   "labelled events": 6,
+   "lines": 2000,
+   "published": {
+    "Drain": 1.0,
+    "Spell": 1.0
+   },
+   "rules": {
+    "accuracy": 1.0,
+    "groups": 6,
+    "seconds": 0.0
+   },
+   "rules on KATO": {
+    "accuracy": 1.0,
+    "groups": 6,
+    "learns": 2000,
+    "lines grouped otherwise than by rules": 0,
+    "merged": 0,
+    "predictions": 2000,
+    "retired": 3,
+    "revived": 0,
+    "seconds": 184.5,
+    "stored": 9
+   }
+  },
+  "HDFS": {
+   "labelled events": 14,
+   "lines": 2000,
+   "published": {
+    "Drain": 0.998,
+    "Spell": 1.0
+   },
+   "rules": {
+    "accuracy": 0.9975,
+    "groups": 16,
+    "seconds": 0.0
+   },
+   "rules on KATO": {
+    "accuracy": 0.9975,
+    "groups": 16,
+    "learns": 2000,
+    "lines grouped otherwise than by rules": 0,
+    "merged": 1,
+    "predictions": 2000,
+    "retired": 5,
+    "revived": 0,
+    "seconds": 176.9,
+    "stored": 21
+   }
+  }
+ }
+}
