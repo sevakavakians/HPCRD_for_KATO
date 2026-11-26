@@ -192,7 +192,7 @@ Spell's own refinement and the log parsers that use entropy decide from what one
 
 1. **For data in which one sequence is one message: build Spell as the module**, with Drain's rule as a setting. That is decided, and section 7 adds the evidence for the setting.
 2. **For language-like data: stop adjusting the whole-sentence rule.** A threshold does not fix it and a floor on the evidence makes it worse. Change the unit (C and D), and take the judge from description length (E).
-3. **Before building: get a reference number from a published method of that kind.** There is an open implementation of ADIOS (`madios`). Run on the probe as published, it would say what such a method finds on these sentences, as `drain3` did for Drain. It is third-party code, so I have not fetched it.
+3. **Before building: get a reference number from a published method of that kind.** There is an open implementation of ADIOS (`madios`, C++, under the zlib licence). Run on the probe with the settings its description gives, it would say what such a method finds on these sentences, as `drain3` did for Drain. It is third-party code, so I have not fetched it.
 4. **Then build model merging's two steps on KATO** and hold them to the formal languages of its paper, where the published result is that every grammar is recovered. Its starting point is where this work stands, its two steps are edits KATO already makes, its judge is in the bits KATO already returns, and it has a form in which taking in new sentences and merging alternate. ADIOS would be the comparison, not the design.
 
 Points 3 and 4 are proposals. Nothing of them is started.
@@ -280,7 +280,7 @@ Original papers, each consulted for this note at the link given, unless marked.
 - Meng and Siu (2002). "Semiautomatic Acquisition of Semantic Structures for Understanding Domain-Specific Natural Language Queries." IEEE Transactions on Knowledge and Data Engineering 14(1):172-181. Abstract only.
 - Pargellis, Fosler-Lussier, Potamianos and Lee (2001). "A comparison of four metrics for auto-inducing semantic classes." https://slp-ntua.github.io/potam/preprints/conf/01_ASRU_andy_underst_II.pdf ; the journal version, Pargellis and others (2004), "Auto-induced semantic classes", Speech Communication 43(3):183-203, was not read.
 - Solan, Horn, Ruppin and Edelman (2005). "Unsupervised learning of natural languages." https://doi.org/10.1073/pnas.0409746102
-- `madios`, an open implementation of ADIOS. https://github.com/liesenf/madios . Its description only; the code was not fetched.
+- `madios`, an open implementation of ADIOS, zlib licence. https://github.com/liesenf/madios , a fork of `shaobohou/madios`. Its description only; the code was not fetched.
 - Stolcke and Omohundro (1994). "Inducing Probabilistic Grammars by Bayesian Model Merging." https://arxiv.org/abs/cmp-lg/9409010
 - Langley and Stromsten (2000). "Learning Context-Free Grammars with a Simplicity Bias." https://doi.org/10.1007/3-540-45164-1_23 . Abstract only.
 - Tatti and Vreeken (2012). "The Long and the Short of It: Summarising Event Sequences with Serial Episodes." https://arxiv.org/abs/1902.02834
