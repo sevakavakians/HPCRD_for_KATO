@@ -16,7 +16,7 @@
 | ADIOS | **Its parts fit KATO. Its procedure does not.** The parts are the three things the hierarchy already has: patterns, classes of values, and sequences rewritten with both. The procedure needs the whole corpus, goes over it many times, cannot undo a step, and depends on the order of the sentences. | From its paper. Not run. |
 | Entropy, as a floor on what a sentence may join | **No.** KATO already returns the measure (its weight of evidence). Used as a floor, it finds fewer of the marked values, 11.6% against 15.6%, and the worn-down rules stay. | Measured. |
 | Entropy, as the way to cut a sentence into pieces | **Yes.** 46% of the marked values come out as exactly one piece, against 19% for cuts placed at random and 16% for one rule per sentence. KATO's own next-event distribution carries the signal as well as counts do. | Measured. The threshold was picked using the marked values. |
-| Has someone solved the degeneracy? | **Yes, in 1994, with description length.** Bayesian model merging starts from exactly one rule per sentence and lets the length of the whole description decide every step. Later work on dialogue systems and on grammar learning agrees on the shape of the answer: rules for parts of sentences, and a variable that holds one known unit. | Read from the papers. Not run. |
+| Has someone dealt with the degeneracy? | **Yes, in 1994, with description length.** Bayesian model merging starts from exactly one rule per sentence and lets the length of the whole description decide every step. It is shown on small formal languages; on natural language its authors report mixed results. Later work on dialogue systems and on grammar learning agrees on the shape of the answer: rules for parts of sentences, and a variable that holds one known unit. | Read from the papers. Not run. |
 
 **The one finding to keep.** Entropy does not help by judging whether a sentence fits a rule. It helps by saying where a unit ends, and, summed over everything stored, by saying whether a rule or a variable pays for itself.
 
@@ -44,7 +44,7 @@ Both faults come from the same two choices: the rule is as long as the sentence,
 
 ## 3. What others have done
 
-Every method below was read from its original paper. "Decision" is what the method uses the measure for.
+Each method below was read from its original paper, except where section 10 says that only an abstract or an earlier version was read. "Decision" is what the method uses the measure for.
 
 | Who | Decision | Measure | Shown on | As data arrives? |
 |---|---|---|---|---|
@@ -148,7 +148,7 @@ Cutting is not yet a rule. Two ways of making rules from the pieces, both scored
 **Verdict.**
 
 1. **Cutting alone does not help** while the rule is still one per sentence: 18.7% against 16.1%, and no gain on the second half.
-2. **The smallest rule for a part of a sentence finds two to nearly three times as many values**, 25% to 42%, because it does not need the rest of the sentence to match.
+2. **The smallest rule for a part of a sentence finds one and a half to two and a half times as many values**, 25% to 42%, because it does not need the rest of the sentence to match.
 3. **It is not selective.** It marks up to three times as many variables, and about 5% to 7% of them are marked values at each of the four settings. Being seen often does not make two words the frame of a value. Something must still decide which variables are worth having and which are the same variable. That is the class step of the methods in section 3, and their third measure.
 4. **This is a measurement, not a method.** It puts two published ideas side by side to see how far a rule for a part of a sentence reaches. It is not proposed as the design.
 
@@ -165,7 +165,7 @@ A KATO node learned each sentence whole, after being asked about it. At every pl
 
 **Verdict: yes.** A node that holds whole sentences, asked with the last one or two words, gives the same signal as a table of counts. No extra store is needed for the forward direction. The backward direction, which section 5.2 shows to be the stronger one, has no field of its own; a second node fed the sentences backwards would give it. That was not run.
 
-This bears on the separate study of learned cuts, which set cutting by prediction aside because it seemed to need a node of rolling windows first. It does not.
+This bears on the separate study of learned cuts, which set cutting by prediction aside because it seemed to need a node of rolling windows first. Where the sequences already have ends, as sentences and lines do, it does not: a node of whole sequences is enough. For a stream with no ends at all the question stays open.
 
 ### 5.6 What stood at the placeholders
 
@@ -207,7 +207,7 @@ Points 3 and 4 are proposals. Nothing of them is started.
 
 Drain finds the candidates of rules 1 and 2 with a small tree. The tree is an index. KATO has its own.
 
-**The one real difference.** Rule 3 compares by position: token 3 of the line against token 3 of the template. KATO compares by order: it finds the longest run of symbols the two share, wherever they stand. `a b c d` and `b c d e` share three of four for KATO and nothing for Drain.
+**The one real difference.** Rule 3 compares by position: token 3 of the line against token 3 of the template. KATO compares by order: it finds the most symbols the two have in the same order, wherever they stand. `a b c d` and `b c d e` share three of four for KATO and nothing for Drain.
 
 **How it runs on KATO all the same.** Put the position into the symbol. Token `send` at position 0 becomes the symbol `0|=send`; a placeholder at position 2 is `2|*`. Two sequences then share a symbol only where they have the same token at the same position, and what KATO returns as `matches` is Drain's count. Storing, replacing and retiring a template are as for Spell.
 
@@ -264,7 +264,7 @@ One thing to know before it is built: a symbol that carries its position makes t
 
 ## 10. Sources
 
-Original papers, each read for this note unless marked.
+Original papers, each consulted for this note at the link given, unless marked.
 
 - Harris (1955). "From phoneme to morpheme." Language 31(2):190-222. Not read for this note; cited as in the study of learned cuts.
 - Jin and Tanaka-Ishii (2006). "Unsupervised Segmentation of Chinese Text by Use of Branching Entropy." https://aclanthology.org/P06-2056/
