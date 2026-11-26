@@ -2,7 +2,7 @@
 
 **Hierarchical pattern chunking and rule discovery for [KATO](https://github.com/sevakavakians/kato).**
 
-**New here? Read [the summary](docs/summary-2026-11-26.md) first.** It says in plain words what was done, shows the accuracy tables, and says what the numbers mean. The notes below call its four steps "rounds".
+**New here? Read [the summary](docs/summary-2026-11-26.md) first.** It says in plain words what was done, shows the accuracy tables, and says what the numbers mean. The notes below call its four steps "rounds". [The register](docs/methods-register.md) lists every published method that was looked at, and which are to be built for KATO.
 
 An experiment, started 24 Nov 2026. The goal is to find or create the KATO capabilities that let it
 
@@ -47,11 +47,16 @@ Four rounds so far:
 - Round 4. Spell's loop on KATO held to the published log-parsing benchmark
   (`experiments/log_benchmark.py`), made the module's outer loop (`loop='templates'`), and checked
   through a running KATO service, where a rule is edited by learning the new pattern and retiring the old one.
+- 26 Nov, a follow-up. Drain's rule on a KATO node (`hpcrd/templates.py`, `PositionReader`), held to the same
+  benchmark. And what entropy can and cannot do about one rule for a whole sentence: KATO's weight of evidence
+  as a floor on joining a rule, two published rules for cutting by branching entropy
+  (`experiments/branching.py`), and rules for parts of sentences (`experiments/entropy_probe.py`).
 
 The write-ups are in `docs/`: `summary-2026-11-26.md` (all four rounds, for a new reader), `worked-examples-2026-11-24.md` (round 1),
 `round-2-sequences-and-gap-variables-2026-11-24.md` (round 2),
 `round-3-published-methods-2026-11-24.md` (round 3) and
-`round-4-log-benchmark-and-outer-loop-2026-11-24.md` (round 4). `examples/report.txt` and
+`round-4-log-benchmark-and-outer-loop-2026-11-24.md` (round 4), `entropy-and-rule-units-2026-11-26.md` (the follow-up)
+and `methods-register.md` (the methods looked at, and what is to be built). `examples/report.txt` and
 `examples/report_sequences.txt` are the full outputs the first two quote, and `experiments/results/` has the numbers.
 
 ## Layout
@@ -62,13 +67,15 @@ The write-ups are in `docs/`: `summary-2026-11-26.md` (all four rounds, for a ne
 | `hpcrd/kato_api_node.py` | The same interface over KATO's REST API, retire and un-retire included. Set `KATO_API` and every node lives in a running service. |
 | `hpcrd/alignment.py` | Rebuilds the position-level alignment of one prediction from `missing`, `extras`, `past`, `present`, `future` (one symbol per event). |
 | `hpcrd/modeler.py` | The module between node_0 and nodes 1a, 1b, 2a, 2b. Every open choice is a field of `Settings`. |
-| `hpcrd/templates.py` | Spell's loop on a KATO node: one template per message type, edited by learning the new pattern and retiring the old one. A line belongs to its type, whatever its template becomes. |
+| `hpcrd/templates.py` | Spell's loop on a KATO node (`TemplateReader`): one template per message type, edited by learning the new pattern and retiring the old one. A line belongs to its type, whatever its template becomes. `PositionReader` is the same loop with Drain's rule for joining: a symbol carries its position, so that KATO's matches are Drain's count. `evidence` is an optional floor on KATO's weight of evidence for a join; it is off unless asked for. |
 | `hpcrd/show.py` | Printing helpers. |
 | `examples/worked_examples.py` | Round 1's worked examples (1 to 6). Prints `examples/report.txt`. |
 | `examples/sequences.py` | Round 2's examples (7 to 12). Prints `examples/report_sequences.txt`. |
 | `experiments/baselines.py` | Drain (through `drain3`), Spell (from the paper's description) and Spell's loop on KATO, on the same probe. `--sweep`: Spell alone over its threshold. |
-| `experiments/log_benchmark.py` | The published log-parsing benchmark (Zhu et al. 2019): the benchmark's own Spell re-written, the same without its two shortcuts, Spell as its paper describes it, Spell's loop on KATO, and `drain3`. The data is fetched at run time, pinned by sha256 (`loghub_pins.json`), and kept outside the repository. |
+| `experiments/log_benchmark.py` | The published log-parsing benchmark (Zhu et al. 2019): the benchmark's own Spell re-written, the same without its two shortcuts, Spell as its paper describes it, Spell's loop on KATO, `drain3`, Drain as three rules without its tree, and those rules on KATO. The data is fetched at run time, pinned by sha256 (`loghub_pins.json`), and kept outside the repository. |
 | `experiments/sgd_probe.py` | VAR spans against annotated slot spans on pinned Schema-Guided Dialogue files. The data is fetched at run time and kept outside the repository; `experiments/results/` holds numbers only. |
+| `experiments/branching.py` | Branching entropy over token sequences, and two published rules for cutting by it (Jin and Tanaka-Ishii 2006). Counts only; no KATO. |
+| `experiments/entropy_probe.py` | On the same dialogue sentences: KATO's weight of evidence as a floor on joining a rule, entropy at the edges of the marked values, the two cutting rules, rules for parts of sentences, what stood at Spell's placeholders, and the entropy of KATO's own next-event distribution. |
 | `examples/explore.py` | Any text, any settings, from the command line. |
 | `scripts/check_alignment.py` | The full alignment check: 502,184 of 502,184 predictions. About a minute. |
 | `tests/` | The reports are reproduced; the alignment is rebuilt; the invariants hold; the loop's templates, types and retirements are what they should be. The tests marked `through_api` also run against a KATO service. |
@@ -97,6 +104,8 @@ uv pip install --python .venv/bin/python drain3                 # only for the n
 ./run.sh experiments/baselines.py --data ../sgd-data --sweep    # Spell alone, over its threshold
 .venv/bin/python -I experiments/log_benchmark.py --data ../loghub-data --fetch   # the log benchmark (-I: it reads downloaded files)
 ./run.sh experiments/sgd_probe.py --data ../sgd-data --only 23 24               # the probe with Spell's loop as the outer loop
+.venv/bin/python -I experiments/entropy_probe.py --data ../sgd-data             # the entropy measurements; about five minutes
+.venv/bin/python -I experiments/entropy_probe.py --data ../sgd-data --only kato # KATO's own next-event entropy; about 45 minutes
 
 # any text, any settings
 ./run.sh examples/explore.py E4 verbose=1 span=stream markers=. slots=gap recall_threshold=0.5 unexplained=break
@@ -147,6 +156,15 @@ frequency, retired). It has to equal the in-process run's.
   systems (HealthApp, Mac) and the first 300 probe sentences with `loop='templates'` give the same
   digest both ways: every line's group, and every pattern's name, frequency and retirement.
   The full benchmark and the full probe have run in-process only.
+- Drain's rule (26 Nov). As three rules without its tree it scores 0.865 on the log benchmark, where the
+  published figure is 0.866, and equals the published figure on each of the 16 systems after rounding. On
+  KATO (`PositionReader`) all 32,000 lines are grouped as by those rules. Spell's loop on KATO gives the
+  digests of 24 Nov on all 16 systems after the two readers were given one shared replace step.
+- The follow-up through a KATO service (26 Nov, the setup above): 34 tests pass in-process and through
+  the service. Drain's rule on two benchmark systems (Apache, HDFS) gives the same groups and the same
+  patterns, stored and retired, both ways. The entropy of KATO's next-event distribution on the first 150
+  probe sentences is the same both ways, number for number. A service takes `max_predictions` up to 10000
+  only; the in-process node now refuses a larger one too. The rest of the follow-up has run in-process only.
 
 ## Licence
 

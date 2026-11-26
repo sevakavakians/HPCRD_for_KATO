@@ -5,6 +5,8 @@ import pytest
 from experiments.log_benchmark import STAR, DrainRules, apart
 from hpcrd.templates import PositionReader, TemplateReader
 
+pytestmark = pytest.mark.through_api
+
 
 def groups_by_rules(lines, threshold, lead):
     parser, member = DrainRules(threshold, lead), []

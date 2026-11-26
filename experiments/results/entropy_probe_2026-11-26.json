@@ -1,0 +1,1142 @@
+{
+ "cuts": {
+  "B_increase, val 0, counts from every sentence": {
+   "all sentences": {
+    "boundaries cut": 0.503,
+    "boundaries inside a value cut": 0.481,
+    "share": 0.181,
+    "share by chance at that rate": 0.149,
+    "share by kind": {
+     "city": 0.275,
+     "cuisine": 0.269,
+     "date": 0.061,
+     "restaurant_name": 0.192,
+     "time": 0.062,
+     "title": 0.37
+    },
+    "value edges cut": 0.577,
+    "values": 1388,
+    "values that are exactly one piece": 251
+   },
+   "first half": {
+    "boundaries cut": 0.504,
+    "boundaries inside a value cut": 0.538,
+    "share": 0.162,
+    "share by chance at that rate": 0.158,
+    "share by kind": {
+     "city": 0.259,
+     "cuisine": 0.25,
+     "date": 0.059,
+     "time": 0.062
+    },
+    "value edges cut": 0.581,
+    "values": 622,
+    "values that are exactly one piece": 101
+   },
+   "second half": {
+    "boundaries cut": 0.503,
+    "boundaries inside a value cut": 0.436,
+    "share": 0.196,
+    "share by chance at that rate": 0.141,
+    "share by kind": {
+     "city": 0.289,
+     "cuisine": 0.317,
+     "date": 0.062,
+     "restaurant_name": 0.192,
+     "time": 0.062,
+     "title": 0.37
+    },
+    "value edges cut": 0.573,
+    "values": 766,
+    "values that are exactly one piece": 150
+   }
+  },
+  "B_increase, val 0, counts from the sentences before": {
+   "all sentences": {
+    "boundaries cut": 0.39,
+    "boundaries inside a value cut": 0.424,
+    "share": 0.085,
+    "share by chance at that rate": 0.109,
+    "share by kind": {
+     "city": 0.14,
+     "cuisine": 0.137,
+     "date": 0.03,
+     "restaurant_name": 0.082,
+     "time": 0.024,
+     "title": 0.136
+    },
+    "value edges cut": 0.363,
+    "values": 1388,
+    "values that are exactly one piece": 118
+   },
+   "first half": {
+    "boundaries cut": 0.344,
+    "boundaries inside a value cut": 0.433,
+    "share": 0.05,
+    "share by chance at that rate": 0.098,
+    "share by kind": {
+     "city": 0.074,
+     "cuisine": 0.091,
+     "date": 0.035,
+     "time": 0.005
+    },
+    "value edges cut": 0.279,
+    "values": 622,
+    "values that are exactly one piece": 31
+   },
+   "second half": {
+    "boundaries cut": 0.434,
+    "boundaries inside a value cut": 0.417,
+    "share": 0.114,
+    "share by chance at that rate": 0.119,
+    "share by kind": {
+     "city": 0.198,
+     "cuisine": 0.254,
+     "date": 0.025,
+     "restaurant_name": 0.082,
+     "time": 0.043,
+     "title": 0.136
+    },
+    "value edges cut": 0.43,
+    "values": 766,
+    "values that are exactly one piece": 87
+   }
+  },
+  "B_ordinary, val 2.5, counts from every sentence": {
+   "all sentences": {
+    "boundaries cut": 0.869,
+    "boundaries inside a value cut": 0.723,
+    "share": 0.409,
+    "share by chance at that rate": 0.273,
+    "share by kind": {
+     "city": 0.668,
+     "cuisine": 0.771,
+     "date": 0.091,
+     "restaurant_name": 0.671,
+     "time": 0.01,
+     "title": 0.531
+    },
+    "value edges cut": 0.978,
+    "values": 1388,
+    "values that are exactly one piece": 568
+   },
+   "first half": {
+    "boundaries cut": 0.872,
+    "boundaries inside a value cut": 0.761,
+    "share": 0.413,
+    "share by chance at that rate": 0.31,
+    "share by kind": {
+     "city": 0.691,
+     "cuisine": 0.817,
+     "date": 0.106,
+     "time": 0.009
+    },
+    "value edges cut": 0.983,
+    "values": 622,
+    "values that are exactly one piece": 257
+   },
+   "second half": {
+    "boundaries cut": 0.866,
+    "boundaries inside a value cut": 0.693,
+    "share": 0.406,
+    "share by chance at that rate": 0.244,
+    "share by kind": {
+     "city": 0.647,
+     "cuisine": 0.651,
+     "date": 0.075,
+     "restaurant_name": 0.671,
+     "time": 0.01,
+     "title": 0.531
+    },
+    "value edges cut": 0.973,
+    "values": 766,
+    "values that are exactly one piece": 311
+   }
+  },
+  "B_ordinary, val 2.5, counts from the sentences before": {
+   "all sentences": {
+    "boundaries cut": 0.803,
+    "boundaries inside a value cut": 0.64,
+    "share": 0.399,
+    "share by chance at that rate": 0.252,
+    "share by kind": {
+     "city": 0.696,
+     "cuisine": 0.551,
+     "date": 0.152,
+     "restaurant_name": 0.747,
+     "time": 0.033,
+     "title": 0.469
+    },
+    "value edges cut": 0.918,
+    "values": 1388,
+    "values that are exactly one piece": 554
+   },
+   "first half": {
+    "boundaries cut": 0.762,
+    "boundaries inside a value cut": 0.614,
+    "share": 0.383,
+    "share by chance at that rate": 0.264,
+    "share by kind": {
+     "city": 0.741,
+     "cuisine": 0.537,
+     "date": 0.212,
+     "time": 0.057
+    },
+    "value edges cut": 0.878,
+    "values": 622,
+    "values that are exactly one piece": 238
+   },
+   "second half": {
+    "boundaries cut": 0.843,
+    "boundaries inside a value cut": 0.66,
+    "share": 0.413,
+    "share by chance at that rate": 0.239,
+    "share by kind": {
+     "city": 0.658,
+     "cuisine": 0.587,
+     "date": 0.087,
+     "restaurant_name": 0.747,
+     "time": 0.01,
+     "title": 0.469
+    },
+    "value edges cut": 0.95,
+    "values": 766,
+    "values that are exactly one piece": 316
+   }
+  },
+  "B_ordinary, val 3.0, counts from every sentence": {
+   "all sentences": {
+    "boundaries cut": 0.796,
+    "boundaries inside a value cut": 0.612,
+    "share": 0.473,
+    "share by chance at that rate": 0.25,
+    "share by kind": {
+     "city": 0.948,
+     "cuisine": 0.634,
+     "date": 0.109,
+     "restaurant_name": 0.76,
+     "time": 0.019,
+     "title": 0.556
+    },
+    "value edges cut": 0.934,
+    "values": 1388,
+    "values that are exactly one piece": 657
+   },
+   "first half": {
+    "boundaries cut": 0.792,
+    "boundaries inside a value cut": 0.647,
+    "share": 0.452,
+    "share by chance at that rate": 0.277,
+    "share by kind": {
+     "city": 0.957,
+     "cuisine": 0.683,
+     "date": 0.106,
+     "time": 0.024
+    },
+    "value edges cut": 0.937,
+    "values": 622,
+    "values that are exactly one piece": 281
+   },
+   "second half": {
+    "boundaries cut": 0.799,
+    "boundaries inside a value cut": 0.584,
+    "share": 0.491,
+    "share by chance at that rate": 0.228,
+    "share by kind": {
+     "city": 0.941,
+     "cuisine": 0.508,
+     "date": 0.113,
+     "restaurant_name": 0.76,
+     "time": 0.014,
+     "title": 0.556
+    },
+    "value edges cut": 0.931,
+    "values": 766,
+    "values that are exactly one piece": 376
+   }
+  },
+  "B_ordinary, val 3.0, counts from the sentences before": {
+   "all sentences": {
+    "boundaries cut": 0.737,
+    "boundaries inside a value cut": 0.531,
+    "share": 0.442,
+    "share by chance at that rate": 0.23,
+    "share by kind": {
+     "city": 0.88,
+     "cuisine": 0.414,
+     "date": 0.182,
+     "restaurant_name": 0.788,
+     "time": 0.062,
+     "title": 0.506
+    },
+    "value edges cut": 0.86,
+    "values": 1388,
+    "values that are exactly one piece": 613
+   },
+   "first half": {
+    "boundaries cut": 0.687,
+    "boundaries inside a value cut": 0.503,
+    "share": 0.386,
+    "share by chance at that rate": 0.232,
+    "share by kind": {
+     "city": 0.815,
+     "cuisine": 0.415,
+     "date": 0.235,
+     "time": 0.095
+    },
+    "value edges cut": 0.808,
+    "values": 622,
+    "values that are exactly one piece": 240
+   },
+   "second half": {
+    "boundaries cut": 0.785,
+    "boundaries inside a value cut": 0.552,
+    "share": 0.487,
+    "share by chance at that rate": 0.225,
+    "share by kind": {
+     "city": 0.936,
+     "cuisine": 0.413,
+     "date": 0.125,
+     "restaurant_name": 0.788,
+     "time": 0.029,
+     "title": 0.506
+    },
+    "value edges cut": 0.901,
+    "values": 766,
+    "values that are exactly one piece": 373
+   }
+  },
+  "B_ordinary, val 3.5, counts from every sentence": {
+   "all sentences": {
+    "boundaries cut": 0.725,
+    "boundaries inside a value cut": 0.512,
+    "share": 0.465,
+    "share by chance at that rate": 0.226,
+    "share by kind": {
+     "city": 0.914,
+     "cuisine": 0.441,
+     "date": 0.127,
+     "restaurant_name": 0.767,
+     "time": 0.124,
+     "title": 0.506
+    },
+    "value edges cut": 0.876,
+    "values": 1388,
+    "values that are exactly one piece": 645
+   },
+   "first half": {
+    "boundaries cut": 0.717,
+    "boundaries inside a value cut": 0.551,
+    "share": 0.426,
+    "share by chance at that rate": 0.245,
+    "share by kind": {
+     "city": 0.926,
+     "cuisine": 0.476,
+     "date": 0.118,
+     "time": 0.128
+    },
+    "value edges cut": 0.872,
+    "values": 622,
+    "values that are exactly one piece": 265
+   },
+   "second half": {
+    "boundaries cut": 0.733,
+    "boundaries inside a value cut": 0.482,
+    "share": 0.496,
+    "share by chance at that rate": 0.211,
+    "share by kind": {
+     "city": 0.904,
+     "cuisine": 0.349,
+     "date": 0.138,
+     "restaurant_name": 0.767,
+     "time": 0.12,
+     "title": 0.506
+    },
+    "value edges cut": 0.879,
+    "values": 766,
+    "values that are exactly one piece": 380
+   }
+  },
+  "B_ordinary, val 3.5, counts from the sentences before": {
+   "all sentences": {
+    "boundaries cut": 0.622,
+    "boundaries inside a value cut": 0.407,
+    "share": 0.464,
+    "share by chance at that rate": 0.191,
+    "share by kind": {
+     "city": 0.811,
+     "cuisine": 0.317,
+     "date": 0.194,
+     "restaurant_name": 0.712,
+     "time": 0.31,
+     "title": 0.284
+    },
+    "value edges cut": 0.796,
+    "values": 1388,
+    "values that are exactly one piece": 644
+   },
+   "first half": {
+    "boundaries cut": 0.535,
+    "boundaries inside a value cut": 0.367,
+    "share": 0.431,
+    "share by chance at that rate": 0.171,
+    "share by kind": {
+     "city": 0.704,
+     "cuisine": 0.293,
+     "date": 0.224,
+     "time": 0.412
+    },
+    "value edges cut": 0.726,
+    "values": 622,
+    "values that are exactly one piece": 268
+   },
+   "second half": {
+    "boundaries cut": 0.706,
+    "boundaries inside a value cut": 0.439,
+    "share": 0.491,
+    "share by chance at that rate": 0.203,
+    "share by kind": {
+     "city": 0.904,
+     "cuisine": 0.381,
+     "date": 0.163,
+     "restaurant_name": 0.712,
+     "time": 0.206,
+     "title": 0.284
+    },
+    "value edges cut": 0.851,
+    "values": 766,
+    "values that are exactly one piece": 376
+   }
+  },
+  "B_ordinary, val 4.0, counts from every sentence": {
+   "all sentences": {
+    "boundaries cut": 0.576,
+    "boundaries inside a value cut": 0.327,
+    "share": 0.542,
+    "share by chance at that rate": 0.175,
+    "share by kind": {
+     "city": 0.885,
+     "cuisine": 0.326,
+     "date": 0.206,
+     "restaurant_name": 0.76,
+     "time": 0.495,
+     "title": 0.198
+    },
+    "value edges cut": 0.826,
+    "values": 1388,
+    "values that are exactly one piece": 752
+   },
+   "first half": {
+    "boundaries cut": 0.565,
+    "boundaries inside a value cut": 0.351,
+    "share": 0.524,
+    "share by chance at that rate": 0.183,
+    "share by kind": {
+     "city": 0.883,
+     "cuisine": 0.36,
+     "date": 0.212,
+     "time": 0.502
+    },
+    "value edges cut": 0.817,
+    "values": 622,
+    "values that are exactly one piece": 326
+   },
+   "second half": {
+    "boundaries cut": 0.587,
+    "boundaries inside a value cut": 0.308,
+    "share": 0.556,
+    "share by chance at that rate": 0.168,
+    "share by kind": {
+     "city": 0.888,
+     "cuisine": 0.238,
+     "date": 0.2,
+     "restaurant_name": 0.76,
+     "time": 0.488,
+     "title": 0.198
+    },
+    "value edges cut": 0.832,
+    "values": 766,
+    "values that are exactly one piece": 426
+   }
+  },
+  "B_ordinary, val 4.0, counts from the sentences before": {
+   "all sentences": {
+    "boundaries cut": 0.481,
+    "boundaries inside a value cut": 0.262,
+    "share": 0.349,
+    "share by chance at that rate": 0.141,
+    "share by kind": {
+     "city": 0.318,
+     "cuisine": 0.238,
+     "date": 0.206,
+     "restaurant_name": 0.671,
+     "time": 0.429,
+     "title": 0.099
+    },
+    "value edges cut": 0.668,
+    "values": 1388,
+    "values that are exactly one piece": 485
+   },
+   "first half": {
+    "boundaries cut": 0.382,
+    "boundaries inside a value cut": 0.218,
+    "share": 0.24,
+    "share by chance at that rate": 0.112,
+    "share by kind": {
+     "city": 0.049,
+     "cuisine": 0.238,
+     "date": 0.235,
+     "time": 0.389
+    },
+    "value edges cut": 0.559,
+    "values": 622,
+    "values that are exactly one piece": 149
+   },
+   "second half": {
+    "boundaries cut": 0.577,
+    "boundaries inside a value cut": 0.297,
+    "share": 0.439,
+    "share by chance at that rate": 0.165,
+    "share by kind": {
+     "city": 0.551,
+     "cuisine": 0.238,
+     "date": 0.175,
+     "restaurant_name": 0.671,
+     "time": 0.469,
+     "title": 0.099
+    },
+    "value edges cut": 0.754,
+    "values": 766,
+    "values that are exactly one piece": 336
+   }
+  },
+  "B_ordinary, val 4.5, counts from every sentence": {
+   "all sentences": {
+    "boundaries cut": 0.389,
+    "boundaries inside a value cut": 0.233,
+    "share": 0.274,
+    "share by chance at that rate": 0.109,
+    "share by kind": {
+     "city": 0.066,
+     "cuisine": 0.286,
+     "date": 0.164,
+     "restaurant_name": 0.5,
+     "time": 0.44,
+     "title": 0.086
+    },
+    "value edges cut": 0.629,
+    "values": 1388,
+    "values that are exactly one piece": 380
+   },
+   "first half": {
+    "boundaries cut": 0.386,
+    "boundaries inside a value cut": 0.253,
+    "share": 0.275,
+    "share by chance at that rate": 0.114,
+    "share by kind": {
+     "city": 0.068,
+     "cuisine": 0.305,
+     "date": 0.176,
+     "time": 0.45
+    },
+    "value edges cut": 0.628,
+    "values": 622,
+    "values that are exactly one piece": 171
+   },
+   "second half": {
+    "boundaries cut": 0.392,
+    "boundaries inside a value cut": 0.218,
+    "share": 0.273,
+    "share by chance at that rate": 0.105,
+    "share by kind": {
+     "city": 0.064,
+     "cuisine": 0.238,
+     "date": 0.15,
+     "restaurant_name": 0.5,
+     "time": 0.431,
+     "title": 0.086
+    },
+    "value edges cut": 0.629,
+    "values": 766,
+    "values that are exactly one piece": 209
+   }
+  },
+  "B_ordinary, val 4.5, counts from the sentences before": {
+   "all sentences": {
+    "boundaries cut": 0.309,
+    "boundaries inside a value cut": 0.196,
+    "share": 0.235,
+    "share by chance at that rate": 0.082,
+    "share by kind": {
+     "city": 0.049,
+     "cuisine": 0.172,
+     "date": 0.273,
+     "restaurant_name": 0.479,
+     "time": 0.352,
+     "title": 0.086
+    },
+    "value edges cut": 0.55,
+    "values": 1388,
+    "values that are exactly one piece": 326
+   },
+   "first half": {
+    "boundaries cut": 0.247,
+    "boundaries inside a value cut": 0.173,
+    "share": 0.19,
+    "share by chance at that rate": 0.065,
+    "share by kind": {
+     "city": 0.037,
+     "cuisine": 0.146,
+     "date": 0.353,
+     "time": 0.275
+    },
+    "value edges cut": 0.459,
+    "values": 622,
+    "values that are exactly one piece": 118
+   },
+   "second half": {
+    "boundaries cut": 0.37,
+    "boundaries inside a value cut": 0.213,
+    "share": 0.272,
+    "share by chance at that rate": 0.098,
+    "share by kind": {
+     "city": 0.059,
+     "cuisine": 0.238,
+     "date": 0.188,
+     "restaurant_name": 0.479,
+     "time": 0.431,
+     "title": 0.086
+    },
+    "value edges cut": 0.622,
+    "values": 766,
+    "values that are exactly one piece": 208
+   }
+  },
+  "B_ordinary, val 5.0, counts from every sentence": {
+   "all sentences": {
+    "boundaries cut": 0.283,
+    "boundaries inside a value cut": 0.197,
+    "share": 0.241,
+    "share by chance at that rate": 0.073,
+    "share by kind": {
+     "city": 0.04,
+     "cuisine": 0.093,
+     "date": 0.43,
+     "restaurant_name": 0.315,
+     "time": 0.421,
+     "title": 0.062
+    },
+    "value edges cut": 0.554,
+    "values": 1388,
+    "values that are exactly one piece": 334
+   },
+   "first half": {
+    "boundaries cut": 0.28,
+    "boundaries inside a value cut": 0.219,
+    "share": 0.241,
+    "share by chance at that rate": 0.076,
+    "share by kind": {
+     "city": 0.037,
+     "cuisine": 0.098,
+     "date": 0.424,
+     "time": 0.436
+    },
+    "value edges cut": 0.546,
+    "values": 622,
+    "values that are exactly one piece": 150
+   },
+   "second half": {
+    "boundaries cut": 0.286,
+    "boundaries inside a value cut": 0.18,
+    "share": 0.24,
+    "share by chance at that rate": 0.071,
+    "share by kind": {
+     "city": 0.043,
+     "cuisine": 0.079,
+     "date": 0.438,
+     "restaurant_name": 0.315,
+     "time": 0.407,
+     "title": 0.062
+    },
+    "value edges cut": 0.56,
+    "values": 766,
+    "values that are exactly one piece": 184
+   }
+  },
+  "B_ordinary, val 5.0, counts from the sentences before": {
+   "all sentences": {
+    "boundaries cut": 0.205,
+    "boundaries inside a value cut": 0.115,
+    "share": 0.137,
+    "share by chance at that rate": 0.049,
+    "share by kind": {
+     "city": 0.032,
+     "cuisine": 0.044,
+     "date": 0.212,
+     "restaurant_name": 0.308,
+     "time": 0.2,
+     "title": 0.062
+    },
+    "value edges cut": 0.427,
+    "values": 1388,
+    "values that are exactly one piece": 190
+   },
+   "first half": {
+    "boundaries cut": 0.151,
+    "boundaries inside a value cut": 0.066,
+    "share": 0.058,
+    "share by chance at that rate": 0.037,
+    "share by kind": {
+     "city": 0.025,
+     "cuisine": 0.03,
+     "date": 0.047,
+     "time": 0.109
+    },
+    "value edges cut": 0.318,
+    "values": 622,
+    "values that are exactly one piece": 36
+   },
+   "second half": {
+    "boundaries cut": 0.257,
+    "boundaries inside a value cut": 0.153,
+    "share": 0.201,
+    "share by chance at that rate": 0.062,
+    "share by kind": {
+     "city": 0.037,
+     "cuisine": 0.079,
+     "date": 0.388,
+     "restaurant_name": 0.308,
+     "time": 0.292,
+     "title": 0.062
+    },
+    "value edges cut": 0.514,
+    "values": 766,
+    "values that are exactly one piece": 154
+   }
+  },
+  "threshold picked on the first half": "B_ordinary, val 3.5"
+ },
+ "edges": {
+  "counts from every sentence": {
+   "boundaries": 26500,
+   "what follows, at a value's start": {
+    "AUC by kind, edge against inside": {
+     "city": 0.988,
+     "cuisine": 0.803,
+     "date": 0.689,
+     "restaurant_name": 0.944,
+     "time": 0.911,
+     "title": 0.777
+    },
+    "AUC, edge against elsewhere": 0.789,
+    "AUC, edge against inside a value": 0.848,
+    "edges": 1289,
+    "mean bits at the edge": 4.37,
+    "mean bits elsewhere": 3.04,
+    "mean bits inside a value": 2.38
+   },
+   "what precedes, at a value's end": {
+    "AUC by kind, edge against inside": {
+     "city": 0.998,
+     "cuisine": 0.772,
+     "date": 0.974,
+     "restaurant_name": 0.986,
+     "time": 0.903,
+     "title": 0.957
+    },
+    "AUC, edge against elsewhere": 0.827,
+    "AUC, edge against inside a value": 0.902,
+    "edges": 1296,
+    "mean bits at the edge": 5.73,
+    "mean bits elsewhere": 3.28,
+    "mean bits inside a value": 2.24
+   },
+   "where a word was never seen": 0
+  },
+  "counts from the sentences before": {
+   "boundaries": 26500,
+   "what follows, at a value's start": {
+    "AUC by kind, edge against inside": {
+     "city": 0.964,
+     "cuisine": 0.812,
+     "date": 0.721,
+     "restaurant_name": 0.929,
+     "time": 0.864,
+     "title": 0.721
+    },
+    "AUC, edge against elsewhere": 0.749,
+    "AUC, edge against inside a value": 0.814,
+    "edges": 1289,
+    "mean bits at the edge": 3.91,
+    "mean bits elsewhere": 2.72,
+    "mean bits inside a value": 2.1
+   },
+   "what precedes, at a value's end": {
+    "AUC by kind, edge against inside": {
+     "city": 0.991,
+     "cuisine": 0.802,
+     "date": 0.943,
+     "restaurant_name": 0.985,
+     "time": 0.885,
+     "title": 0.96
+    },
+    "AUC, edge against elsewhere": 0.814,
+    "AUC, edge against inside a value": 0.889,
+    "edges": 1296,
+    "mean bits at the edge": 5.3,
+    "mean bits elsewhere": 2.96,
+    "mean bits inside a value": 1.98
+   },
+   "where a word was never seen": 2069
+  }
+ },
+ "evidence": {
+  "Spell's loop on KATO": {
+   "as it arrived": {
+    "share": 0.156,
+    "values": 1388,
+    "values inside a longer variable": 0.165,
+    "values that are exactly one variable": 216,
+    "variables marked": 4047,
+    "variables that are exactly a value": 0.053
+   },
+   "at the end": {
+    "share": 0.164,
+    "values": 1388,
+    "values inside a longer variable": 0.45,
+    "values that are exactly one variable": 228,
+    "variables marked": 5969,
+    "variables that are exactly a value": 0.038
+   },
+   "joins by evidence": {
+    "above 0 bits": 2212,
+    "at or below 0 bits": 687,
+    "median bits": 6.85,
+    "values found exactly in joins above 0 bits": 115,
+    "values found exactly in joins at or below 0 bits": 101
+   },
+   "most-used rules at the end (sentences, fixed words, variables)": [
+    [
+     98,
+     3,
+     2
+    ],
+    [
+     58,
+     2,
+     1
+    ],
+    [
+     49,
+     2,
+     1
+    ],
+    [
+     48,
+     4,
+     2
+    ],
+    [
+     37,
+     3,
+     2
+    ],
+    [
+     35,
+     3,
+     1
+    ],
+    [
+     33,
+     1,
+     1
+    ],
+    [
+     30,
+     2,
+     2
+    ]
+   ],
+   "rules at the end": 941,
+   "rules with at most two fixed words, holding two sentences or more": 64,
+   "seconds": 130.7,
+   "sentences that joined a rule": 2899,
+   "sentences under them": 518
+  },
+  "the same, joining only above 0 bits of evidence": {
+   "as it arrived": {
+    "share": 0.116,
+    "values": 1388,
+    "values inside a longer variable": 0.144,
+    "values that are exactly one variable": 161,
+    "variables marked": 3568,
+    "variables that are exactly a value": 0.045
+   },
+   "at the end": {
+    "share": 0.122,
+    "values": 1388,
+    "values inside a longer variable": 0.357,
+    "values that are exactly one variable": 169,
+    "variables marked": 5434,
+    "variables that are exactly a value": 0.031
+   },
+   "most-used rules at the end (sentences, fixed words, variables)": [
+    [
+     63,
+     3,
+     2
+    ],
+    [
+     60,
+     4,
+     2
+    ],
+    [
+     56,
+     5,
+     2
+    ],
+    [
+     51,
+     2,
+     2
+    ],
+    [
+     34,
+     3,
+     2
+    ],
+    [
+     31,
+     2,
+     2
+    ],
+    [
+     31,
+     3,
+     3
+    ],
+    [
+     30,
+     2,
+     2
+    ]
+   ],
+   "rules at the end": 1102,
+   "rules with at most two fixed words, holding two sentences or more": 70,
+   "seconds": 233.1,
+   "sentences that joined a rule": 2738,
+   "sentences under them": 464
+  }
+ },
+ "kato": {
+  "KATO, shown the 1 word before": {
+   "AUC, start against elsewhere": 0.746,
+   "AUC, start against inside a value": 0.809,
+   "boundaries with nothing to go on": 1162,
+   "mean bits at a value's start": 3.84,
+   "mean bits elsewhere": 2.67,
+   "mean bits inside a value": 2.07
+  },
+  "KATO, shown the 2 words before": {
+   "AUC, start against elsewhere": 0.736,
+   "AUC, start against inside a value": 0.817,
+   "boundaries with nothing to go on": 285,
+   "mean bits at a value's start": 3.18,
+   "mean bits elsewhere": 2.14,
+   "mean bits inside a value": 1.66
+  },
+  "KATO, shown the sentence so far": {
+   "AUC, start against elsewhere": 0.685,
+   "AUC, start against inside a value": 0.672,
+   "boundaries with nothing to go on": 122,
+   "mean bits at a value's start": 2.94,
+   "mean bits elsewhere": 2.07,
+   "mean bits inside a value": 2.13
+  },
+  "boundaries": 26500,
+  "counts of what followed the word before": {
+   "AUC, start against elsewhere": 0.749,
+   "AUC, start against inside a value": 0.814,
+   "boundaries with nothing to go on": 1162,
+   "mean bits at a value's start": 3.91,
+   "mean bits elsewhere": 2.72,
+   "mean bits inside a value": 2.1
+  },
+  "predictions asked": 79500,
+  "seconds": 2637.4,
+  "sentences": 3873
+ },
+ "parts": {
+  "Spell's loop on pieces (B_ordinary, val 3.5)": {
+   "all sentences": {
+    "share": 0.187,
+    "values": 1388,
+    "values inside a longer variable": 0.257,
+    "values that are exactly one variable": 260,
+    "variables marked": 3770,
+    "variables that are exactly a value": 0.069
+   },
+   "second half": {
+    "share": 0.181,
+    "values": 766,
+    "values inside a longer variable": 0.278,
+    "values that are exactly one variable": 139,
+    "variables marked": 1995,
+    "variables that are exactly a value": 0.07
+   }
+  },
+  "Spell's loop on words": {
+   "all sentences": {
+    "share": 0.161,
+    "values": 1388,
+    "values inside a longer variable": 0.165,
+    "values that are exactly one variable": 224,
+    "variables marked": 4011,
+    "variables that are exactly a value": 0.056
+   },
+   "second half": {
+    "share": 0.178,
+    "values": 766,
+    "values inside a longer variable": 0.161,
+    "values that are exactly one variable": 136,
+    "variables marked": 2097,
+    "variables that are exactly a value": 0.065
+   }
+  },
+  "two words around a piece, seen 10 times with 5 other pieces": {
+   "all sentences": {
+    "share": 0.324,
+    "values": 1388,
+    "values inside a longer variable": 0.118,
+    "values that are exactly one variable": 450,
+    "variables marked": 6605,
+    "variables that are exactly a value": 0.068
+   },
+   "second half": {
+    "share": 0.368,
+    "values": 766,
+    "values inside a longer variable": 0.101,
+    "values that are exactly one variable": 282,
+    "variables marked": 4084,
+    "variables that are exactly a value": 0.069
+   }
+  },
+  "two words around a piece, seen 2 times with 1 other piece": {
+   "all sentences": {
+    "share": 0.419,
+    "values": 1388,
+    "values inside a longer variable": 0.17,
+    "values that are exactly one variable": 582,
+    "variables marked": 11792,
+    "variables that are exactly a value": 0.049
+   },
+   "second half": {
+    "share": 0.456,
+    "values": 766,
+    "values inside a longer variable": 0.134,
+    "values that are exactly one variable": 349,
+    "variables marked": 7132,
+    "variables that are exactly a value": 0.049
+   }
+  },
+  "two words around a piece, seen 20 times with 8 other pieces": {
+   "all sentences": {
+    "share": 0.248,
+    "values": 1388,
+    "values inside a longer variable": 0.089,
+    "values that are exactly one variable": 344,
+    "variables marked": 5214,
+    "variables that are exactly a value": 0.066
+   },
+   "second half": {
+    "share": 0.281,
+    "values": 766,
+    "values inside a longer variable": 0.077,
+    "values that are exactly one variable": 215,
+    "variables marked": 3218,
+    "variables that are exactly a value": 0.067
+   }
+  },
+  "two words around a piece, seen 5 times with 3 other pieces": {
+   "all sentences": {
+    "share": 0.378,
+    "values": 1388,
+    "values inside a longer variable": 0.141,
+    "values that are exactly one variable": 524,
+    "variables marked": 8050,
+    "variables that are exactly a value": 0.065
+   },
+   "second half": {
+    "share": 0.424,
+    "values": 766,
+    "values inside a longer variable": 0.12,
+    "values that are exactly one variable": 325,
+    "variables marked": 4908,
+    "variables that are exactly a value": 0.066
+   }
+  },
+  "two words around one word, seen 2 times with 1 other word": {
+   "all sentences": {
+    "share": 0.202,
+    "values": 1388,
+    "values inside a longer variable": 0.0,
+    "values that are exactly one variable": 281,
+    "variables marked": 14719,
+    "variables that are exactly a value": 0.019
+   },
+   "second half": {
+    "share": 0.201,
+    "values": 766,
+    "values inside a longer variable": 0.0,
+    "values that are exactly one variable": 154,
+    "variables marked": 8562,
+    "variables that are exactly a value": 0.018
+   }
+  },
+  "two words around one word, seen 5 times with 3 other words": {
+   "all sentences": {
+    "share": 0.151,
+    "values": 1388,
+    "values inside a longer variable": 0.0,
+    "values that are exactly one variable": 210,
+    "variables marked": 7070,
+    "variables that are exactly a value": 0.03
+   },
+   "second half": {
+    "share": 0.158,
+    "values": 766,
+    "values inside a longer variable": 0.0,
+    "values that are exactly one variable": 121,
+    "variables marked": 4429,
+    "variables that are exactly a value": 0.027
+   }
+  }
+ },
+ "placeholders": {
+  "all": {
+   "fillers": 5323,
+   "median number of different fillers": 2,
+   "median of the mean filler length, in tokens": 2.0,
+   "placeholders": 1372,
+   "placeholders Spell's split rule would take apart (fewer than 8 different fillers, no digit)": 1088
+  },
+  "at least half of the fillers are exactly a marked value": {
+   "fillers": 246,
+   "median number of different fillers": 2,
+   "median of the mean filler length, in tokens": 2.0,
+   "placeholders": 89,
+   "placeholders Spell's split rule would take apart (fewer than 8 different fillers, no digit)": 62
+  },
+  "the others": {
+   "fillers": 5077,
+   "median number of different fillers": 2,
+   "median of the mean filler length, in tokens": 2.0,
+   "placeholders": 1283,
+   "placeholders Spell's split rule would take apart (fewer than 8 different fillers, no digit)": 1026
+  }
+ },
+ "second half starts at sentence": 1936,
+ "sentences": 3873,
+ "values": 1388
+}

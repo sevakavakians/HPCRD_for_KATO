@@ -52,6 +52,8 @@ def bare(name):
 class InProcessNode:
     def __init__(self, name, recall_threshold=0.1, max_predictions=100,
                  max_pattern_length=0, stm_mode='CLEAR', rank_sort_algo='potential'):
+        if not 1 <= max_predictions <= 10000:       # as kato/config/session_config.py: a service refuses the session
+            raise ValueError("max_predictions must be between 1 and 10000")
         self.name = name
         self.recall_threshold = recall_threshold
         self.max_predictions = max_predictions

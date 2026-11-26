@@ -147,3 +147,13 @@ def test_a_line_of_placeholders_only_joins_the_type_it_is():
     other, joined, _found = reader.read([star, star, star])
     assert not joined and reader.kind == 1      # three placeholders are another content, and no generalisation of the two
     reader.check()
+
+
+def test_the_stand_in_refuses_a_prediction_limit_that_kato_refuses():
+    # KATO takes max_predictions from 1 to 10000 (kato/config/session_config.py); a service answers a
+    # session outside that with 400. The in-process node used to take any number.
+    from hpcrd.kato_node import InProcessNode
+    for limit in (0, 10001, 100000):
+        with pytest.raises(ValueError):
+            InProcessNode('limit', max_predictions=limit)
+    InProcessNode('limit', max_predictions=10000)
