@@ -2,6 +2,8 @@
 
 **Hierarchical pattern chunking and rule discovery for [KATO](https://github.com/sevakavakians/kato).**
 
+**New here? Read [the summary](docs/summary-2026-11-26.md) first.** It says in plain words what was done, shows the accuracy tables, and says what the numbers mean. The notes below call its four steps "rounds".
+
 An experiment, started 24 Nov 2026. The goal is to find or create the KATO capabilities that let it
 
 1. segment patterns automatically,
@@ -46,7 +48,7 @@ Four rounds so far:
   (`experiments/log_benchmark.py`), made the module's outer loop (`loop='templates'`), and checked
   through a running KATO service, where a rule is edited by learning the new pattern and retiring the old one.
 
-The write-ups are in `docs/`: `worked-examples-2026-11-24.md` (round 1),
+The write-ups are in `docs/`: `summary-2026-11-26.md` (all four rounds, for a new reader), `worked-examples-2026-11-24.md` (round 1),
 `round-2-sequences-and-gap-variables-2026-11-24.md` (round 2),
 `round-3-published-methods-2026-11-24.md` (round 3) and
 `round-4-log-benchmark-and-outer-loop-2026-11-24.md` (round 4). `examples/report.txt` and
