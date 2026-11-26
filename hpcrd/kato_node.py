@@ -14,8 +14,10 @@ What is mirrored by hand, from kato/informatics/knowledge_base.py and
 kato/storage/redis_writer.py: frequency counting and the node counters, the
 "fewer than two symbols is not learned" rule, the observe order (append,
 predict, auto-learn), ROLLING/CLEAR, and the single-symbol candidate path. Also, from
-kato/api/endpoints/sessions.py, retiring a pattern: a tombstone that every read path skips,
-reversible. The retire mirror has not been checked against a running KATO.
+kato/api/endpoints/sessions.py and kato/storage/redis_writer.py, retiring a pattern: a tombstone
+that every prediction skips, reversible. The pattern stays stored and can still be read by name,
+and learning it again is refused (knowledge_base.learnPattern raises RetiredPatternError, HTTP
+409) until it is un-retired. Checked against a running service: see kato_api_node.py.
 
 Not mirrored: storage, sessions, emotives, metadata, vectors, retirement, and
 the metrics that describe one prediction at a time (entropy, tf-idf, ...).
@@ -36,11 +38,15 @@ from kato.representations.pattern import Pattern  # noqa: E402
 from kato.representations.prediction import Prediction, rank_predictions, refine_alignment_by_events  # noqa: E402
 from kato.searches.pattern_search import InformationExtractor, _lcs_ratio_scorer  # noqa: E402
 
+from .kato_api_node import RetiredPattern  # noqa: E402,F401   (that module needs no KATO checkout)
+
 PREFIX = 'PTRN|'
 
 
 def bare(name):
     return name[len(PREFIX):] if name.startswith(PREFIX) else name
+
+
 
 
 class InProcessNode:
@@ -53,7 +59,7 @@ class InProcessNode:
         self.stm_mode = stm_mode
         self.rank_sort_algo = rank_sort_algo
         self.patterns = {}            # bare sha1 -> {'name','pattern_data','length','frequency','emotives'}
-        self.retired = set()          # bare sha1 of tombstoned patterns: stored, and skipped by every read
+        self.retired = set()          # bare sha1 of tombstoned patterns: stored, and skipped by every prediction
         self.learn_order = []         # bare sha1, in order of first learn
         self.symbol_freq = Counter()  # symbols:freq
         self.symbol_pmf = Counter()   # symbols:pmf
@@ -74,6 +80,8 @@ class InProcessNode:
         pattern = Pattern(events)
         if len(pattern) <= 1:
             return None
+        if pattern.name in self.retired:    # as knowledge_base.learnPattern does, before anything is written
+            raise RetiredPattern(f"{PREFIX}{pattern.name} is retired on this node: un-retire it first")
         self.learns += 1
         counts = Counter(chain(*pattern.pattern_data))
         new = pattern.name not in self.patterns
@@ -94,12 +102,14 @@ class InProcessNode:
         return PREFIX + pattern.name
 
     def frequency(self, name):
+        """As GET /pattern/{name}: a retired pattern is still returned, with its frequency."""
         entry = self.patterns.get(bare(name))
-        return entry['frequency'] if entry and bare(name) not in self.retired else 0
+        return entry['frequency'] if entry else 0
 
     def retire(self, names):
-        """KATO: POST /sessions/{id}/patterns/retire. The patterns stay stored; reads skip them."""
-        self.retired.update(bare(n) for n in names if bare(n) in self.patterns)
+        """KATO: POST /sessions/{id}/patterns/retire. The patterns stay stored; predictions skip
+        them. As in KATO, an id is tombstoned whether or not the node holds that pattern."""
+        self.retired.update(bare(n) for n in names)
 
     def unretire(self, names):
         """KATO: POST /sessions/{id}/patterns/un-retire."""

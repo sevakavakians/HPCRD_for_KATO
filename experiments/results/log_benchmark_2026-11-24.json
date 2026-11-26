@@ -1,0 +1,763 @@
+{
+ "pins": {
+  "commit": "d9d4180784cde9afef990eeeb458591011933f9b",
+  "dataset": "Loghub 2k samples with hand-labelled templates, as distributed with logparser",
+  "path": "data/loghub_2k/<System>/<System>_2k.log_structured.csv",
+  "source": "https://github.com/logpai/logparser",
+  "terms": "LICENSE OF LOGHUB (data/loghub_2k/LICENSE): freely available for research or academic work; refer to https://github.com/logpai/loghub and cite the loghub paper"
+ },
+ "systems": {
+  "Android": {
+   "Drain": {
+    "accuracy": 0.831,
+    "groups": 164,
+    "seconds": 0.0
+   },
+   "labelled events": 166,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.9085,
+    "groups": 189,
+    "seconds": 0.2
+   },
+   "on KATO": {
+    "accuracy": 0.9085,
+    "digest": "88924115aa8cac33a8c3fe6087c229dedebdfc18",
+    "groups": 189,
+    "learns": 1684,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 7,
+    "predictions": 1684,
+    "retired": 4,
+    "revived": 9,
+    "seconds": 13.4,
+    "stored": 169
+   },
+   "paper": {
+    "accuracy": 0.9085,
+    "groups": 189,
+    "seconds": 0.2
+   },
+   "plain": {
+    "accuracy": 0.9085,
+    "groups": 187,
+    "seconds": 0.2
+   },
+   "published": {
+    "Drain": 0.911,
+    "Spell": 0.919
+   },
+   "reference": {
+    "accuracy": 0.9185,
+    "groups": 180,
+    "seconds": 0.0
+   }
+  },
+  "Apache": {
+   "Drain": {
+    "accuracy": 1.0,
+    "groups": 6,
+    "seconds": 0.0
+   },
+   "labelled events": 6,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 1.0,
+    "groups": 6,
+    "seconds": 0.0
+   },
+   "on KATO": {
+    "accuracy": 1.0,
+    "digest": "03827ea9e60438b985390054ddb50f32ff8cf442",
+    "groups": 6,
+    "learns": 2000,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 2000,
+    "retired": 3,
+    "revived": 0,
+    "seconds": 0.7,
+    "stored": 9
+   },
+   "paper": {
+    "accuracy": 1.0,
+    "groups": 6,
+    "seconds": 0.0
+   },
+   "plain": {
+    "accuracy": 1.0,
+    "groups": 6,
+    "seconds": 0.0
+   },
+   "published": {
+    "Drain": 1.0,
+    "Spell": 1.0
+   },
+   "reference": {
+    "accuracy": 1.0,
+    "groups": 6,
+    "seconds": 0.0
+   }
+  },
+  "BGL": {
+   "Drain": {
+    "accuracy": 0.9625,
+    "groups": 108,
+    "seconds": 0.0
+   },
+   "labelled events": 120,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.7975,
+    "groups": 264,
+    "seconds": 0.1
+   },
+   "on KATO": {
+    "accuracy": 0.7975,
+    "digest": "af40c43ae2309c2df344cfaeff817bbeb49464fb",
+    "groups": 264,
+    "learns": 2000,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 2000,
+    "retired": 84,
+    "revived": 1,
+    "seconds": 2.7,
+    "stored": 348
+   },
+   "paper": {
+    "accuracy": 0.7975,
+    "groups": 264,
+    "seconds": 0.1
+   },
+   "plain": {
+    "accuracy": 0.8005,
+    "groups": 265,
+    "seconds": 0.3
+   },
+   "published": {
+    "Drain": 0.963,
+    "Spell": 0.787
+   },
+   "reference": {
+    "accuracy": 0.7865,
+    "groups": 262,
+    "seconds": 0.1
+   }
+  },
+  "HDFS": {
+   "Drain": {
+    "accuracy": 0.9975,
+    "groups": 16,
+    "seconds": 0.0
+   },
+   "labelled events": 14,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.9975,
+    "groups": 15,
+    "seconds": 0.0
+   },
+   "on KATO": {
+    "accuracy": 0.9975,
+    "digest": "a2a3fd3f215508475828e43f705782d04dd9fdc4",
+    "groups": 15,
+    "learns": 2000,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 1,
+    "predictions": 2000,
+    "retired": 6,
+    "revived": 0,
+    "seconds": 2.7,
+    "stored": 21
+   },
+   "paper": {
+    "accuracy": 0.9975,
+    "groups": 15,
+    "seconds": 0.8
+   },
+   "plain": {
+    "accuracy": 0.9975,
+    "groups": 16,
+    "seconds": 0.1
+   },
+   "published": {
+    "Drain": 0.998,
+    "Spell": 1.0
+   },
+   "reference": {
+    "accuracy": 1.0,
+    "groups": 14,
+    "seconds": 0.0
+   }
+  },
+  "HPC": {
+   "Drain": {
+    "accuracy": 0.887,
+    "groups": 47,
+    "seconds": 0.0
+   },
+   "labelled events": 46,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.904,
+    "groups": 49,
+    "seconds": 0.0
+   },
+   "on KATO": {
+    "accuracy": 0.904,
+    "digest": "e3a32ac1cc16269e68f8a6e5d5f743795806ccfd",
+    "groups": 49,
+    "learns": 1092,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 504,
+    "merged": 0,
+    "predictions": 1092,
+    "retired": 17,
+    "revived": 0,
+    "seconds": 0.4,
+    "stored": 56
+   },
+   "paper": {
+    "accuracy": 0.652,
+    "groups": 47,
+    "seconds": 0.0
+   },
+   "plain": {
+    "accuracy": 0.652,
+    "groups": 47,
+    "seconds": 0.0
+   },
+   "published": {
+    "Drain": 0.887,
+    "Spell": 0.654
+   },
+   "reference": {
+    "accuracy": 0.654,
+    "groups": 46,
+    "seconds": 0.0
+   }
+  },
+  "Hadoop": {
+   "Drain": {
+    "accuracy": 0.9475,
+    "groups": 103,
+    "seconds": 0.0
+   },
+   "labelled events": 114,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.777,
+    "groups": 165,
+    "seconds": 0.2
+   },
+   "on KATO": {
+    "accuracy": 0.777,
+    "digest": "68b253ede0e378147e51ea1744ff2d336ca085f9",
+    "groups": 165,
+    "learns": 1999,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 1999,
+    "retired": 58,
+    "revived": 0,
+    "seconds": 4.0,
+    "stored": 222
+   },
+   "paper": {
+    "accuracy": 0.777,
+    "groups": 165,
+    "seconds": 0.2
+   },
+   "plain": {
+    "accuracy": 0.778,
+    "groups": 169,
+    "seconds": 0.2
+   },
+   "published": {
+    "Drain": 0.948,
+    "Spell": 0.778
+   },
+   "reference": {
+    "accuracy": 0.7775,
+    "groups": 167,
+    "seconds": 0.0
+   }
+  },
+  "HealthApp": {
+   "Drain": {
+    "accuracy": 0.78,
+    "groups": 312,
+    "seconds": 0.0
+   },
+   "labelled events": 75,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.76,
+    "groups": 165,
+    "seconds": 0.1
+   },
+   "on KATO": {
+    "accuracy": 0.76,
+    "digest": "4d7c40e001cc131528ed27fb06ed00ceddce5aa6",
+    "groups": 165,
+    "learns": 1988,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 4,
+    "merged": 0,
+    "predictions": 1988,
+    "retired": 48,
+    "revived": 1,
+    "seconds": 2.3,
+    "stored": 205
+   },
+   "paper": {
+    "accuracy": 0.7595,
+    "groups": 165,
+    "seconds": 0.1
+   },
+   "plain": {
+    "accuracy": 0.7595,
+    "groups": 230,
+    "seconds": 0.1
+   },
+   "published": {
+    "Drain": 0.78,
+    "Spell": 0.639
+   },
+   "reference": {
+    "accuracy": 0.639,
+    "groups": 214,
+    "seconds": 0.0
+   }
+  },
+  "Linux": {
+   "Drain": {
+    "accuracy": 0.69,
+    "groups": 112,
+    "seconds": 0.0
+   },
+   "labelled events": 118,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.605,
+    "groups": 98,
+    "seconds": 0.0
+   },
+   "on KATO": {
+    "accuracy": 0.605,
+    "digest": "eba956f5e1519b6618db4c73d1f47709ca8a9128",
+    "groups": 98,
+    "learns": 1993,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 1993,
+    "retired": 20,
+    "revived": 1,
+    "seconds": 2.1,
+    "stored": 117
+   },
+   "paper": {
+    "accuracy": 0.605,
+    "groups": 98,
+    "seconds": 0.0
+   },
+   "plain": {
+    "accuracy": 0.605,
+    "groups": 98,
+    "seconds": 0.1
+   },
+   "published": {
+    "Drain": 0.69,
+    "Spell": 0.605
+   },
+   "reference": {
+    "accuracy": 0.605,
+    "groups": 99,
+    "seconds": 0.0
+   }
+  },
+  "Mac": {
+   "Drain": {
+    "accuracy": 0.7865,
+    "groups": 394,
+    "seconds": 0.0
+   },
+   "labelled events": 341,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.7485,
+    "groups": 358,
+    "seconds": 0.3
+   },
+   "on KATO": {
+    "accuracy": 0.7485,
+    "digest": "3481597a3327edafb3ff191f74835ea24cc5cf78",
+    "groups": 358,
+    "learns": 1987,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 1987,
+    "retired": 158,
+    "revived": 6,
+    "seconds": 4.7,
+    "stored": 513
+   },
+   "paper": {
+    "accuracy": 0.7485,
+    "groups": 358,
+    "seconds": 0.3
+   },
+   "plain": {
+    "accuracy": 0.756,
+    "groups": 366,
+    "seconds": 0.4
+   },
+   "published": {
+    "Drain": 0.787,
+    "Spell": 0.757
+   },
+   "reference": {
+    "accuracy": 0.7565,
+    "groups": 358,
+    "seconds": 0.1
+   }
+  },
+  "OpenSSH": {
+   "Drain": {
+    "accuracy": 0.7875,
+    "groups": 24,
+    "seconds": 0.0
+   },
+   "labelled events": 27,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.4845,
+    "groups": 29,
+    "seconds": 0.1
+   },
+   "on KATO": {
+    "accuracy": 0.4845,
+    "digest": "a93783516a97aed6bfb1721e00e88cd0f97dc1db",
+    "groups": 29,
+    "learns": 2000,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 2000,
+    "retired": 17,
+    "revived": 1,
+    "seconds": 5.0,
+    "stored": 46
+   },
+   "paper": {
+    "accuracy": 0.4845,
+    "groups": 29,
+    "seconds": 0.1
+   },
+   "plain": {
+    "accuracy": 0.4845,
+    "groups": 29,
+    "seconds": 0.2
+   },
+   "published": {
+    "Drain": 0.788,
+    "Spell": 0.554
+   },
+   "reference": {
+    "accuracy": 0.554,
+    "groups": 27,
+    "seconds": 0.0
+   }
+  },
+  "OpenStack": {
+   "Drain": {
+    "accuracy": 0.7325,
+    "groups": 299,
+    "seconds": 0.0
+   },
+   "labelled events": 43,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.764,
+    "groups": 451,
+    "seconds": 0.2
+   },
+   "on KATO": {
+    "accuracy": 0.764,
+    "digest": "039066b5415d5c25b386f7cc697e414bcd5f5dc3",
+    "groups": 451,
+    "learns": 2000,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 2000,
+    "retired": 24,
+    "revived": 0,
+    "seconds": 20.2,
+    "stored": 475
+   },
+   "paper": {
+    "accuracy": 0.764,
+    "groups": 451,
+    "seconds": 0.2
+   },
+   "plain": {
+    "accuracy": 0.764,
+    "groups": 451,
+    "seconds": 0.4
+   },
+   "published": {
+    "Drain": 0.733,
+    "Spell": 0.764
+   },
+   "reference": {
+    "accuracy": 0.764,
+    "groups": 451,
+    "seconds": 0.2
+   }
+  },
+  "Proxifier": {
+   "Drain": {
+    "accuracy": 0.5265,
+    "groups": 18,
+    "seconds": 0.0
+   },
+   "labelled events": 8,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.5265,
+    "groups": 299,
+    "seconds": 0.2
+   },
+   "on KATO": {
+    "accuracy": 0.5265,
+    "digest": "5585d4c86c5b0516c34c2b74e7ff5e5a8d676ce8",
+    "groups": 299,
+    "learns": 2000,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 2000,
+    "retired": 76,
+    "revived": 0,
+    "seconds": 57.1,
+    "stored": 375
+   },
+   "paper": {
+    "accuracy": 0.5265,
+    "groups": 299,
+    "seconds": 0.2
+   },
+   "plain": {
+    "accuracy": 0.5265,
+    "groups": 299,
+    "seconds": 2.8
+   },
+   "published": {
+    "Drain": 0.527,
+    "Spell": 0.527
+   },
+   "reference": {
+    "accuracy": 0.5265,
+    "groups": 94,
+    "seconds": 0.1
+   }
+  },
+  "Spark": {
+   "Drain": {
+    "accuracy": 0.92,
+    "groups": 29,
+    "seconds": 0.0
+   },
+   "labelled events": 36,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.905,
+    "groups": 58,
+    "seconds": 0.1
+   },
+   "on KATO": {
+    "accuracy": 0.905,
+    "digest": "6522503caa46e51ba32fe236c38cd095654ef567",
+    "groups": 58,
+    "learns": 2000,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 2000,
+    "retired": 16,
+    "revived": 0,
+    "seconds": 1.1,
+    "stored": 74
+   },
+   "paper": {
+    "accuracy": 0.905,
+    "groups": 58,
+    "seconds": 0.1
+   },
+   "plain": {
+    "accuracy": 0.905,
+    "groups": 58,
+    "seconds": 0.1
+   },
+   "published": {
+    "Drain": 0.92,
+    "Spell": 0.905
+   },
+   "reference": {
+    "accuracy": 0.905,
+    "groups": 58,
+    "seconds": 0.0
+   }
+  },
+  "Thunderbird": {
+   "Drain": {
+    "accuracy": 0.955,
+    "groups": 182,
+    "seconds": 0.0
+   },
+   "labelled events": 149,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.8465,
+    "groups": 154,
+    "seconds": 0.1
+   },
+   "on KATO": {
+    "accuracy": 0.8465,
+    "digest": "128f69926f007297e39ce4f6ba27b6fdba6cdcae",
+    "groups": 154,
+    "learns": 1995,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 7,
+    "merged": 0,
+    "predictions": 1995,
+    "retired": 44,
+    "revived": 0,
+    "seconds": 2.7,
+    "stored": 194
+   },
+   "paper": {
+    "accuracy": 0.846,
+    "groups": 154,
+    "seconds": 0.1
+   },
+   "plain": {
+    "accuracy": 0.846,
+    "groups": 154,
+    "seconds": 0.2
+   },
+   "published": {
+    "Drain": 0.955,
+    "Spell": 0.844
+   },
+   "reference": {
+    "accuracy": 0.8435,
+    "groups": 152,
+    "seconds": 0.1
+   }
+  },
+  "Windows": {
+   "Drain": {
+    "accuracy": 0.997,
+    "groups": 53,
+    "seconds": 0.0
+   },
+   "labelled events": 50,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.9885,
+    "groups": 53,
+    "seconds": 0.1
+   },
+   "on KATO": {
+    "accuracy": 0.9885,
+    "digest": "7868b244e1bf982883dc1471000a982e3dec94fa",
+    "groups": 53,
+    "learns": 2000,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 2000,
+    "retired": 13,
+    "revived": 0,
+    "seconds": 1.1,
+    "stored": 66
+   },
+   "paper": {
+    "accuracy": 0.9885,
+    "groups": 53,
+    "seconds": 0.1
+   },
+   "plain": {
+    "accuracy": 0.9885,
+    "groups": 53,
+    "seconds": 0.1
+   },
+   "published": {
+    "Drain": 0.997,
+    "Spell": 0.989
+   },
+   "reference": {
+    "accuracy": 0.9885,
+    "groups": 53,
+    "seconds": 0.0
+   }
+  },
+  "Zookeeper": {
+   "Drain": {
+    "accuracy": 0.9665,
+    "groups": 46,
+    "seconds": 0.0
+   },
+   "labelled events": 50,
+   "lines": 2000,
+   "lone": {
+    "accuracy": 0.9635,
+    "groups": 57,
+    "seconds": 0.0
+   },
+   "on KATO": {
+    "accuracy": 0.9635,
+    "digest": "2e003849f4f5af1c3072f9a4a319ee11a5738f68",
+    "groups": 57,
+    "learns": 1994,
+    "lines grouped otherwise than by lone": 0,
+    "lines grouped otherwise than by paper": 0,
+    "merged": 0,
+    "predictions": 1994,
+    "retired": 16,
+    "revived": 0,
+    "seconds": 1.6,
+    "stored": 71
+   },
+   "paper": {
+    "accuracy": 0.9635,
+    "groups": 57,
+    "seconds": 0.0
+   },
+   "plain": {
+    "accuracy": 0.9635,
+    "groups": 57,
+    "seconds": 0.1
+   },
+   "published": {
+    "Drain": 0.967,
+    "Spell": 0.964
+   },
+   "reference": {
+    "accuracy": 0.9635,
+    "groups": 57,
+    "seconds": 0.0
+   }
+  }
+ }
+}

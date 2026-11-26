@@ -26,6 +26,7 @@ from fractions import Fraction
 
 from .alignment import flat, read
 from .kato_node import PREFIX, Node, bare, Pattern
+from .templates import TemplateReader
 
 VAR = 'VAR|'
 
@@ -50,6 +51,10 @@ class Settings:
     fold: str = 'all'            # the readings that decide constant / variable: 'all' that were read
                                  # | 'nearest' (the most similar ones that differ, and exact repeats)
     inside: bool = False         # values='sequence': read each new value against its VAR's earlier values
+    loop: str = 'ensemble'       # span='sequence': 'ensemble' reads node_0's ensemble (rounds 1 and 2)
+                                 # | 'templates' is Spell's loop (Du and Li 2016): a sequence joins the template it
+                                 #   shares most with, and that template is edited. `fold` and `topdown` are not used.
+    tau: float = 0.5             # loop='templates': the share of a sequence a template must share with it
     topdown: bool = False        # span='sequence': a learned rule that fits a new sequence reads it, before node_0 is asked
     rule_threshold: float = 0.5  # topdown: how much of a sequence a rule's constants must account for (node_1t's recall_threshold)
 
@@ -246,6 +251,11 @@ class Modeler:
         # (the pattern is the rule with its names unravelled through node_1a).
         self.node1t = Node('node_1t', recall_threshold=s.rule_threshold, max_predictions=10000) if s.topdown else None
         self.rule_of = {}
+        self.reader = None
+        if s.loop == 'templates':
+            if not (whole and s.slots == 'gap' and s.values == 'sequence'):
+                raise ValueError("loop='templates' needs span='sequence', slots='gap' and values='sequence'")
+            self.reader = TemplateReader(tau=s.tau, parameter=VAR, number=self.next_var)
         self.reach = None if whole else s.window    # the longest stretch one node_0 pattern can show whole
         self.learned_at = {}        # rolling windows: node_0 pattern name -> steps at which it was learned
         self.var_count = 0
@@ -340,6 +350,11 @@ class Modeler:
                 'learned': None, 'raw': [], 'stretches': []}
         self.closed = b
         if len(tokens) < 2:     # one symbol is not a pattern
+            return step
+        if self.reader is not None:
+            result = self.read_by_templates(tokens)
+            result['stretch'] = (a, b)
+            step.update(stretches=[result], by_template=result['template'], learned=self.node0.learn(events))
             return step
         if self.s.topdown:
             result = self.read_by_rule(tokens)
@@ -605,6 +620,71 @@ class Modeler:
                 result['node2b'].append(('VARs side by side', list(run)))
             run = []
         self.node2a.observe([rule], predict=False)
+
+    # -- Spell's loop as the outer loop ---------------------------------------
+    def next_var(self):
+        self.var_count += 1
+        return f'{VAR}{self.var_count}'
+
+    def rule_of_template(self, template):
+        """The node_1b form of a template: each run of constants by its chunk's name, VARs as they are."""
+        out, run = [], []
+        for symbol in list(template) + [None]:
+            if symbol is not None and not symbol.startswith(VAR):
+                run.append(symbol)
+                continue
+            if run:
+                out.append(run[0] if len(run) == 1 else pattern_name([[x] for x in run]))
+                run = []
+            if symbol is not None:
+                out.append(symbol)
+        return out
+
+    def read_by_templates(self, tokens):
+        """loop='templates'. The template node is the rule store: the sequence joins the template it
+        shares most with (hpcrd/templates.py), and the nodes above are fed from that. A VAR is a
+        placeholder of the template and keeps its symbol when the template is edited. When the
+        template changes, the old rule in node_1b is retired with it."""
+        n = len(tokens)
+        name, joined, _gaps = self.reader.read(tokens)
+        out = {'labels': ['C'] * n, 'noise': [], 'parts': [], 'evidence': None, 'template': name, 'joined': joined,
+               'changed': False}
+        if not joined:
+            return out      # a type of its own so far: nothing above the template
+        last = self.reader.last
+        r, slots = last['reading'], iter(last['slots'])
+        items, run = [], None
+        for (q0, i0), (q1, i1) in zip([(-1, -1)] + r.pairs, r.pairs + [(len(r.pattern), n)]):
+            if q1 - q0 > 1 or i1 - i0 > 1:
+                if run:
+                    items.append({'kind': 'C', 'lo': run[0], 'hi': run[1], 'tokens': tokens[run[0]:run[1]],
+                                  'support': last['lines before']})
+                    run = None
+                var, lo, hi, held = next(slots)
+                items.append({'kind': 'V', 'lo': lo, 'hi': hi, 'tokens': tokens[lo:hi], 'var': var,
+                              'alts': Counter({tuple(held): last['lines before']}) if held else Counter()})
+            if i1 < n:
+                run = (run[0], i1 + 1) if run else (i1, i1 + 1)
+        if run:
+            items.append({'kind': 'C', 'lo': run[0], 'hi': run[1], 'tokens': tokens[run[0]:run[1]],
+                          'support': last['lines before']})
+        for item in items:
+            if item['kind'] == 'V':
+                out['labels'][item['lo']:item['hi']] = ['V'] * (item['hi'] - item['lo'])
+        part = {'span': (0, n), 'items': items, 'rule': None, 'sequence': None, 'chunks': [], 'bindings': [],
+                'new_vars': [], 'recognised': not last['changed'], 'probe': None, 'node2b': [], 'inside': [],
+                'by_template': name}
+        out.update(parts=[part], changed=last['changed'], old=last['old'], new=last['new'])
+        symbols, alternatives = self.stand_for(items, part, how='rule')
+        if not any(item['kind'] == 'V' for item in items):
+            return out      # the type has no VAR yet: the sequence again, whole. Its chunk is counted.
+        self.record(part, items, symbols, alternatives, [item['var'] for item in items if item['kind'] == 'V'], None)
+        if last['changed']:     # the rule was edited: its earlier form is retired, not deleted
+            old = self.rule_of_template(last['old'])
+            if len(old) >= 2 and self.node1b.frequency(pattern_name([[x] for x in old])):
+                self.node1b.retire([pattern_name([[x] for x in old])])
+                part['retired'] = old
+        return out
 
     # -- top-down: a learned rule reads a new sequence -----------------------
     def read_by_rule(self, tokens):

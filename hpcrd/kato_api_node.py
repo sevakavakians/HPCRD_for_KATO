@@ -14,6 +14,15 @@ Calls used:
     GET  /sessions/{id}/predictions                 predictions, future_potentials, ends_here
     POST /sessions/{id}/clear-stm, /clear-all
     GET  /pattern/{name}?node_id=...                a pattern's data and frequency
+    POST /sessions/{id}/patterns/retire             a tombstone: the pattern stays stored, predictions skip it
+    POST /sessions/{id}/patterns/un-retire          and back
+    POST /sessions/{id}/learn                       only to ask why a learn was not confirmed (409: retired)
+
+What KATO at f32bac0 does with a retired pattern, as seen on a running service (24 Nov 2026):
+predictions skip it; GET /pattern/{name} still returns it, frequency included; learning it again is
+refused (409 RETIRED_PATTERN from /learn; from observe-sequence with learn_at_end a 200 with no
+final_learned_pattern, the sequence left in the session's STM) until it is un-retired; an id the node
+does not hold is tombstoned all the same; a malformed id is a 422.
 """
 import json
 import os
@@ -27,6 +36,11 @@ _opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
 
 def bare(name):
     return name[len(PREFIX):] if name.startswith(PREFIX) else name
+
+
+class RetiredPattern(Exception):
+    """KATO refuses to learn a pattern whose hash is retired on the node (RetiredPatternError,
+    HTTP 409). Un-retire it first if it should exist again."""
 
 
 class ApiNode:
@@ -51,6 +65,7 @@ class ApiNode:
         self.asker = self._session({**shared, 'max_pattern_length': 0, 'process_predictions': False})
         self._call('POST', f"/sessions/{self.stream}/clear-all")
         self.learn_order = []
+        self.retired = set()          # bare sha1 of the patterns this client retired on the node
         self.stm = []
         self.learns = 0
         self.predicts = 0
@@ -68,7 +83,10 @@ class ApiNode:
         except urllib.error.HTTPError as error:
             if missing_ok and error.code == 404:
                 return None
-            raise RuntimeError(f"{method} {path}: {error.code} {error.read()[:300]!r}") from error
+            text = error.read()[:400]
+            if error.code == 409 and b'RETIRED_PATTERN' in text:
+                raise RetiredPattern(text.decode(errors='replace')) from error
+            raise RuntimeError(f"{method} {path}: {error.code} {text!r}") from error
 
     def _session(self, config):
         return self._call('POST', '/sessions', {'node_id': self.node_id, 'config': config})['session_id']
@@ -83,12 +101,18 @@ class ApiNode:
         events = [list(e) for e in (self.stm if events is None else events)]
         if sum(len(e) for e in events) <= 1:
             return None
-        self.learns += 1
         out = self._call('POST', f"/sessions/{self.learner}/observe-sequence",
                          {'observations': [{'strings': e} for e in events], 'learn_at_end': True})
         name = out['final_learned_pattern']
         if not name:
+            # A learn that fails at the end of observe-sequence is a 200 with no name, and the session
+            # keeps the sequence in its STM. The explicit learn says why: 409 for a retired pattern.
+            try:
+                self._call('POST', f"/sessions/{self.learner}/learn")
+            finally:
+                self._call('POST', f"/sessions/{self.learner}/clear-stm")
             raise RuntimeError(f"KATO did not confirm the learn of {events!r}")
+        self.learns += 1
         self._register(name)
         return name
 
@@ -108,9 +132,25 @@ class ApiNode:
     def pattern(self, name):
         return self._read(name)['pattern_data']
 
+    def retire(self, names):
+        """POST /sessions/{id}/patterns/retire. Node-scoped and durable; the rows stay."""
+        ids = [bare(n) for n in names]
+        out = self._call('POST', f"/sessions/{self.learner}/patterns/retire", {'pattern_ids': ids})
+        if sorted(out['retired'] + out['already_retired']) != sorted(set(ids)):
+            raise RuntimeError(f"KATO retired {out['retired']} of {ids}")
+        self.retired.update(ids)
+        self._cache = None
+
+    def unretire(self, names):
+        """POST /sessions/{id}/patterns/un-retire."""
+        ids = [bare(n) for n in names]
+        self._call('POST', f"/sessions/{self.learner}/patterns/un-retire", {'pattern_ids': ids})
+        self.retired.difference_update(ids)
+        self._cache = None
+
     @property
     def patterns(self):
-        """Every pattern this client taught the node, read back from KATO."""
+        """Every pattern this client taught the node, read back from KATO, the retired ones too."""
         if self._cache is None:
             self._cache = {}
             for name in self.learn_order:

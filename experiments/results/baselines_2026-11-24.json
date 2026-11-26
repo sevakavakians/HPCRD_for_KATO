@@ -72,94 +72,96 @@
  "Spell's loop on KATO, tau 0.5": {
   "as it arrived": {
    "VARs": {
-    "across a slot edge": 64,
-    "exactly a slot": 224,
-    "longer than a slot": 213,
-    "no annotated slot": 3320,
-    "part of a slot": 219
+    "across a slot edge": 66,
+    "exactly a slot": 216,
+    "longer than a slot": 219,
+    "no annotated slot": 3334,
+    "part of a slot": 212
    },
    "slots": {
-    "constant in a rule, or dropped": 49,
-    "inside a longer VAR": 221,
-    "no rule for the sentence": 674,
-    "one VAR, exactly": 224,
-    "partly in a VAR": 220
+    "constant in a rule, or dropped": 51,
+    "inside a longer VAR": 229,
+    "no rule for the sentence": 676,
+    "one VAR, exactly": 216,
+    "partly in a VAR": 216
    }
   },
   "at the end": {
    "VARs": {
     "across a slot edge": 122,
-    "exactly a slot": 237,
-    "longer than a slot": 552,
-    "no annotated slot": 4755,
-    "part of a slot": 293
+    "exactly a slot": 228,
+    "longer than a slot": 558,
+    "no annotated slot": 4767,
+    "part of a slot": 294
    },
    "slots": {
-    "constant in a rule, or dropped": 55,
-    "inside a longer VAR": 612,
-    "no rule for the sentence": 146,
-    "one VAR, exactly": 237,
-    "partly in a VAR": 338
+    "constant in a rule, or dropped": 64,
+    "inside a longer VAR": 624,
+    "no rule for the sentence": 141,
+    "one VAR, exactly": 228,
+    "partly in a VAR": 331
    }
   },
   "kato": {
+   "edits that met another live template": 1,
    "learns": 3841,
-   "patterns stored": 2193,
+   "patterns stored": 2178,
    "predictions asked": 3841,
-   "retired": 1260,
-   "retired content that came back": 52
+   "retired": 1237,
+   "retired content that came back": 54
   },
   "lines": 3873,
-  "lines that joined an existing template": 2896,
-  "seconds": 107.0,
-  "templates": 933,
-  "templates with two or more lines": 749
+  "lines that joined an existing template": 2899,
+  "seconds": 104.0,
+  "templates": 941,
+  "templates with two or more lines": 771
  },
  "Spell's loop on KATO, tau 0.7": {
   "as it arrived": {
    "VARs": {
-    "across a slot edge": 6,
-    "exactly a slot": 128,
-    "longer than a slot": 41,
-    "no annotated slot": 1403,
-    "part of a slot": 113
+    "across a slot edge": 8,
+    "exactly a slot": 126,
+    "longer than a slot": 42,
+    "no annotated slot": 1400,
+    "part of a slot": 111
    },
    "slots": {
-    "constant in a rule, or dropped": 57,
-    "inside a longer VAR": 41,
-    "no rule for the sentence": 1062,
-    "one VAR, exactly": 128,
-    "partly in a VAR": 100
+    "constant in a rule, or dropped": 59,
+    "inside a longer VAR": 42,
+    "no rule for the sentence": 1060,
+    "one VAR, exactly": 126,
+    "partly in a VAR": 101
    }
   },
   "at the end": {
    "VARs": {
-    "across a slot edge": 29,
-    "exactly a slot": 164,
-    "longer than a slot": 238,
-    "no annotated slot": 2721,
-    "part of a slot": 199
+    "across a slot edge": 32,
+    "exactly a slot": 165,
+    "longer than a slot": 234,
+    "no annotated slot": 2750,
+    "part of a slot": 194
    },
    "slots": {
-    "constant in a rule, or dropped": 103,
-    "inside a longer VAR": 259,
-    "no rule for the sentence": 669,
-    "one VAR, exactly": 164,
-    "partly in a VAR": 193
+    "constant in a rule, or dropped": 105,
+    "inside a longer VAR": 252,
+    "no rule for the sentence": 674,
+    "one VAR, exactly": 165,
+    "partly in a VAR": 192
    }
   },
   "kato": {
+   "edits that met another live template": 0,
    "learns": 3841,
-   "patterns stored": 2762,
+   "patterns stored": 2755,
    "predictions asked": 3841,
-   "retired": 1025,
-   "retired content that came back": 47
+   "retired": 1016,
+   "retired content that came back": 45
   },
   "lines": 3873,
-  "lines that joined an existing template": 2096,
-  "seconds": 239.1,
-  "templates": 1737,
-  "templates with two or more lines": 806
+  "lines that joined an existing template": 2102,
+  "seconds": 224.4,
+  "templates": 1739,
+  "templates with two or more lines": 815
  },
  "Spell, tau 0.5": {
   "as it arrived": {
@@ -235,7 +237,7 @@
   },
   "lines": 3873,
   "lines that joined an existing template": 2131,
-  "seconds": 3.2,
+  "seconds": 3.1,
   "templates": 1742,
   "templates with two or more lines": 825
  }

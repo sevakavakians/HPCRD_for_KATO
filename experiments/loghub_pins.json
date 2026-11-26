@@ -1,0 +1,73 @@
+{
+ "dataset": "Loghub 2k samples with hand-labelled templates, as distributed with logparser",
+ "source": "https://github.com/logpai/logparser",
+ "path": "data/loghub_2k/<System>/<System>_2k.log_structured.csv",
+ "commit": "d9d4180784cde9afef990eeeb458591011933f9b",
+ "terms": "LICENSE OF LOGHUB (data/loghub_2k/LICENSE): freely available for research or academic work; refer to https://github.com/logpai/loghub and cite the loghub paper",
+ "files": {
+  "Android_2k.log_structured.csv": {
+   "sha256": "80d58d6c79249c9f4891fbe0c2eaeaade30f933c69b7d030af190a10d73d96e5",
+   "bytes": 450975
+  },
+  "Apache_2k.log_structured.csv": {
+   "sha256": "54331d12eedf513f2127f4d89f0284c8b15fddfa5471103abf9db2c73d737778",
+   "bytes": 258805
+  },
+  "BGL_2k.log_structured.csv": {
+   "sha256": "3fe74103c0b02a28514534e2a47257a3f770135ca61afd425bbd3b9d6a31fe26",
+   "bytes": 425129
+  },
+  "HDFS_2k.log_structured.csv": {
+   "sha256": "729df59774e3dde934044028546d2a55d5e3d4370b9d12fcebbe4c087b2bf7b4",
+   "bytes": 414635
+  },
+  "HPC_2k.log_structured.csv": {
+   "sha256": "0787df9cfab7e9495669548315ea8a9a51b02029c0dcfa28944707ad755a8c86",
+   "bytes": 217818
+  },
+  "Hadoop_2k.log_structured.csv": {
+   "sha256": "e88e5bf99d7f23f482517cc79290ad75b90d914af5d6114176e8bbf0f8ae0fad",
+   "bytes": 541144
+  },
+  "HealthApp_2k.log_structured.csv": {
+   "sha256": "11831c70cc8851cb74486153149ae3136453fccca708fcb6826d8dcb0edbc6cb",
+   "bytes": 283128
+  },
+  "Linux_2k.log_structured.csv": {
+   "sha256": "7c86d7b0ecb961a25f00d9475a154df97613b9974f31ce142a146caa2017c71e",
+   "bytes": 327804
+  },
+  "Mac_2k.log_structured.csv": {
+   "sha256": "c8d5d74e0dcd923675ee944ea592abaf0eae91ef492435330694ce5008267c8d",
+   "bytes": 502573
+  },
+  "OpenSSH_2k.log_structured.csv": {
+   "sha256": "c0996a11545f4b94b435993760afa441a9e373f7bfc9e787afdb8e62f65acb4f",
+   "bytes": 357677
+  },
+  "OpenStack_2k.log_structured.csv": {
+   "sha256": "ecc88e7909777181824260e9bdacd1469bd24d55131d6fc14e9c8c17edc49ff0",
+   "bytes": 719703
+  },
+  "Proxifier_2k.log_structured.csv": {
+   "sha256": "5aa88821bb217d82c3a964cbe9fdb0d67f235b0538ac164ef0a87e0ced4f2715",
+   "bytes": 356522
+  },
+  "Spark_2k.log_structured.csv": {
+   "sha256": "d7df75f6839b6bcf98ff020b6b0b6e2ee89d8cc53ee3d08d441bd42fd84a2cb5",
+   "bytes": 305002
+  },
+  "Thunderbird_2k.log_structured.csv": {
+   "sha256": "c62196d8a3449de765501bbf58c2093452e9d1add439053301d29fdad8a06809",
+   "bytes": 446333
+  },
+  "Windows_2k.log_structured.csv": {
+   "sha256": "caa98dd6c1291ba0470d5c171df8514616b35669d724652bd7aa973df0dee881",
+   "bytes": 404249
+  },
+  "Zookeeper_2k.log_structured.csv": {
+   "sha256": "e4a450c67595828103cfab049d971f54eee778fdded061222ba6581bed2a210a",
+   "bytes": 372360
+  }
+ }
+}

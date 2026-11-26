@@ -1,0 +1,51 @@
+{
+ "pins": {
+  "commit": "d9d4180784cde9afef990eeeb458591011933f9b",
+  "dataset": "Loghub 2k samples with hand-labelled templates, as distributed with logparser",
+  "path": "data/loghub_2k/<System>/<System>_2k.log_structured.csv",
+  "source": "https://github.com/logpai/logparser",
+  "terms": "LICENSE OF LOGHUB (data/loghub_2k/LICENSE): freely available for research or academic work; refer to https://github.com/logpai/loghub and cite the loghub paper"
+ },
+ "systems": {
+  "HealthApp": {
+   "labelled events": 75,
+   "lines": 2000,
+   "on KATO": {
+    "accuracy": 0.76,
+    "digest": "4d7c40e001cc131528ed27fb06ed00ceddce5aa6",
+    "groups": 165,
+    "learns": 1988,
+    "merged": 0,
+    "predictions": 1988,
+    "retired": 48,
+    "revived": 1,
+    "seconds": 463.3,
+    "stored": 205
+   },
+   "published": {
+    "Drain": 0.78,
+    "Spell": 0.639
+   }
+  },
+  "Mac": {
+   "labelled events": 341,
+   "lines": 2000,
+   "on KATO": {
+    "accuracy": 0.7485,
+    "digest": "3481597a3327edafb3ff191f74835ea24cc5cf78",
+    "groups": 358,
+    "learns": 1987,
+    "merged": 0,
+    "predictions": 1987,
+    "retired": 158,
+    "revived": 6,
+    "seconds": 328.8,
+    "stored": 513
+   },
+   "published": {
+    "Drain": 0.787,
+    "Spell": 0.757
+   }
+  }
+ }
+}

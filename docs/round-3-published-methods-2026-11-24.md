@@ -2,6 +2,13 @@
 
 24 Nov 2026. Follows `round-2-sequences-and-gap-variables-2026-11-24.md`. Branch `claude/published-methods`.
 
+> **Corrected in round 4** (`round-4-log-benchmark-and-outer-loop-2026-11-24.md`). The text below is as it was written.
+>
+> 1. **Spell's average on the log benchmark.** Sections 1 and 5 quote 0.751, which is what the benchmark paper's Table IV prints. The sixteen values the table gives for Spell average 0.793 (IPLoM: 0.777 printed, 0.806 averaged; Drain: 0.865 and 0.866).
+> 2. **The loop on KATO, sections 0, 2 and 3.** Those numbers (933 templates, 749 with two or more lines, 16.1% of slots, 52 un-retires) were measured with ties going to the smaller pattern name, and with a line's type looked up by the name of the pattern it had joined. Ties now go to the older type, as in the benchmark's implementation, and a line stays with its message type: 941 templates, 771 with two or more lines, 15.6% of slots, 54 un-retires.
+> 3. **What retiring does, section 3.** "Every read skips it" is not what KATO does. Predictions skip a retired pattern; `GET /pattern/{name}` still returns it. And KATO refuses to learn a retired pattern again until it is un-retired. Both were seen on a running service in round 4, and the in-process node now does the same.
+> 4. **"Nothing went through KATO's API"** and weak point 4 are no longer the state of things: round 4 ran the loop on a KATO service.
+
 Round 2 ended with two questions. Your answer to both was the same: decide by prior art, and use what others have shown to work instead of reinventing it. This note does that. Everything ran in-process; nothing went through KATO's API.
 
 ## 0. In one screen

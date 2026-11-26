@@ -50,6 +50,11 @@ RUNS = {
     'mixed, rules first': (MIXED, {**GAP, 'topdown': True, 'rule_threshold': 0.3}),
     'cities, rules first, inside': (CITIES, {**GAP, 'topdown': True, 'inside': True}),
     'T5, nearest, rules first': (T5, {**GAP, 'fold': 'nearest', 'topdown': True}),
+    "cities, Spell's loop": (CITIES, {**GAP, 'loop': 'templates'}),
+    "T5, Spell's loop": (T5, {**GAP, 'loop': 'templates'}),
+    "T3A, Spell's loop": (T3A, {**GAP, 'loop': 'templates'}),
+    "party, Spell's loop, inside": (PARTY, {**GAP, 'loop': 'templates', 'inside': True}),
+    "mixed, Spell's loop": (MIXED, {**GAP, 'loop': 'templates'}),
 }
 
 
@@ -143,8 +148,18 @@ def test_invariants(label):
     assert instances > 0
     if kw.get('topdown'):
         assert by_rule > 0
-    if label in ('cities, inside', 'party, inside'):
+    if label in ('cities, inside', 'party, inside', "party, Spell's loop, inside"):
         assert inner > 0
+    if m.reader is not None:    # the template node and node_1b say the same thing, live and retired
+        m.reader.check()
+        live = [e for e in m.reader.node.patterns.values() if e['name'] not in m.reader.node.retired]
+        rules = {tuple(ev[0] for ev in e['pattern_data']) for e in m.node1b.patterns.values()
+                 if e['name'] not in m.node1b.retired and any(ev[0].startswith(VAR) for ev in e['pattern_data'])}
+        from_templates = {tuple(m.rule_of_template([ev[0] for ev in e['pattern_data']])) for e in live
+                          if any(ev[0].startswith(VAR) for ev in e['pattern_data'])}
+        inner_rules = {tuple(ev[0] for ev in m.node1b.pattern(e['pattern_data'][1][0])) for e in m.node2b.patterns.values()
+                       if len(e['pattern_data']) == 2 and e['pattern_data'][1][0] in {PREFIX + n for n in m.node1b.patterns}}
+        assert from_templates == rules - inner_rules
     if label == 'T3A, inside':
         assert inner == 0       # nothing in that text recombines
 
@@ -218,3 +233,28 @@ def test_cut_gives_the_boundary_without_a_marker():
     b, _ = run(CITIES.replace(' .', ''), **{**GAP, 'markers': ()})
     assert len(a.node0.patterns) == 6 and len(a.node1b.patterns) == 1
     assert len(b.node0.patterns) == 1               # without a cut the text is one sequence
+
+
+@pytest.mark.through_api
+def test_spells_loop_as_the_outer_loop_gives_one_rule_and_keeps_its_var_through_edits():
+    m, steps = run(CITIES, **GAP, loop='templates')
+    live = [e for e in m.node1b.patterns.values() if e['name'] not in m.node1b.retired]
+    assert [e['frequency'] for e in live] == [6]
+    assert sum(ev[0].startswith(VAR) for ev in live[0]['pattern_data']) == 1
+    values = {tuple(e[0] for e in p['pattern_data'][1:]): p['frequency'] for p in m.node2b.patterns.values()}
+    assert values[('new', 'york')] == 2 and values[('boston',)] == 1     # boston: what the template held before its first edit
+    assert len(m.reader.node.patterns) == 2 and len(m.reader.node.retired) == 1   # the first sentence, retired
+
+
+@pytest.mark.through_api
+def test_an_edit_keeps_the_var_and_retires_the_old_rule():
+    text = "book for two at seven . book for six at seven . book for six at nine ."
+    m, steps = run(text, **GAP, loop='templates')
+    rules = [(e['name'] in m.node1b.retired, [ev[0] for ev in e['pattern_data']]) for e in
+             sorted(m.node1b.patterns.values(), key=lambda e: len(e['pattern_data']))]
+    assert [r for retired, r in rules if retired] == [[m.chunk(['book', 'for'], learn=False), 'VAR|1',
+                                                      m.chunk(['at', 'seven', '.'], learn=False)]]
+    (now,) = [r for retired, r in rules if not retired]
+    assert [x for x in now if x.startswith(VAR)] == ['VAR|1', 'VAR|2']    # the first VAR kept its symbol
+    held = {tuple(ev[0] for ev in e['pattern_data']) for e in m.node2b.patterns.values()}
+    assert {('VAR|1', 'two'), ('VAR|1', 'six'), ('VAR|2', 'seven'), ('VAR|2', 'nine')} <= held

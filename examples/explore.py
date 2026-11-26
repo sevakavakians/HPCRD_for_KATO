@@ -69,6 +69,8 @@ def run(text, verbose=True, **kw):
             stretch(res)
     print()
     dump_node(m.node0, 'node_0', limit=0)
+    if m.reader is not None:
+        dump_node(m.reader.node, 'templates')
     print('  VARs:', m.var_count)
     dump_node(m.node1a, 'node_1a')
     dump_node(m.node1b, 'node_1b', m.node1a)

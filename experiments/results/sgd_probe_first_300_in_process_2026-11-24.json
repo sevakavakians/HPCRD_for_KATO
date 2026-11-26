@@ -1,0 +1,194 @@
+{
+ "data": {
+  "median sentence length": 7,
+  "sentences": 300,
+  "slot spans": 1393,
+  "slot spans cut by a sentence end": 5,
+  "slot spans in these sentences": 100,
+  "tokens": 2370,
+  "tokens are": "words and punctuation marks",
+  "user turns": 2967
+ },
+ "pins": {
+  "commit": "e852981ae34990f4358979625854259302feaa78",
+  "dataset": "Schema-Guided Dialogue (Rastogi et al. 2020), CC BY-SA 4.0",
+  "files": {
+   "train/dialogues_001.json": {
+    "bytes": 3128575,
+    "sha256": "5ce28a6e656bc88c1da29c983d243d5a81eb37de92698da3864d1cf02894ca24"
+   },
+   "train/dialogues_002.json": {
+    "bytes": 2233395,
+    "sha256": "56a06f9762593b27f5b34225de4ce37da5e83c9c5747e56bca2899f147d88b3e"
+   },
+   "train/dialogues_003.json": {
+    "bytes": 1804298,
+    "sha256": "aae3d8d141c8c36bc5268ca573044b4e82d4534947c169d951a1f229b9852029"
+   }
+  },
+  "source": "https://github.com/google-research-datasets/dstc8-schema-guided-dialogue"
+ },
+ "runs": {
+  "sentences, Spell's loop as the outer loop, tau 0.5": {
+   "all": {
+    "VARs": {
+     "across a slot edge": 2,
+     "exactly a slot": 15,
+     "longer than a slot": 6,
+     "no annotated slot": 209,
+     "part of a slot": 11
+    },
+    "rule instances": 162,
+    "rule instances of a known rule": 50,
+    "sentences": 300,
+    "sentences with a rule": 162,
+    "slots": {
+     "constant in a rule, or dropped": 2,
+     "inside a longer VAR": 6,
+     "no rule for the sentence": 66,
+     "one VAR, exactly": 15,
+     "partly in a VAR": 11
+    }
+   },
+   "ids": {
+    "VAR ids that hold exactly a slot": 15,
+    "ids per slot name": {
+     "city": 6,
+     "cuisine": 3,
+     "date": 4,
+     "time": 2
+    },
+    "of those, ids holding one slot name only": 15
+   },
+   "last third": {
+    "VARs": {
+     "exactly a slot": 5,
+     "longer than a slot": 2,
+     "no annotated slot": 90,
+     "part of a slot": 8
+    },
+    "rule instances": 66,
+    "rule instances of a known rule": 26,
+    "sentences": 100,
+    "sentences with a rule": 66,
+    "slots": {
+     "constant in a rule, or dropped": 1,
+     "inside a longer VAR": 2,
+     "no rule for the sentence": 15,
+     "one VAR, exactly": 5,
+     "partly in a VAR": 6
+    }
+   },
+   "nodes": {
+    "VAR ids": 174,
+    "digest": "85cf10d2368aa15cc201e0ffa529ed132244bae7",
+    "node_0 patterns": 280,
+    "node_0 stored symbols": 2273,
+    "node_1a chunks": 86,
+    "node_1b rules": 112,
+    "node_1b rules live": 74,
+    "node_1b rules seen again": 32,
+    "node_1b top frequencies": [
+     6,
+     4,
+     4,
+     3,
+     3
+    ],
+    "node_2b patterns": 463,
+    "templates live": 134,
+    "templates stored": 246
+   },
+   "seconds": 1.2,
+   "settings": {
+    "loop": "templates",
+    "slots": "gap",
+    "span": "sequence",
+    "tau": 0.5,
+    "unexplained": "break",
+    "values": "sequence"
+   }
+  },
+  "sentences, Spell's loop as the outer loop, tau 0.5, inside": {
+   "all": {
+    "VARs": {
+     "across a slot edge": 2,
+     "exactly a slot": 15,
+     "longer than a slot": 6,
+     "no annotated slot": 211,
+     "part of a slot": 11
+    },
+    "rule instances": 162,
+    "rule instances of a known rule": 50,
+    "sentences": 300,
+    "sentences with a rule": 162,
+    "slots": {
+     "constant in a rule, or dropped": 2,
+     "inside a longer VAR": 6,
+     "no rule for the sentence": 66,
+     "one VAR, exactly": 15,
+     "partly in a VAR": 11
+    }
+   },
+   "ids": {
+    "VAR ids that hold exactly a slot": 15,
+    "ids per slot name": {
+     "city": 6,
+     "cuisine": 3,
+     "date": 4,
+     "time": 2
+    },
+    "of those, ids holding one slot name only": 15
+   },
+   "last third": {
+    "VARs": {
+     "exactly a slot": 5,
+     "longer than a slot": 2,
+     "no annotated slot": 92,
+     "part of a slot": 8
+    },
+    "rule instances": 66,
+    "rule instances of a known rule": 26,
+    "sentences": 100,
+    "sentences with a rule": 66,
+    "slots": {
+     "constant in a rule, or dropped": 1,
+     "inside a longer VAR": 2,
+     "no rule for the sentence": 15,
+     "one VAR, exactly": 5,
+     "partly in a VAR": 6
+    }
+   },
+   "nodes": {
+    "VAR ids": 192,
+    "digest": "231bb9d672e65db80933e90e7b15bd98d5d14fda",
+    "node_0 patterns": 280,
+    "node_0 stored symbols": 2273,
+    "node_1a chunks": 87,
+    "node_1b rules": 129,
+    "node_1b rules live": 91,
+    "node_1b rules seen again": 36,
+    "node_1b top frequencies": [
+     6,
+     4,
+     4,
+     3,
+     3
+    ],
+    "node_2b patterns": 515,
+    "templates live": 134,
+    "templates stored": 246
+   },
+   "seconds": 1.3,
+   "settings": {
+    "inside": true,
+    "loop": "templates",
+    "slots": "gap",
+    "span": "sequence",
+    "tau": 0.5,
+    "unexplained": "break",
+    "values": "sequence"
+   }
+  }
+ }
+}

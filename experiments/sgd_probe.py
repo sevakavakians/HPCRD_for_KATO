@@ -28,6 +28,7 @@ import urllib.request
 from collections import Counter
 
 from hpcrd.modeler import VAR, Modeler, Settings
+from hpcrd.show import digest
 
 HERE = pathlib.Path(__file__).resolve().parent
 PINS = json.loads((HERE / 'sgd_pins.json').read_text())
@@ -62,6 +63,8 @@ CONFIGS = [
     ('sentences, per gap, all 0.7, rules read first 0.5', dict(SEQ, recall_threshold=0.7, topdown=True, rule_threshold=0.5)),
     ('sentences, per gap, nearest 0.5, rules first 0.5, inside', dict(SEQ, recall_threshold=0.5, fold='nearest', topdown=True, rule_threshold=0.5, inside=True)),
     ('sentences, per gap, nearest 0.5, inside', dict(SEQ, recall_threshold=0.5, fold='nearest', inside=True)),
+    ("sentences, Spell's loop as the outer loop, tau 0.5", dict(SEQ, loop='templates', tau=0.5)),
+    ("sentences, Spell's loop as the outer loop, tau 0.5, inside", dict(SEQ, loop='templates', tau=0.5, inside=True)),
 ]
 
 
@@ -136,7 +139,7 @@ def judge(result, slots, deep=False):
             emissions += 1
             recognised += part['rule_frequency'] > 1
             for item, symbol in zip(part['items'], part['sequence']):
-                if item['kind'] == 'V':
+                if item['kind'] == 'V' and item['hi'] > item['lo']:     # a VAR with nothing in this sentence has no span
                     spans += leaves(item['lo'], item['hi'], symbol, item.get('inside') if deep else None)
     covered = set()
     for a, b, _var in spans:
@@ -225,6 +228,14 @@ def run(settings, data, rules=0):
         'VAR ids': m.var_count,
         'node_2b patterns': len(m.node2b.patterns),
     }
+    if m.reader is not None:
+        out['nodes']['templates stored'] = len(m.reader.node.patterns)
+        out['nodes']['templates live'] = len(m.reader.node.patterns) - len(m.reader.node.retired)
+        out['nodes']['node_1b rules live'] = len(m.node1b.patterns) - len(m.node1b.retired)
+    nodes = [('node_0', m.node0), ('node_1a', m.node1a), ('node_1b', m.node1b), ('node_2a', m.node2a), ('node_2b', m.node2b)]
+    nodes += [('node_1t', m.node1t)] if m.node1t is not None else []
+    nodes += [('templates', m.reader.node)] if m.reader is not None else []
+    out['nodes']['digest'] = digest(nodes)      # every pattern of every node: name, frequency, retired
     out['ids'] = {
         'VAR ids that hold exactly a slot': len(by_var),
         'of those, ids holding one slot name only': sum(1 for c in by_var.values() if len(c) == 1),
